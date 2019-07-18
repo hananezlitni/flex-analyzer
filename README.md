@@ -1,6 +1,6 @@
 # flexibility-analyzer
 
-> Flexibility structure analyzer. Team leads: Sigrun Andradottir, Hayriye Ayhan, Douglas G Down
+> Flexibility structure analyzer.
 
 ## Build Setup
 
