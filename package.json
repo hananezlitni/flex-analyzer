@@ -1,7 +1,7 @@
 {
   "name": "flexibility-analyzer",
   "version": "1.0.0",
-  "description": "Flexibility structure analyzer. Team leads: Sigrun Andradottir, Hayriye Ayhan, Douglas G Down",
+  "description": "Flexibility structure analyzer.",
   "author": "Hanane Zlitni",
   "private": true,
   "scripts": {
