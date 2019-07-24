@@ -1,55 +1,82 @@
 <template>
-  <div>
+  <div id="app">
+    <header>
+			<h1>Flexibility Structure Analyzer</h1>
+		</header> 
+    <app-nav />
     <nuxt />
   </div>
 </template>
 
-<style>
-html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
-}
+<script>
+  import AppNav from "~/components/AppNav.vue";
 
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-  margin: 0;
-}
+  export default {
+    components: {
+      AppNav
+    }
+  };
+</script>
 
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
+<style lang="scss">
+  /************************* IMPORTS ****************************/
+  @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,900');
+  @import url('https://fonts.googleapis.com/css?family=Playfair+Display');
+  @import url('https://fonts.googleapis.com/css?family=Playfair+Display+SC:400,700');
 
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
+  /************************* VARIABLES ****************************/
+  $roboto: 'Roboto', sans-serif;
+  $roboto-mono: 'Roboto Mono', monospace;
+  $background-color: hsl(216, 29%, 97%);
+  $lightest-color: hsl(214, 44%, 85%);
+  $lightest-color2: hsl(214, 40%, 90%);
+  $gray-color: hsl(0, 0%, 50%);
+  $accent-color: hsl(199, 84%, 55%);
+  $main-color: hsl(203, 100%, 27%);
+  $font-color: hsl(210, 24%, 16%);
 
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
+  /************************* BASE ****************************/
+  #app {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    min-height: 100%;
+    background-color: $background-color;
+    font-family: $roboto;	
+    color: $font-color;
+    min-width: 1420px;
+    box-sizing: border-box;
+    height: 100%;
+  }
 
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
-}
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+    /*outline: 1px solid red;*/
+    &:before, &:after {
+      box-sizing: inherit;
+    }
+  }
+
+  header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    background-color: #FFFFFF;
+    padding: 15px;
+    box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.15);
+    h1 {
+      text-align: center;
+      color: $font-color;
+      font-weight: 500;
+    }
+  }
+
+  main {
+    grid-column: 4 / -1;
+    background-color: #FFFFFF;
+    padding: 50px 50px 0 50px;
+    margin: 50px 50px 50px 10px;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.15);
+  }
 </style>
