@@ -10,12 +10,12 @@
 
               <br>
               <h1>Import Structure</h1>
-              <p><i>Please use the form below to import a structure in a CSV file. For more information about the accepted file format and content, please read <a href="#">this page</a>.</i></p>
+              <p><i>Please use the form below to import a structure in a CSV file. For more information about the accepted file and content format, please read <a href="#">this page</a>.</i></p>
 
-              <form>
-                  <input type="file" name="file" />
+              <form enctype="text/csv" @submit="$event.preventDefault()">
+                  <input type="file" id="file" accept=".csv" @change="uploadFile" />
                   <br><br><br>
-                  <input class="button button--action primary" type="submit" value="Import" @click="debug">
+                  <input class="button button--action primary" type="submit" value="Import">
               </form>
             </slot>
         </section>
@@ -92,28 +92,32 @@
 </style>
 
 <script>
+  import * as d3 from "d3";
+  import * as axios from 'axios';
+  //import { upload } from '~/middleware/FileUpload.service';
+
   export default {
     name: 'Modal',
     methods: {
       close() {
         this.$emit('close');
       },
-      debug() {
-        console.log("Hello from debug()!");
-      },
-      save(formData) {
-        // upload data to the server
-        this.currentStatus = STATUS_SAVING;
+      uploadFile() {
+        let fileInput = document.getElementById('file');
+        const formData = new FormData();
 
-        upload(formData)
-          .then(x => {
-            this.uploadedFiles = [].concat(x);
-            this.currentStatus = STATUS_SUCCESS;
-          })
-          .catch(err => {
-            this.uploadError = err.response;
-            this.currentStatus = STATUS_FAILED;
-          });
+        formData.append('file', fileInput.files[0]);
+
+       // try {
+       //   axios.post('/upload', formData);
+       // } catch(err) {
+       //   console.log(err);
+       // }
+        
+
+        //upload(formData);
+
+        
       }
     },
   };
