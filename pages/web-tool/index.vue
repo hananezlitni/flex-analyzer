@@ -5,12 +5,7 @@
         <Tasks />
     </div>
     <div class="actions">
-        <Modal
-            v-show="isModalVisible"
-            @close="closeModal"
-        />
 		<br><br><br><br><br>
-		<input type="button" value="Import a Structure" class="button button--not-filled" @click="showModal">
 		<input type="button" value="Export Structure" class="button button--not-filled">
         <input type="button" value="Clear All" class="button button--action secondary">
 		<input type="button" value="Submit" class="button button--action primary">
@@ -20,24 +15,17 @@
 
 <script>
     import Tasks from '~/components/Tasks.vue';
-    import Modal from '~/components/Modal.vue';
 
     export default {
         components: {
-            Tasks, Modal
+            Tasks
         },
         data () {
             return {
-                isModalVisible: false
             }
         },
         methods: {
-            showModal() {
-                this.isModalVisible = true;
-            },
-            closeModal() {
-                this.isModalVisible = false;
-            }
+    
         }
     }
 </script>

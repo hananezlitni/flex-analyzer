@@ -1,16 +1,11 @@
 <template>
     <aside>
         <nav>
-            <ul id="tabsUl">
-                <li><nuxt-link to="/">About</nuxt-link></li>
-                <li><nuxt-link to="/tool">Tool</nuxt-link></li>
-                <li><nuxt-link to="/help">Help</nuxt-link></li>
-                <br><br><br><br><br><br><br><br><br><br><br><br>
-                <hr> 
-                <div class="footer">
-                    <p>Team leads:</p>
-                    <p>Student contributors:</p>
-                </div>
+            <ul class="navigation__list">
+                <li class="navigation__list__item"><nuxt-link to="/">About</nuxt-link></li>
+                <li class="navigation__list__item"><nuxt-link to="/web-tool">On-screen Tool</nuxt-link></li>
+                <li class="navigation__list__item"><nuxt-link to="/import-tool">Import a Structure</nuxt-link></li>
+                <li class="navigation__list__item"><nuxt-link to="/help">Help</nuxt-link></li>
             </ul>    
         </nav>
     </aside>
@@ -21,45 +16,31 @@
         grid-column: 1 / 3;
     }
     nav {
-        background-color: hsl(216, 29%, 97%);
-        margin: 50px 0 0 50px;
-        ul {
-            list-style: none;
-            margin-bottom: 99%;
-            li {
-                a {
-                    font-family: 'Roboto', sans-serif;
-                    color: hsl(0, 0%, 50%);
-                    font-size: 0.85em;
-                    font-weight: 500;
-                    text-decoration: none;
-                    padding: 15px 10px;
-                    display: block;
-                    width: inherit;
-                    height: auto;
-                    &:hover {
-                        background-color: #FFFFFF;
-                    }
-                    &.nuxt-link-exact-active {
-                        color: hsl(210, 24%, 16%);
-                        background-color: #FFFFFF;
-                        border-left: 3px solid hsl(199, 84%, 55%);
-                    }
-                }
+        background-color: inherit;
+        margin: 20px 0 0 50px;
+    }
+    .navigation__list {
+        list-style: none;
+    }
+    .navigation__list__item {
+        a {
+            font-family: $roboto;
+            color: $gray-color;
+            font-size: 0.9em;
+            font-weight: 400;
+            text-decoration: none;
+            padding: 15px 10px;
+            display: block;
+            width: inherit;
+            height: auto;
+            &:hover {
+                background-color: hsla(203, 100%, 27%, 0.15);
             }
-        }
-        .footer {
-            margin-top: 20px;
-            p {
-                font-family: 'Roboto Mono', monospace;
-                color: hsl(0, 0%, 50%);
-                font-size: 0.75em;
-                padding: 10px;
+            &.nuxt-link-exact-active {
+                color: $font-color;
+                background-color: hsla(199, 84%, 55%, 0.15);
+                border-left: 3px solid $accent-color;
             }
-        }
-        hr {
-            border: 0.5px solid hsla(0, 0%, 50%, 0.3);
-            margin-top: 120px;
         }
     }
 </style>

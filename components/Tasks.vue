@@ -36,7 +36,7 @@ export default {
         cursor: pointer;
         display: inline-block;
         svg {        
-            fill: hsl(203, 100%, 27%);
+            fill: $accent-color;
             width: 20px;
             height: 20px;
         }
@@ -45,7 +45,7 @@ export default {
         height: 25px;
         padding: 10px;
         margin: 8px;
-        background-color: #F4F4F4;
+        background-color: $font-color;
         border: none;
         border-radius: 3px;
         width: 80px;
