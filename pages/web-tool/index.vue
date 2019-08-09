@@ -1,6 +1,7 @@
 <template>
   <main>
-    <div class="tasks">
+    <p>Coming soon.</p>
+    <!--<div class="tasks">
         <h2>Tasks</h2>
         <Tasks />
     </div>
@@ -9,12 +10,12 @@
 		<input type="button" value="Export Structure" class="button button--not-filled">
         <input type="button" value="Clear All" class="button button--action secondary">
 		<input type="button" value="Submit" class="button button--action primary">
-	</div>
+	</div>-->
   </main>
 </template>
 
 <script>
-    import Tasks from '~/components/Tasks.vue';
+    /*import Tasks from '~/components/Tasks.vue';
 
     export default {
         components: {
@@ -27,12 +28,12 @@
         methods: {
     
         }
-    }
+    }*/
 </script>
 
 
 <style lang="scss" scoped>
-    main {
+    /*main {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
         h2 {
@@ -45,7 +46,5 @@
     .actions {
         grid-row: 3;
         grid-column: 1 / 13;
-        margin: 20px; /* this will need to be removed later */
-        padding-top: 100px; /* this will need to be removed later */
-    }
+    }*/
 </style>
