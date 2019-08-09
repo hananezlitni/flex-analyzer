@@ -4,7 +4,7 @@
 
 # Flexibility Structure Analyzer
 
-## Site: <https://flexibility-analyzer.netlify.com/>
+### Site: [https://flexibility-analyzer.netlify.com/](https://flexibility-analyzer.netlify.com/)
 
 The Flexibility Structure Analyzer is a web-based tool that allows people who wish to design a flexible system to check and verify whether their designed system's structure is as efficient or robust as a fully flexible system and to compare it with systems.
 
