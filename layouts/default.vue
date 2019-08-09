@@ -2,8 +2,13 @@
   <div id="app">
     <header class="header">
 			<h1 class="header__title">Flexibility Structure Analyzer</h1>
-      <p class="header__team-leads">Team leads: <a href="https://www2.isye.gatech.edu/people/faculty/Sigrun_Andradottir/" target="_blank">Sigrún Andradóttir</a>, <a href="https://www.isye.gatech.edu/users/hayriye-ayhan?entry=hs41" target="_blank">Hayriye Ayhan</a>, <a href="http://www.cas.mcmaster.ca/~downd/" target="_blank">Douglas G. Down</a></p>
-      <p class="header__contributors">Student contributors:</p>
+      <p class="header__team">
+        Team leads: <a href="https://www2.isye.gatech.edu/people/faculty/Sigrun_Andradottir/" target="_blank">Sigrún Andradóttir</a>, <a href="https://www.isye.gatech.edu/users/hayriye-ayhan?entry=hs41" target="_blank">Hayriye Ayhan</a>, <a href="http://www.cas.mcmaster.ca/~downd/" target="_blank">Douglas G. Down</a>
+        <br>
+        Student contributors (initial version): Matt Fielding, Edward Peng, and Alvin Poon
+        <br>
+        Re-designed &amp; developed by Hanane Zlitni
+      </p>
 		</header> 
     <app-nav />
     <nuxt />
@@ -66,11 +71,11 @@
     color: $font-color;
     font-weight: 500;
   }
-  .header__team-leads, .header__contributors {
+  .header__team {
     font-family: $roboto-mono;
     text-align: center;
     color: $accent-color;
-    font-size: 0.9em;
+    font-size: 0.95em;
     padding: 10px;
   }
   .button {
