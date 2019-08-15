@@ -85,13 +85,12 @@
     margin: 5px;
     border-radius: 8px;
     font-size: 0.85em;
-    font-weight: 600;
     text-transform: uppercase; 
     margin: 0 auto;
+    font-family: $roboto;	
   }
   .button--action {
     color: $background-color--main;
-    font-weight: 600;
   }
   .primary {
     background-color: $accent-color;
@@ -105,6 +104,5 @@
     background-color: inherit;
     border: 2px solid $accent-color;
     color: $accent-color;
-    font-weight: 600;
   }
 </style>
