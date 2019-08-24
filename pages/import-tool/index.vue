@@ -13,10 +13,7 @@
                             Choose a file
                         </label>
                         
-                        <br><br>
-
                         <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" />
-                        <br><br><br>
                         <input class="button button--action primary import__button" type="submit" value="Import Vectors" @click="loadVectors">
                     </form>
                 </div>
@@ -34,6 +31,7 @@
                 </div>
             </tab>
         </tabs>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js" />
     </main>
 </template>
 
@@ -41,12 +39,14 @@
     import * as d3 from "d3";
     import Tab from '../../components/Tab';
     import Tabs from '../../components/Tabs';
+    import initCanvas from '../../services/structure'
+    //import * as Raphael from '../../services/raphael'
     //import getParsecsvdata from '../../services/file-upload'
 
     export default {
         name: 'ImportTool',
         components: {
-            Tab, Tabs
+            Tab, Tabs, initCanvas
         },
         data() {
             return {
@@ -64,6 +64,7 @@
             },
             loadVectors() {
                 console.log("loadVectors clicked!")
+                initCanvas(6,5)
             },
             loadConfigurations() {
                 console.log("loadConfigurations clicked!")
@@ -125,6 +126,7 @@
     }
     .import__button {
         align-self: center;
+        margin-top: 2em;
     }
     .import__vectors-form__input {
         width: 0.1px;
@@ -142,6 +144,7 @@
         align-self: center;
         text-align: center;
         padding: 0.55em 0;
+        margin-bottom: 1em;
     }
     .import__vectors-form__input + label {
         font-family: $roboto;	
