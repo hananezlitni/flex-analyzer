@@ -30,7 +30,7 @@ var P_WIDTH = 500;
 // C,S - integers specifying default servers and tasks
 
 function initCanvas(C, S) {
-	paper = Raphael(90, T_OFFSET + 20, P_WIDTH, p_height);
+	paper = Raphael("figure", P_WIDTH, p_height);
 	for (var i = 0; i < C; i++){
 		addTask();
 	}
@@ -62,7 +62,7 @@ function addTask() {
 	
 	// Make circle
 	circle[numC] = paper.circle(C_OFFSET, 25 + MARGIN * (order[1][id] - 1), 20);
-	circle[numC].attr("fill", "blue");
+	circle[numC].attr("fill", "#dddddd");
 	circle[numC].node.onmouseover = function() {
 		this.style.cursor = "pointer";
 	}
@@ -74,7 +74,7 @@ function addTask() {
 	}
 	
 	// Add text
-	ltext[numC] = paper.text(10, 25 + MARGIN * (order[1][id] - 1), numC).attr("font-size", "20");
+	ltext[numC] = (paper.text(10, 25 + MARGIN * (order[1][id] - 1), numC).attr("font-size","20")).attr("fill","#2bafec");
 	// Set of containers for lines
 	//for (var i = 1; i <= numS; i++)*****************
 		//line[i][numC] = []; ************************
@@ -91,11 +91,11 @@ function addTask() {
 		//alert(sticky);
 		
 		if (active[1] != id) {
-			// If not selected, first make it red
-			circle[id].attr("fill","red");
+			// If not selected, select it
+			circle[id].attr("fill","#2bafec");
 			// If something else was selected, unselect it
 			if (active[1] > -1) {
-				circle[active[1]].attr("fill","blue");
+				circle[active[1]].attr("fill","#dddddd");
 			}
 			// Update currently selected task
 			active[1] = id;
@@ -103,7 +103,7 @@ function addTask() {
 			checkLine();
 		} else {
 			// If this was selected, make it blue and clear it
-			circle[id].attr("fill","blue");
+			circle[id].attr("fill","#dddddd");
 			active[1] = -1;
 		}
 	});
@@ -138,7 +138,7 @@ function addServer() {
 	
 	// Make rect
 	rect[numS] = paper.rect(R_OFFSET, 8 + MARGIN * (order[0][numS] - 1), 40, 40, 4);
-	rect[numS].attr("fill", "blue");
+	rect[numS].attr("fill", "#dddddd");
 	rect[numS].node.onmouseover = function() {
 		this.style.cursor = "pointer";
 	}
@@ -148,7 +148,7 @@ function addServer() {
 		paper.setSize(P_WIDTH, p_height);
 	}
 	// Add text
-	rtext[numS] = paper.text(460, 25 + MARGIN * (order[0][numS] - 1), id).attr("font-size", "20");
+	rtext[numS] = (paper.text(460, 25 + MARGIN * (order[0][numS] - 1), id).attr("font-size", "20")).attr("fill","#2bafec");
 	// Add line container for server
 	line[numS] = [];
 	// Onclick function
@@ -162,19 +162,19 @@ function addServer() {
 		}
 	
 		if (active[0] != id) {
-			// If not selected, make red
-			rect[id].attr("fill","red");
+			// If not selected, make it turquoise
+			rect[id].attr("fill","#2bafec");
 			// Unselect anything else
 			if (active[0] > -1) {
-				rect[active[0]].attr("fill","blue");
+				rect[active[0]].attr("fill","#dddddd");
 			}
 			// Set active server
 			active[0] = id;
 			// Check connection
 			checkLine();
 		} else {
-			// clear blue
-			rect[id].attr("fill","blue");
+			// clear selection
+			rect[id].attr("fill","#dddddd");
 			active[0] = -1;
 		}
 	});
@@ -212,9 +212,7 @@ function remLine (S, C) {
 // If so, toggle the line between them.
 function checkLine() {
 	var S = active[0];	// Active server
-	console.log(S)
 	var C = active[1];	// Active task
-	console.log(C)
 
 	// Get co-ordinates of nodes
 	var x1 = xof("S", S);
@@ -237,6 +235,7 @@ function checkLine() {
 		if (line[S][C] == undefined) {
 			line[S][C] = paper.path("M"+x1+","+y1+"L"+x2+","+y2);
 			line[S][C].attr("stroke-width","2");
+			line[S][C].attr("stroke","#2bafec");
 			document.forms["LP"].elements["isTrained["+S+"]["+C+"]"].value = "1";
 		} else {
 			// Line, remove line
@@ -248,13 +247,13 @@ function checkLine() {
 		//alert(sticky);
 		if (!stickyS) {
 			active[0] = -1;
-			rect[S].attr("fill","blue");
+			rect[S].attr("fill","#dddddd");
 		}
 		if (!stickyC) {
 			active[1] = -1;
-			circle[C].attr("fill","blue");
+			circle[C].attr("fill","#dddddd");
 		}
-		// Reset their colours to blue
+		// Reset their colours
 	}
 
 }
@@ -722,9 +721,9 @@ function moveNode(dir, id, type, displace) {
 	if (temp > 0) {
 		active[type] = temp;
 		if (type == 0) {
-			rect[temp].attr("fill","red");
+			rect[temp].attr("fill","#2bafec");
 		} else {
-			circle[temp].attr("fill","red");
+			circle[temp].attr("fill","#2bafec");
 		}
 	}
 }
@@ -732,9 +731,9 @@ function moveNode(dir, id, type, displace) {
 // Clear selection
 function resetActive() {
 	for (var n = 1; n <= numS; n++)
-		rect[n].attr("fill", "blue");
+		rect[n].attr("fill", "#dddddd");
 	for (var n = 1; n <= numC; n++)
-		circle[n].attr("fill", "blue");
+		circle[n].attr("fill", "#dddddd");
 	active[0] = -1;
 	active[1] = -1;
 }
