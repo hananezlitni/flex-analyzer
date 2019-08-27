@@ -14,7 +14,7 @@
                         </label>
                         
                         <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" />
-                        <input class="button button--action primary import__button" type="submit" value="Import Vectors" @click="loadVectors">
+                        <input class="button button--action primary import__button" type="submit" value="Generate Figure" @click="loadVectors">
                     </form>
                 </div>
                 <div id="figure"></div> 
@@ -32,7 +32,7 @@
                         </label>
 
                         <textarea placeholder="Configurations..." class="import__configurations-form__textarea" />
-                        <input class="button button--action primary import__button" type="submit" value="Import Configurations" @click="loadConfigurations">
+                        <input class="button button--action primary import__button" type="submit" value="Generate Figure" @click="loadConfigurations">
                     </form>
                 </div>
             </tab>
