@@ -61,7 +61,8 @@
                 tabs: [],
                 numOfTasks: 5,
                 numOfServers: 5,
-                fVector: []            
+                fVector: [],
+                fVectorValid: false            
             };
         },
         created() {
@@ -77,16 +78,18 @@
                 if (this.fVector === undefined || this.fVector.length == 0) {
                     this.errorMessage("Error: The f vector is empty.")
                 } else {
-                    let regex1 = /(?!\"1\")/
-                    let regex2 = /(?!\"0\")/
-                    console.log(regex2.test(["0"]))
-                    //console.log(this.fVector.some(row => row.includes()))
-                    if (this.fVector.every(row => row.includes("0")) || this.fVector.every(row => row.includes("1"))) {
+                    for (var i = 0; i < this.fVector.length; i++) {
+                        this.fVectorValid = this.fVector[i].every(item => item === "0" || item === "1")
+                        if (this.fVectorValid === false)
+                            break
+                    }
+
+                    if (this.fVectorValid) {
                         this.errorMessage("")
                         document.getElementById("figure").innerHTML = ""
                         initCanvas(this.numOfTasks, this.numOfServers, this.fVector) 
                     } else {
-                        this.errorMessage("Error: The f vector can only contain 0 or 1.")
+                        this.errorMessage("Error: The f vector can only contain 0 and 1.")
                     }
                 }
             },
