@@ -12,9 +12,11 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
                             Choose a file
                         </label>
+
+                        <p id="errorMessage"></p>
                         
-                        <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" />
-                        <input class="button button--action primary import__button" type="submit" value="Generate Figure" @click="loadVectors">
+                        <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" @keyup="getCsvData($event)" />
+                        <input class="button button--action primary import__button" type="submit" value="Generate Figure" @click="generateFigure">
                     </form>
                 </div>
                 <div id="figure"></div> 
@@ -30,6 +32,8 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
                             Choose a file
                         </label>
+
+                        <p id="errorMessage"></p>
 
                         <textarea placeholder="Configurations..." class="import__configurations-form__textarea" />
                         <input class="button button--action primary import__button" type="submit" value="Generate Figure" @click="loadConfigurations">
@@ -56,7 +60,8 @@
             return {
                 tabs: [],
                 numOfTasks: 5,
-                numOfServers: 5
+                numOfServers: 5,
+                fVector: []            
             };
         },
         created() {
@@ -68,14 +73,27 @@
                     tab.isActive = (tab.name == selectedTab.name);
                 });
             },
-            loadVectors() {
-                initCanvas(this.numOfTasks, this.numOfServers)
+            generateFigure() {
+                if (this.fVector === undefined || this.fVector.length == 0) {
+                    this.errorMessage("Error: The f vector is empty.")
+                } else {
+                    let regex1 = /(?!\"1\")/
+                    let regex2 = /(?!\"0\")/
+                    console.log(regex2.test(["0"]))
+                    //console.log(this.fVector.some(row => row.includes()))
+                    if (this.fVector.every(row => row.includes("0")) || this.fVector.every(row => row.includes("1"))) {
+                        this.errorMessage("")
+                        document.getElementById("figure").innerHTML = ""
+                        initCanvas(this.numOfTasks, this.numOfServers, this.fVector) 
+                    } else {
+                        this.errorMessage("Error: The f vector can only contain 0 or 1.")
+                    }
+                }
             },
             loadConfigurations() {
                 console.log("loadConfigurations clicked!")
             },
             getCsvVectors(e) {
-                //you have to clear text area if it's not empty
                 let input = document.getElementById('file-upload');
                 let textarea = document.getElementById('textArea');
                 var self = this
@@ -99,36 +117,34 @@
                         let values = textarea.value.split("\n")
                         self.numOfTasks = values[0]
                         self.numOfServers = values[1]
+
+                        let fVectorStart = 3 + parseInt(self.numOfServers)
+                        let count = 0
+                        for (i = fVectorStart; i < values.length; i++) {
+                            self.fVector[count++] = values[i].split(',')
+                        }
                     };
                 }
             },
+            getCsvData(e) {
+                this.fVector = []
+                let textarea = e.target.value;
+                let values = textarea.split("\n")
+
+                this.numOfTasks = values[0]
+                this.numOfServers = values[1]
+
+                let fVectorStart = 3 + parseInt(this.numOfServers)
+                let count = 0
+                for (var j = fVectorStart; j < values.length; j++) {
+                    this.fVector[count++] = values[j].split(',')
+                }
+            },
             getCsvConfigurations(e) {
-                //you have to clear text area if it's not empty
-               /* let input = document.getElementById('file-upload');
-                let textarea = document.getElementById('textArea');
-                var self = this
-
-                if (textarea.value.length > 0) {
-                    textarea.value = ''
-                } 
                 
-                if (input.files && input.files[0]) {
-                    var myFile = input.files[0];
-                    var reader = new FileReader();
-                    reader.readAsBinaryString(myFile)
-
-                    reader.onload = function (e) {
-                        let csvdata = e.target.result; 
-                        let lines = csvdata.split('\n');
-                        for(var i = 0; i < lines.length;i++) {
-                            textarea.value += lines[i].replace(/['"]+/g, '')
-                        }
-
-                        let values = textarea.value.split("\n")
-                        self.numOfTasks = values[0]
-                        self.numOfServers = values[1]
-                    };
-                }*/
+            },
+            errorMessage(message) {
+                document.getElementById("errorMessage").innerHTML = message
             }
         },
     }
@@ -205,5 +221,12 @@
         display: flex;
         flex-direction: row;
         justify-content: center;
+    }
+    #errorMessage {
+        color: #ff4d4d;
+        font-size: 1.2em;
+        text-align: center;
+        padding: 5px;
+        margin: 5px;
     }
 </style>

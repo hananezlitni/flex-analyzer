@@ -29,13 +29,59 @@ var P_WIDTH = 500;
 // Sets default canvas size, then adds default number of servers and tasks
 // C,S - integers specifying default servers and tasks
 
-function initCanvas(C, S) {
+function initCanvas(C, S, fVector) {
+	//Reset all variables
+	numC = 0;			// Number of tasks
+	numS = 0;			// Number of servers
+	active = [-1, -1];	// Holds selected task/server pair. -1 if none
+	line = [];			// Container for line objects
+	line[0] = [];
+	stickyC = false;
+	stickyS = false;
+
+	circle = [];		// Holds circle/task objects
+	rect = [];			// Holds rect/server objects
+	ltext = [];			// Holds task numbers
+	rtext = [];			// Holds server numbers
+
+	order = [];
+	order[0] = [];		// order of servers display
+	order[1] = [];		// order of tasks display
+
+	L_OFFSET = 570;		// Left offset Canvas
+	T_OFFSET = 41;		// Top offset Canvas
+	MARGIN = 50;		// Margin between rows
+	C_OFFSET = 50;		// Circle offset
+	R_OFFSET = 400;		// Rect offset
+
+	paper;
+	p_height = 1;
+	P_WIDTH = 500;
+
+	//Initialize canvas
 	paper = Raphael("figure", P_WIDTH, p_height);
 	for (var i = 0; i < C; i++){
 		addTask();
 	}
 	for (var i = 0; i < S; i++){
 		addServer();
+	}
+
+	generateSkills(fVector)
+}
+
+function generateSkills(fVector) {
+	var server = 0
+	var task = 0
+
+	for (server = 0; server < fVector.length; server++) {
+		for (task = 0; task < fVector[0].length; task++) {
+			if (fVector[server][task] === "1") {
+				drawLine(server + 1, task + 1)
+			} else {
+				continue
+			}
+		}
 	}
 }
 
@@ -107,12 +153,6 @@ function addTask() {
 			active[1] = -1;
 		}
 	});
-	// Make form
-	//insertForm("taskRate", "n", numC);
-	/*for (var i = 1; i <= numS; i++) {
-		insertForm("isTrained", i, numC);
-		insertForm("serverRate", i, numC);
-	}*/
 }
 
 // Function for adding a server to the system
@@ -219,15 +259,6 @@ function checkLine() {
 	var x2 = xof("C", C);
 	var y1 = yof("S", S);
 	var y2 = yof("C", C);
-
-	//var cStick = document.getElementById("cStick").checked;
-	//var sStick = document.getElementById("sStick").checked;
-	
-	//var evtobj=window.event? event : e
-	//if (evtobj.altKey || evtobj.ctrlKey || evtobj.shiftKey)
-		//alert("you pressed one of the 'Alt', 'Ctrl', or 'Shift' keys")
-	
-	//alert(keyPressed);
 	
 	// If both are active
 	if (S != -1 && C != -1) {
@@ -236,12 +267,10 @@ function checkLine() {
 			line[S][C] = paper.path("M"+x1+","+y1+"L"+x2+","+y2);
 			line[S][C].attr("stroke-width","2");
 			line[S][C].attr("stroke","#2bafec");
-			document.forms["LP"].elements["isTrained["+S+"]["+C+"]"].value = "1";
 		} else {
 			// Line, remove line
 			line[S][C].remove();
 			line[S][C] = undefined;
-			document.forms["LP"].elements["isTrained["+S+"]["+C+"]"].value = "0";
 		}
 		// Reset the active task/servers
 		//alert(sticky);
@@ -255,7 +284,6 @@ function checkLine() {
 		}
 		// Reset their colours
 	}
-
 }
 
 // Returns x value of specified node of type, num
@@ -283,48 +311,6 @@ function yof(type, num) {
 		return false;
 	}
 }
-
-// Function for making dynamic forms 
-// type is serverRate, isTrained, or taskRate.
-// i is server number, j is task number
-// i is ignored for task rates
-/*function insertForm(type, i, j) {
-	var temp = (i+1) * 1000 + j + 1;
-	// Create form container
-	var newdiv = document.createElement('div');
-	newdiv.id = type + "_div_" + i + "_" + j;
-	newdiv.style.position = "absolute";
-	if (type == "taskRate") {
-		newdiv.innerHTML = "<input type = 'text' value = '1' size = '5' name = 'taskRate[" + j + "]' tabindex = " + temp + ">";
-		newdiv.style.left = "20px";
-		newdiv.style.top = (T_OFFSET + 37 + MARGIN * (order[1][j] - 1)).toString() + "px";
-	} else if (type == "isTrained") {
-		newdiv.innerHTML = "<input type = 'hidden' value = '0' name = 'isTrained[" + i + "][" + j + "]'>";
-	} else {
-		newdiv.innerHTML = "<input type = 'text' value = '0' size = '5' name = 'serverRate[" + i + "][" + j + "]' tabindex = " + temp + ">";
-		newdiv.style.left = (570 + (order[1][j] - 1) * 70).toString() + "px";
-		newdiv.style.top = (T_OFFSET + 37 + MARGIN * (order[0][i] - 1)).toString() + "px";
-	}
-	document.getElementById("dynamicForm").appendChild(newdiv);
-
-	// Create form label
-	var newspan = document.createElement('span');
-	newspan.id = type + "_span_" + i + "_" + j;
-	newspan.style.position = "absolute";
-	newspan.style.fontSize = "1.0em";
-	if (type == "taskRate") {
-		newspan.innerHTML = "&lambda;<sub>" + j + "</sub>";
-		newspan.style.left = "50px";
-		newspan.style.top = (T_OFFSET + 13 + MARGIN * (order[1][j] - 1)).toString() + "px";
-	} else if (type == "serverRate") {
-		newspan.innerHTML = "&mu;<sub>" + i + "," + j + "</sub>";
-		newspan.style.left = (590 + 70 * (order[1][j] - 1)).toString() + "px";
-		newspan.style.top = (T_OFFSET + 13 + MARGIN * (order[0][i] - 1)).toString() + "px";
-	}
-	if (type != "isTrained")
-		document.getElementById("dynamicForm").appendChild(newspan);
-	
-}*/
 
 // Hides object of id name
 function hide (name) {
@@ -364,7 +350,6 @@ function remTask() {
 	
 	// Remove last task
 	remLastTask();
-	
 }
 
 // Remove last (by numerical) task
@@ -432,7 +417,6 @@ function remServer() {
 	
 	// Remove last server
 	remLastServer();
-	
 }
 
 // Remove the last server
