@@ -62,7 +62,7 @@
                 numOfTasks: 5,
                 numOfServers: 5,
                 fVector: [],
-                fVectorValid: false            
+                fVectorValid: true            
             };
         },
         created() {
@@ -78,18 +78,39 @@
                 if (this.fVector === undefined || this.fVector.length == 0) {
                     this.errorMessage("Error: The f vector is empty.")
                 } else {
+                    //Check fvector values are 0s and 1s only
                     for (var i = 0; i < this.fVector.length; i++) {
-                        this.fVectorValid = this.fVector[i].every(item => item === "0" || item === "1")
-                        if (this.fVectorValid === false)
+                        if (this.fVector[i].every(item => item === "0" || item === "1") === false) {
+                            this.fVectorValid = false
+                            document.getElementById("figure").innerHTML = ""
+                            this.errorMessage("Error: The f vector can only contain 0 and 1.")
                             break
+                        } else if (i == this.fVector.length - 1) {
+                            this.fVectorValid = true
+                        } else {
+                            continue
+                        }
                     }
 
+                    //Check fvector dimensions
+                    for (var j = 0; j < this.fVector.length; j++) {
+                        if (this.fVector.length != this.numOfServers || this.fVector[j].length != this.numOfTasks) {
+                            this.fVectorValid = false
+                            document.getElementById("figure").innerHTML = ""
+                            this.errorMessage("Error: The dimensions of the f vector are incorrect.")
+                            break
+                        } else if (i == this.fVector.length - 1) {
+                            this.fVectorValid = true
+                        } else {
+                            continue
+                        }
+                    }
+
+                    //Initialize figure if fvector is valid
                     if (this.fVectorValid) {
                         this.errorMessage("")
                         document.getElementById("figure").innerHTML = ""
                         initCanvas(this.numOfTasks, this.numOfServers, this.fVector) 
-                    } else {
-                        this.errorMessage("Error: The f vector can only contain 0 and 1.")
                     }
                 }
             },
