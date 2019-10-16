@@ -135,26 +135,28 @@
                 }
             },
             parseCsvData(e) {
-                this.fVector = []
-                let textarea = e.target.value;
-                let values = textarea.split("\n")
+                if (!(e.keyCode > 36 && e.keyCode < 41)) {
+                    this.fVector = []
+                    let textarea = e.target.value;
+                    let values = textarea.split("\n")
 
-                this.numOfTasks = values[0]
-                this.numOfServers = values[1]
-                this.arrivalRates = values[2].split(',')
+                    this.numOfTasks = values[0]
+                    this.numOfServers = values[1]
+                    this.arrivalRates = values[2].split(',')
 
-                let fVectorStart = 3 + parseInt(this.numOfServers)
-                let count = 0
-                for (var j = fVectorStart; j < values.length; j++) {
-                    this.fVector[count++] = values[j].split(',')
+                    let fVectorStart = 3 + parseInt(this.numOfServers)
+                    let count = 0
+                    for (var j = fVectorStart; j < values.length; j++) {
+                        this.fVector[count++] = values[j].split(',')
+                    }
+
+                    let counter = 0
+                    for (var l = 3; l < fVectorStart; l++) {
+                        this.serverRates[counter++] = values[l].split(',')
+                    }
+
+                    this.generateFigure()
                 }
-
-                let counter = 0
-                for (var l = 3; l < fVectorStart; l++) {
-                    this.serverRates[counter++] = values[l].split(',')
-                }
-
-                this.generateFigure()
             },
             generateFigure() {
                 if (this.fVector === undefined || this.fVector.length == 0) {
