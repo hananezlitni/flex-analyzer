@@ -7,16 +7,31 @@
                     <p class="import__note"><i>Please use the form below to import a structure as vectors. Please read <a href="/">the documentation</a> for information about the format of the content.</i></p>
 
                     <form class="import__vectors-form" @submit="$event.preventDefault()">
-                        <input type="file" id="file-upload" class="import__vectors-form__input" @change="getVectorsFromCsv($event)" />
-                        <label for="file-upload" class="import__vectors-form__label">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
-                            Choose a file
-                        </label>
+                        <div class="buttons-div">
+                            <input type="file" id="file-upload" class="import__vectors-form__input" @change="getVectorsFromCsv($event)" />
+                            <label for="file-upload" class="import__vectors-form__label">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
+                                Choose a file
+                            </label>
+
+                            <button class="button button--action secondary" @click="exportStructure">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 576 512">
+                                    <path fill="#13191f" d="M384 121.9c0-6.3-2.5-12.4-7-16.9L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128zM571 308l-95.7-96.4c-10.1-10.1-27.4-3-27.4 11.3V288h-64v64h64v65.2c0 14.3 17.3 21.4 27.4 11.3L571 332c6.6-6.6 6.6-17.4 0-24zm-379 28v-32c0-8.8 7.2-16 16-16h176V160H248c-13.2 0-24-10.8-24-24V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V352H208c-8.8 0-16-7.2-16-16z"/>
+                                </svg>
+                                Export Structure
+                            </button>
+
+                            <button class="button button--action primary" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
+                                    <path fill="#13191f" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"/>
+                                </svg>
+                                Submit Structure
+                            </button>
+                        </div>
 
                         <p id="errorMessage"></p>
                         
                         <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" @keyup="parseCsvData($event)" />
-                        <input class="button button--action primary import__button" type="submit" value="Get Results">
                     </form>
                 </div>
                 <div id="figure"></div> 
@@ -100,10 +115,16 @@
                 var self = this
 
                 if (textarea.value.length > 0) {
-                    textarea.value = ''
-                } 
+                    textarea.value = ""
+                    this.numOfTasks = 5
+                    this.numOfServers = 5
+                    this.fVector = []
+                    this.arrivalRates = []
+                    this.serverRates = []
+                    document.getElementById("figure").innerHTML = ""
+                }
                 
-                if (input.files && input.files[0]) {
+                if (input.files && input.files[0]) { 
                     var myFile = input.files[0];
                     var reader = new FileReader();
                     reader.readAsBinaryString(myFile)
@@ -111,7 +132,7 @@
                     reader.onload = function (e) {
                         let csvdata = e.target.result; 
                         let lines = csvdata.split('\n');
-                        for(var i = 0; i < lines.length;i++) {
+                        for (var i = 0; i < lines.length; i++) {
                             textarea.value += lines[i].replace(/['"]+/g, '')
                         }
 
@@ -482,6 +503,28 @@
             },
             errorMessage(message) {
                 document.getElementById("errorMessage").innerHTML = message
+            },
+            exportStructure() {
+                var csvRows = []
+                let structure = document.getElementById('textArea').value.split("\n")
+                var csvContent = ""
+                
+                for (var x = 0; x < structure.length; x++) {
+                    if (x == structure.length -1 ) {
+                        csvContent += structure[x]
+                    } else {
+                        csvContent += structure[x] + "\r\n"
+                    }
+                }
+
+                var element = document.createElement('a')
+                element.setAttribute('href', 'data:text/csv;base64,' + btoa(csvContent));
+                element.setAttribute('download', 'structure.csv');
+                element.style.display = 'none';
+                
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
             }
         },
     }
@@ -513,6 +556,7 @@
         font-family: $roboto;
         line-height: 1.5;
         resize: none;
+        margin: 0 auto;
         &::placeholder {
             font-style: italic;
         }
@@ -530,14 +574,14 @@
         z-index: -1;
     }
     .import__vectors-form__label {
-        width: 200px;
-        height: 45px;
+        width: 185px;
+        height: 43px;
         border: 2px solid $accent-color;
         border-radius: 8px;
         align-self: center;
         text-align: center;
         padding: 0.55em 0;
-        margin-bottom: 1em;
+        margin: 0 2em 1em 0;
     }
     .import__vectors-form__input + label, .import__configurations-form__input + label {
         font-family: $roboto;	

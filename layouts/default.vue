@@ -79,14 +79,12 @@
     padding: 10px;
   }
   .button {
-    width: auto;
-    height: 45px;
-    padding: 5px;
-    margin: 5px;
+    width: 185px;
+    height: 43px;
+    padding: 0.55em 0;
+    margin-bottom: 1em;
     border-radius: 8px;
-    font-size: 0.85em;
-    text-transform: uppercase; 
-    margin: 0 auto;
+    font-size: 1.05em;
     font-family: $roboto;	
   }
   .button--action {
