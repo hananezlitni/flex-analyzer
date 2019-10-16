@@ -49,12 +49,12 @@
     import * as d3 from "d3";
     import Tab from '../../components/Tab';
     import Tabs from '../../components/Tabs';
-    import initCanvas from '../../services/structure'
+    //import initCanvas from '../../services/structure';
 
     export default {
         name: 'ImportTool',
         components: {
-            Tab, Tabs, initCanvas
+            Tab, Tabs //, initCanvas
         },
         data() {
             return {
@@ -62,56 +62,36 @@
                 numOfTasks: 5,
                 numOfServers: 5,
                 fVector: [],
-                fVectorValid: true            
+                arrivalRates: [],
+                serverRates: [],
+                fVectorValid: true,
+                numC: 0,			// Number of tasks
+                numS: 0,			// Number of servers
+                active: [-1, -1],	// Holds selected task/server pair. -1 if none
+                line: [],		// Container for line objects
+                stickyC: false,
+                stickyS: false,
+                circle: [],		// Holds circle/task objects
+                rect: [],		// Holds rect/server objects
+                ltext: [],		// Holds task numbers
+                rtext: [],		// Holds server numbers
+                order: [],
+                MARGIN: 50,		// Margin between rows
+                C_OFFSET: 50,		// Circle offset
+                R_OFFSET: 400,		// Rect offset
+                paper: null,
+                p_height: 1,
+                P_WIDTH: 500        
             };
         },
         created() {
-                this.tabs = this.$children; 
+            this.tabs = this.$children; 
         },
         methods: {
             selectTab(selectedTab) {
                 this.tabs.forEach(tab => {
                     tab.isActive = (tab.name == selectedTab.name);
                 });
-            },
-            generateFigure() {
-                if (this.fVector === undefined || this.fVector.length == 0) {
-                    this.errorMessage("Error: The f vector is empty.")
-                } else {
-                    //Check fvector values are 0s and 1s only
-                    for (var i = 0; i < this.fVector.length; i++) {
-                        if (this.fVector[i].every(item => item === "0" || item === "1") === false) {
-                            this.fVectorValid = false
-                            document.getElementById("figure").innerHTML = ""
-                            this.errorMessage("Error: The f vector can only contain 0 and 1.")
-                            break
-                        } else if (i == this.fVector.length - 1) {
-                            this.fVectorValid = true
-                        } else {
-                            continue
-                        }
-                    }
-                    //Check fvector dimensions
-                    for (var j = 0; j < this.fVector.length; j++) {
-                        if (this.fVector.length != this.numOfServers || this.fVector[j].length != this.numOfTasks) {
-                            this.fVectorValid = false
-                            document.getElementById("figure").innerHTML = ""
-                            this.errorMessage("Error: The dimensions of the f vector are incorrect.")
-                            break
-                        } else if (i == this.fVector.length - 1) {
-                            this.fVectorValid = true
-                        } else {
-                            continue
-                        }
-                    }
-
-                    //Initialize figure if fvector is valid
-                    if (this.fVectorValid) {
-                        this.errorMessage("")
-                        document.getElementById("figure").innerHTML = ""
-                        initCanvas(this.numOfTasks, this.numOfServers, this.fVector) 
-                    }
-                }
             },
             getVectorsFromCsv(e) {
                 let input = document.getElementById('file-upload');
@@ -137,12 +117,18 @@
                         let values = textarea.value.split("\n")
                         self.numOfTasks = values[0]
                         self.numOfServers = values[1]
+                        self.arrivalRates = values[2].split(',')
 
                         let fVectorStart = 3 + parseInt(self.numOfServers)
                         let count = 0
                         for (i = fVectorStart; i < values.length; i++) {
                             self.fVector[count++] = values[i].split(',')
                         }
+
+                        let counter = 0
+                        for (var j = 3; j < fVectorStart; j++) {
+                            self.serverRates[counter++] = values[j].split(',')
+                        } 
                         self.generateFigure()
                     };
                 }
@@ -154,16 +140,342 @@
 
                 this.numOfTasks = values[0]
                 this.numOfServers = values[1]
+                this.arrivalRates = values[2].split(',')
 
                 let fVectorStart = 3 + parseInt(this.numOfServers)
                 let count = 0
                 for (var j = fVectorStart; j < values.length; j++) {
                     this.fVector[count++] = values[j].split(',')
                 }
+
+                let counter = 0
+                for (var l = 3; l < fVectorStart; l++) {
+                    this.serverRates[counter++] = values[l].split(',')
+                }
+
                 this.generateFigure()
             },
-            getConfigurationsFromCsv(e) {
+            generateFigure() {
+                if (this.fVector === undefined || this.fVector.length == 0) {
+                    this.errorMessage("Error: The f vector is empty.")
+                } else {
+                    //Check fvector values are 0s and 1s only
+                    for (var i = 0; i < this.fVector.length; i++) {
+                        if (this.fVector[i].every(item => item === "0" || item === "1") === false) {
+                            this.fVectorValid = false
+                            document.getElementById("figure").innerHTML = ""
+                            this.errorMessage("Error: The f vector can only contain 0 and 1.")
+                            break
+                        } else if (i == this.fVector.length - 1) {
+                            this.fVectorValid = true
+                        } else {
+                            continue
+                        }
+                    }
+                    //Check fvector dimensions
+                    for (var j = 0; j < this.fVector.length; j++) {
+                        if (this.fVector.length != this.numOfServers || this.fVector[j].length != this.numOfTasks) {
+                            this.fVectorValid = false
+                            document.getElementById("figure").innerHTML = ""
+                            this.errorMessage("Error: The dimensions of the f vector are incorrect.")
+                            break
+                        } else {
+                            continue
+                        }
+                    }
+
+                    //Initialize figure if fvector is valid
+                    if (this.fVectorValid) {
+                        this.errorMessage("")
+                        document.getElementById("figure").innerHTML = ""
+                        this.initCanvas(this.numOfTasks, this.numOfServers) 
+                    }
+                }
+            },
+            initCanvas(C, S) {
+                this.order[0] = [];		// order of servers display
+                this.order[1] = [];		// order of tasks display
+                this.line[0] = [];
+
+                //Reset all variables
+                this.numC = 0;			// Number of tasks
+                this.numS = 0;			// Number of servers
+                this.active = [-1, -1];	// Holds selected task/server pair. -1 if none
+                this.line = [];			// Container for line objects
+                this.line[0] = [];
+                this.stickyC = false;
+                this.stickyS = false;
+
+                this.circle = [];		// Holds circle/task objects
+                this.rect = [];			// Holds rect/server objects
+                this.ltext = [];			// Holds task numbers
+                this.rtext = [];			// Holds server numbers
+
+                this.order = [];
+                this.order[0] = [];		// order of servers display
+                this.order[1] = [];		// order of tasks display
+
+                this.L_OFFSET = 570;		// Left offset Canvas
+                this.T_OFFSET = 41;		// Top offset Canvas
+                this.MARGIN = 50;		// Margin between rows
+                this.C_OFFSET = 50;		// Circle offset
+                this.R_OFFSET = 400;		// Rect offset
+
+                this.paper = null;
+                this.p_height = 1;
+                this.P_WIDTH = 500;
+
+                //Initialize canvas
+                this.paper = Raphael("figure", this.P_WIDTH, this.p_height);
+                for (var i = 0; i < C; i++){
+                    this.addTask();
+                }
+                for (var i = 0; i < S; i++){
+                    this.addServer();
+                }
+
+                this.generateSkills()
+            },
+            generateSkills() {
+                var server = 0
+                var task = 0
+
+                for (server = 0; server < this.fVector.length; server++) {
+                    for (task = 0; task < this.fVector[0].length; task++) {
+                        if (this.fVector[server][task] === "1") {
+                            this.drawLine(server + 1, task + 1)
+                        } else {
+                            continue
+                        }
+                    }
+                }
+            },
+            // Adds a task to the first available physical space on the canvas
+            // A task comprises of a circle, a rate, and a label for each.
+            addTask() {
+                var self = this;
+
+                // Increase count
+                this.numC++;
+                var id = this.numC;
+                // Add to order
+                var searching = true;
+                var pos = 1;
+                while (searching) {
+                    for (var j = 1; j <= this.numC + 1; j++) {
+                        if (this.order[1][j] == pos) {
+                            pos++;
+                            break;
+                        } else if (j == this.numC + 1) {
+                            searching = false;
+                        }
+                    }
+                }
+                this.order[1][id] = pos;
                 
+                // Make circle
+                this.circle[this.numC] = this.paper.circle(this.C_OFFSET, 25 + this.MARGIN * (this.order[1][id] - 1), 20);
+                this.circle[this.numC].attr("fill", "#dddddd");
+                this.circle[this.numC].node.onmouseover = function() {
+                    this.style.cursor = "pointer";
+                }
+
+                // Check paper size
+                if (25 + this.MARGIN * (this.order[1][id] - 1) + 200 > this.p_height) {
+                    this.p_height += 200;
+                    this.paper.setSize(this.P_WIDTH, this.p_height);
+                }
+                
+                // Add text
+                this.ltext[this.numC] = (this.paper.text(10, 25 + this.MARGIN * (this.order[1][id] - 1), this.numC).attr("font-size","20")).attr("fill","#2bafec");
+                
+                // Onclick function
+                this.circle[this.numC].click(function(evt) {
+                    if ((evt.ctrlKey || evt.shiftKey) && (self.active[0] != -1)) {
+                        self.stickyS = true;
+                    } else {
+                        self.stickyC = false;
+                        self.stickyS = false;
+                    } 
+                    
+                    if (self.active[1] != id) {
+                        // If not selected, select it
+                        self.circle[id].attr("fill","#2bafec");
+                        // If something else was selected, unselect it
+                        if (self.active[1] > -1) {
+                            self.circle[self.active[1]].attr("fill","#dddddd");
+                        }
+                        // Update currently selected task
+                        self.active[1] = id;
+                        // Check if selecting the task connects two points
+                        self.checkLine();
+                    } else {
+                        // If this was selected, make it blue and clear it
+                        self.circle[id].attr("fill","#dddddd");
+                        self.active[1] = -1;
+                    }
+                });
+            },
+            // Function for adding a server to the system
+            // Server consists of a square, one rate for each task, and labels
+            addServer() {
+                var self = this;
+
+                // Increase count
+                this.numS++;
+                var id = this.numS;
+                // Add to order
+                var searching = true;
+                var pos = 1;
+                while (searching) {
+                    for (var i = 1; i <= this.numS + 1; i++) {
+                        if (this.order[0][i] == pos) {
+                            pos++;
+                            break;
+                        } else if (i == this.numS + 1) {
+                            searching = false;
+                        }
+                    }
+                }
+                this.order[0][id] = pos;
+                
+                // Make rect
+                this.rect[this.numS] = this.paper.rect(this.R_OFFSET, 8 + this.MARGIN * (this.order[0][this.numS] - 1), 40, 40, 4);
+                this.rect[this.numS].attr("fill", "#dddddd");
+                this.rect[this.numS].node.onmouseover = function() {
+                    this.style.cursor = "pointer";
+                }
+                // Check paper size
+                if (25 + this.MARGIN * (this.order[0][this.numS] - 1) + 200 > this.p_height) {
+                    this.p_height += 200;
+                    this.paper.setSize(this.P_WIDTH, this.p_height);
+                }
+                // Add text
+                this.rtext[this.numS] = (this.paper.text(460, 25 + this.MARGIN * (this.order[0][this.numS] - 1), id).attr("font-size", "20")).attr("fill","#2bafec");
+                // Add line container for server
+                this.line[this.numS] = [];
+                
+                // Onclick function
+                this.rect[this.numS].click(function(evt) {
+                    if ((evt.ctrlKey || evt.shiftKey) && (self.active[1] != -1)) {
+                        self.stickyC = true;
+                    } else {
+                        self.stickyC = false;
+                        self.stickyS = false;			
+                    }
+                
+                    if (self.active[0] != id) {
+                        // If not selected, make it turquoise
+                        self.rect[id].attr("fill","#2bafec");
+                        // Unselect anything else
+                        if (self.active[0] > -1) {
+                            self.rect[self.active[0]].attr("fill","#dddddd");
+                        }
+                        // Set active server
+                        self.active[0] = id;
+                        // Check connection
+                        self.checkLine();
+                    } else {
+                        // clear selection
+                        self.rect[id].attr("fill","#dddddd");
+                        self.active[0] = -1;
+                    }
+                });
+            },
+            // If there is no line between S and C, draw a line using checkLine
+            // S, C denote server and task number
+            drawLine (S, C) {
+                if (this.line[S][C] != undefined)
+                    return true;
+                this.active[0] = S;
+                this.active[1] = C;
+                this.checkLine();
+                this.active[0] = -S;
+                this.active[1] = -C;
+            },
+            // Checks if both a server and a task are selected.
+            // If so, toggle the line between them.
+            checkLine() {
+                var S = this.active[0];	// Active server
+                var C = this.active[1];	// Active task
+
+                // Get co-ordinates of nodes
+                var x1 = this.xof("S", S);
+                var x2 = this.xof("C", C);
+                var y1 = this.yof("S", S);
+                var y2 = this.yof("C", C);
+                
+                // If both are active
+                /* Note: The original if condition was (S != -1 && C != -1). I changed it to remove the console error
+                error generated because S is -10. */
+                if (S > -1 && C > -1) {
+                    // No line, draw line
+                    if (this.line[S][C] == undefined) {
+                        this.line[S][C] = this.paper.path("M"+x1+","+y1+"L"+x2+","+y2);
+                        this.line[S][C].attr("stroke-width","2");
+                        this.line[S][C].attr("stroke","#2bafec");
+                        this.fVector[S-1][C-1] = "1"
+                        this.updateTextArea()
+                    } else {
+                        // Line, remove line
+                        this.line[S][C].remove();
+                        this.line[S][C] = undefined;
+                        this.fVector[S-1][C-1] = "0"
+                        this.updateTextArea()
+                    }
+                    // Reset the active task/servers
+                    //alert(sticky);
+                    if (!this.stickyS) {
+                        this.active[0] = -1;
+                        this.rect[S].attr("fill","#dddddd");
+                    }
+                    if (!this.stickyC) {
+                        this.active[1] = -1;
+                        this.circle[C].attr("fill","#dddddd");
+                    }
+                }
+            },
+            // Returns x value of specified node of type, num
+            // Type is a character, "C" for task, "S" for server
+            // num is the relevant node number
+            xof(type, num) {
+                if (type == "C" && num > -1) {
+                    return this.circle[num].attr('cx') + this.circle[num].attr('r');
+                } else if (type == "S" && num > -1) {
+                    return this.rect[num].attr('x');
+                } else {
+                    return false;
+                }
+            },
+            // Returns y value of specified node of type, num
+            // Type is a character, "C" for task, "S" for server
+            // num is the relevant node number
+            yof(type, num) {
+                if (type == "C" && num > -1) {
+                    return this.circle[num].attr('cy');
+                } else if (type == "S" && num > -1) {
+                    return this.rect[num].attr('y') + 0.5 * this.rect[num].attr('height');
+                } else {
+                    return false;
+                }
+            },
+            getConfigurationsFromCsv(e) {},
+            updateTextArea() {
+                var textarea = document.getElementById("textArea")
+                
+                textarea.value = this.numOfTasks + "\n" + this.numOfServers + "\n" + this.arrivalRates + "\n"
+
+                for (var z = 0; z < this.serverRates.length; z++) {
+                    textarea.value += this.serverRates[z] + "\n"
+                }
+
+                for (var n = 0; n < this.fVector.length; n++) {
+                    if (n == this.fVector.length - 1) {
+                        textarea.value += this.fVector[n]
+                    } else {
+                        textarea.value += this.fVector[n] + "\n"
+                    }
+                }
             },
             errorMessage(message) {
                 document.getElementById("errorMessage").innerHTML = message
