@@ -122,61 +122,71 @@
                     this.arrivalRates = []
                     this.serverRates = []
                     document.getElementById("figure").innerHTML = ""
-                }
-                
-                if (input.files && input.files[0]) { 
-                    var myFile = input.files[0];
-                    var reader = new FileReader();
-                    reader.readAsBinaryString(myFile)
+                } else {
+                    if (input.files && input.files[0]) { 
+                        var myFile = input.files[0];
+                        var reader = new FileReader();
+                        reader.readAsBinaryString(myFile)
 
-                    reader.onload = function (e) {
-                        let csvdata = e.target.result; 
-                        let lines = csvdata.split('\n');
-                        for (var i = 0; i < lines.length; i++) {
-                            textarea.value += lines[i].replace(/['"]+/g, '')
-                        }
+                        reader.onload = function (e) {
+                            let csvdata = e.target.result; 
+                            let lines = csvdata.split('\n');
+                            for (var i = 0; i < lines.length; i++) {
+                                textarea.value += lines[i].replace(/['"]+/g, '')
+                            }
 
-                        let values = textarea.value.split("\n")
-                        self.numOfTasks = values[0]
-                        self.numOfServers = values[1]
-                        self.arrivalRates = values[2].split(',')
+                            let values = textarea.value.split("\n")
+                            self.numOfTasks = values[0]
+                            self.numOfServers = values[1]
+                            self.arrivalRates = values[2].split(',')
 
-                        let fVectorStart = 3 + parseInt(self.numOfServers)
-                        let count = 0
-                        for (i = fVectorStart; i < values.length; i++) {
-                            self.fVector[count++] = values[i].split(',')
-                        }
+                            let fVectorStart = 3 + parseInt(self.numOfServers)
+                            let count = 0
+                            for (i = fVectorStart; i < values.length; i++) {
+                                self.fVector[count++] = values[i].split(',')
+                            }
 
-                        let counter = 0
-                        for (var j = 3; j < fVectorStart; j++) {
-                            self.serverRates[counter++] = values[j].split(',')
-                        } 
-                        self.generateFigure()
-                    };
+                            let counter = 0
+                            for (var j = 3; j < fVectorStart; j++) {
+                                self.serverRates[counter++] = values[j].split(',')
+                            } 
+                            self.generateFigure()
+                        };
+                    }
                 }
             },
             parseCsvData(e) {
-                if (!(e.keyCode > 36 && e.keyCode < 41)) {
-                    this.fVector = []
-                    let textarea = e.target.value;
-                    let values = textarea.split("\n")
+                let textarea = e.target.value
+                
+                if (textarea.length > 0) {
+                    if (!(e.keyCode > 36 && e.keyCode < 41)) {
+                        this.fVector = []
+                        let values = textarea.split("\n")
 
-                    this.numOfTasks = values[0]
-                    this.numOfServers = values[1]
-                    this.arrivalRates = values[2].split(',')
+                        this.numOfTasks = values[0]
+                        this.numOfServers = values[1]
+                        this.arrivalRates = values[2].split(',')
 
-                    let fVectorStart = 3 + parseInt(this.numOfServers)
-                    let count = 0
-                    for (var j = fVectorStart; j < values.length; j++) {
-                        this.fVector[count++] = values[j].split(',')
+                        //if (this.numOfTasks != undefined && this.numOfServers != undefined && this.arrivalRates != undefined) {
+                            
+
+                        let fVectorStart = 3 + parseInt(this.numOfServers)
+                        let count = 0
+                        for (var j = fVectorStart; j < values.length; j++) {
+                            this.fVector[count++] = values[j].split(',')
+                        }
+
+                        let counter = 0
+                        for (var l = 3; l < fVectorStart; l++) {
+                            this.serverRates[counter++] = values[l].split(',')
+                        }
+
+                        this.generateFigure()
+                        //}   
                     }
-
-                    let counter = 0
-                    for (var l = 3; l < fVectorStart; l++) {
-                        this.serverRates[counter++] = values[l].split(',')
-                    }
-
-                    this.generateFigure()
+                } else {
+                    document.getElementById("figure").innerHTML = ""
+                    this.errorMessage("")
                 }
             },
             generateFigure() {
