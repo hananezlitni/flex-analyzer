@@ -77,10 +77,10 @@
                 tabs: [],
                 numOfTasks: 5,
                 numOfServers: 5,
-                fVector: [],
+                fMatrix: [],
                 arrivalRates: [],
                 serverRates: [],
-                fVectorValid: true,
+                fMatrixValid: true,
                 numC: 0,			// Number of tasks
                 numS: 0,			// Number of servers
                 active: [-1, -1],	// Holds selected task/server pair. -1 if none
@@ -118,7 +118,7 @@
                     textarea.value = ""
                     this.numOfTasks = 5
                     this.numOfServers = 5
-                    this.fVector = []
+                    this.fMatrix = []
                     this.arrivalRates = []
                     this.serverRates = []
                     document.getElementById("figure").innerHTML = ""
@@ -140,14 +140,14 @@
                             self.numOfServers = values[1]
                             self.arrivalRates = values[2].split(',')
 
-                            let fVectorStart = 3 + parseInt(self.numOfServers)
+                            let fMatrixStart = 3 + parseInt(self.numOfServers)
                             let count = 0
-                            for (i = fVectorStart; i < values.length; i++) {
-                                self.fVector[count++] = values[i].split(',')
+                            for (i = fMatrixStart; i < values.length; i++) {
+                                self.fMatrix[count++] = values[i].split(',')
                             }
 
                             let counter = 0
-                            for (var j = 3; j < fVectorStart; j++) {
+                            for (var j = 3; j < fMatrixStart; j++) {
                                 self.serverRates[counter++] = values[j].split(',')
                             } 
                             self.generateFigure()
@@ -160,7 +160,7 @@
                 
                 if (textarea.length > 0) {
                     if (!(e.keyCode > 36 && e.keyCode < 41)) {
-                        this.fVector = []
+                        this.fMatrix = []
                         let values = textarea.split("\n")
 
                         this.numOfTasks = values[0]
@@ -170,14 +170,14 @@
                         //if (this.numOfTasks != undefined && this.numOfServers != undefined && this.arrivalRates != undefined) {
                             
 
-                        let fVectorStart = 3 + parseInt(this.numOfServers)
+                        let fMatrixStart = 3 + parseInt(this.numOfServers)
                         let count = 0
-                        for (var j = fVectorStart; j < values.length; j++) {
-                            this.fVector[count++] = values[j].split(',')
+                        for (var j = fMatrixStart; j < values.length; j++) {
+                            this.fMatrix[count++] = values[j].split(',')
                         }
 
                         let counter = 0
-                        for (var l = 3; l < fVectorStart; l++) {
+                        for (var l = 3; l < fMatrixStart; l++) {
                             this.serverRates[counter++] = values[l].split(',')
                         }
 
@@ -190,26 +190,26 @@
                 }
             },
             generateFigure() {
-                if (this.fVector === undefined || this.fVector.length == 0) {
+                if (this.fMatrix === undefined || this.fMatrix.length == 0) {
                     this.errorMessage("Error: The f vector is empty.")
                 } else {
-                    //Check fvector values are 0s and 1s only
-                    for (var i = 0; i < this.fVector.length; i++) {
-                        if (this.fVector[i].every(item => item === "0" || item === "1") === false) {
-                            this.fVectorValid = false
+                    //Check fMatrix values are 0s and 1s only
+                    for (var i = 0; i < this.fMatrix.length; i++) {
+                        if (this.fMatrix[i].every(item => item === "0" || item === "1") === false) {
+                            this.fMatrixValid = false
                             document.getElementById("figure").innerHTML = ""
                             this.errorMessage("Error: The f vector can only contain 0 and 1.")
                             break
-                        } else if (i == this.fVector.length - 1) {
-                            this.fVectorValid = true
+                        } else if (i == this.fMatrix.length - 1) {
+                            this.fMatrixValid = true
                         } else {
                             continue
                         }
                     }
-                    //Check fvector dimensions
-                    for (var j = 0; j < this.fVector.length; j++) {
-                        if (this.fVector.length != this.numOfServers || this.fVector[j].length != this.numOfTasks) {
-                            this.fVectorValid = false
+                    //Check fMatrix dimensions
+                    for (var j = 0; j < this.fMatrix.length; j++) {
+                        if (this.fMatrix.length != this.numOfServers || this.fMatrix[j].length != this.numOfTasks) {
+                            this.fMatrixValid = false
                             document.getElementById("figure").innerHTML = ""
                             this.errorMessage("Error: The dimensions of the f vector are incorrect.")
                             break
@@ -218,8 +218,8 @@
                         }
                     }
 
-                    //Initialize figure if fvector is valid
-                    if (this.fVectorValid) {
+                    //Initialize figure if fMatrix is valid
+                    if (this.fMatrixValid) {
                         this.errorMessage("")
                         document.getElementById("figure").innerHTML = ""
                         this.initCanvas(this.numOfTasks, this.numOfServers) 
@@ -274,9 +274,9 @@
                 var server = 0
                 var task = 0
 
-                for (server = 0; server < this.fVector.length; server++) {
-                    for (task = 0; task < this.fVector[0].length; task++) {
-                        if (this.fVector[server][task] === "1") {
+                for (server = 0; server < this.fMatrix.length; server++) {
+                    for (task = 0; task < this.fMatrix[0].length; task++) {
+                        if (this.fMatrix[server][task] === "1") {
                             this.drawLine(server + 1, task + 1)
                         } else {
                             continue
@@ -448,13 +448,13 @@
                         this.line[S][C] = this.paper.path("M"+x1+","+y1+"L"+x2+","+y2);
                         this.line[S][C].attr("stroke-width","2");
                         this.line[S][C].attr("stroke","#2bafec");
-                        this.fVector[S-1][C-1] = "1"
+                        this.fMatrix[S-1][C-1] = "1"
                         this.updateTextArea()
                     } else {
                         // Line, remove line
                         this.line[S][C].remove();
                         this.line[S][C] = undefined;
-                        this.fVector[S-1][C-1] = "0"
+                        this.fMatrix[S-1][C-1] = "0"
                         this.updateTextArea()
                     }
                     // Reset the active task/servers
@@ -503,11 +503,11 @@
                     textarea.value += this.serverRates[z] + "\n"
                 }
 
-                for (var n = 0; n < this.fVector.length; n++) {
-                    if (n == this.fVector.length - 1) {
-                        textarea.value += this.fVector[n]
+                for (var n = 0; n < this.fMatrix.length; n++) {
+                    if (n == this.fMatrix.length - 1) {
+                        textarea.value += this.fMatrix[n]
                     } else {
-                        textarea.value += this.fVector[n] + "\n"
+                        textarea.value += this.fMatrix[n] + "\n"
                     }
                 }
             },
