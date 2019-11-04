@@ -2,9 +2,8 @@
     <aside>
         <nav>
             <ul class="navigation__list">
-                <li class="navigation__list__item"><nuxt-link to="/">Documentation</nuxt-link></li>
-                <li class="navigation__list__item"><nuxt-link to="/web-tool">On-screen Tool</nuxt-link></li>
-                <li class="navigation__list__item"><nuxt-link to="/import-tool">Import a Structure</nuxt-link></li>
+                <li class="navigation__list__item"><nuxt-link to="/">Tool</nuxt-link></li>
+                <li class="navigation__list__item"><nuxt-link to="/documentation" target="_blank">Documentation</nuxt-link></li>
             </ul>    
         </nav>
     </aside>
