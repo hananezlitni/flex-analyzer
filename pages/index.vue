@@ -4,7 +4,7 @@
             <tab name="Import Vectors" :selected="true">
                 <div class="import">
                     <h1 class="import__title">Import a Structure: Vectors</h1>
-                    <p class="import__note"><i>Please use the form below to import a structure as vectors. Please read <a href="/">the documentation</a> for information about the format of the content.</i></p>
+                    <p class="import__note"><i>Please use the form below to import a structure as vectors. Please read <a href="/documentation" target="_blank">the documentation</a> for information about the format of the content.</i></p>
 
                     <form class="import__vectors-form" @submit="$event.preventDefault()">
                         <div class="buttons-div">
@@ -39,7 +39,7 @@
             <tab name="Import Configurations">
                 <div class="import">
                     <h1 class="import__title">Import a Structure: Configurations</h1>
-                    <p class="import__note"><i>Please use the form below to import a structure as configurations. Please read <a href="/">the documentation</a> for information about the format of the content.</i></p>
+                    <p class="import__note"><i>Please use the form below to import a structure as configurations. Please read <a href="/documentation" target="_blank">the documentation</a> for information about the format of the content.</i></p>
 
                     <form class="import__configurations-form" @submit="$event.preventDefault()">
                         <input type="file" id="file-upload" class="import__configurations-form__input" @change="getConfigurationsFromCsv($event)" />
