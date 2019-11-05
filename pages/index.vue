@@ -43,6 +43,8 @@
                   </button>
                 </div>
 
+                <br />
+
                 <div id="figure"></div> 
             </tab>
             <tab name="Import Configurations">
@@ -261,12 +263,12 @@
                 this.L_OFFSET = 570;		// Left offset Canvas
                 this.T_OFFSET = 41;		// Top offset Canvas
                 this.MARGIN = 50;		// Margin between rows
-                this.C_OFFSET = 50;		// Circle offset
-                this.R_OFFSET = 400;		// Rect offset
+                this.C_OFFSET = 110;		// Circle offset
+                this.R_OFFSET = 380;		// Rect offset
 
                 this.paper = null;
                 this.p_height = 1;
-                this.P_WIDTH = 500;
+                this.P_WIDTH = 600;
 
                 //Initialize canvas
                 this.paper = Raphael("figure", this.P_WIDTH, this.p_height);
@@ -330,7 +332,7 @@
                 }
                 
                 // Add text
-                this.ltext[this.numC] = (this.paper.text(10, 25 + this.MARGIN * (this.order[1][id] - 1), this.numC).attr("font-size","20")).attr("fill","#2bafec");
+                this.ltext[this.numC] = (this.paper.text(0, 25 + this.MARGIN * (this.order[1][id] - 1), "Task " + this.numC).attr("font-size","18")).attr("fill","#2bafec").attr('text-anchor', 'start');
                 
                 // Onclick function
                 this.circle[this.numC].click(function(evt) {
@@ -394,7 +396,7 @@
                     this.paper.setSize(this.P_WIDTH, this.p_height);
                 }
                 // Add text
-                this.rtext[this.numS] = (this.paper.text(460, 25 + this.MARGIN * (this.order[0][this.numS] - 1), id).attr("font-size", "20")).attr("fill","#2bafec");
+                this.rtext[this.numS] = (this.paper.text(430, 28 + this.MARGIN * (this.order[0][this.numS] - 1), "Server " + id).attr("font-size", "18")).attr("fill","#2bafec").attr('text-anchor', 'start');
                 // Add line container for server
                 this.line[this.numS] = [];
                 
@@ -627,6 +629,7 @@
         flex-direction: column;
         justify-items: center;
         align-items: center;
+        padding-left: 4em;
     }
     #errorMessage {
         color: #ff4d4d;
