@@ -200,14 +200,14 @@
             },
             generateFigure() {
                 if (this.fMatrix === undefined || this.fMatrix.length == 0) {
-                    this.errorMessage("Error: The f vector is empty.")
+                    this.errorMessage("Error: The f matrix is empty.")
                 } else {
                     //Check fMatrix values are 0s and 1s only
                     for (var i = 0; i < this.fMatrix.length; i++) {
                         if (this.fMatrix[i].every(item => item === "0" || item === "1") === false) {
                             this.fMatrixValid = false
                             document.getElementById("figure").innerHTML = ""
-                            this.errorMessage("Error: The f vector can only contain 0 and 1.")
+                            this.errorMessage("Error: The f matrix can only contain 0 and 1.")
                             break
                         } else if (i == this.fMatrix.length - 1) {
                             this.fMatrixValid = true
@@ -220,7 +220,7 @@
                         if (this.fMatrix.length != this.numOfServers || this.fMatrix[j].length != this.numOfTasks) {
                             this.fMatrixValid = false
                             document.getElementById("figure").innerHTML = ""
-                            this.errorMessage("Error: The dimensions of the f vector are incorrect.")
+                            this.errorMessage("Error: The dimensions of the f matrix are incorrect.")
                             break
                         } else {
                             continue
