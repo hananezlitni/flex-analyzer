@@ -82,13 +82,17 @@
     width: 185px;
     height: 43px;
     padding: 0.55em 0;
-    margin-bottom: 1em;
+    margin: 0 1em 1em 0;
     border-radius: 8px;
     font-size: 1.05em;
     font-family: $roboto;	
+    cursor: pointer;
   }
   .button--action {
     color: $background-color--main;
+  }
+  .button--action--figure {
+    width: 195px;
   }
   .primary {
     background-color: $accent-color;
