@@ -550,7 +550,7 @@
             },
             printMsg() {
               axios.get('/test')
-                .then(response => (console.log("Message: " + response)))
+                .then(response => (console.log("Message: " + JSON.stringify(response))))
             }
         },
     }
