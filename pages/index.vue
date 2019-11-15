@@ -580,7 +580,7 @@
                     if (i == 0) {
                       serverLocationVector[serverLocationVectorIndex++] = "0"
                     } else {
-                      if (f[serverIndex1][i-1] == "1") {
+                      if (f[serverIndex1][i - 1] == "1") {
                         serverLocationVector[serverLocationVectorIndex++] = i + ""
                       } else {
                         serverLocationVector[serverLocationVectorIndex++] = "0"
@@ -590,7 +590,7 @@
                     if (j == 0) {
                       serverLocationVector[serverLocationVectorIndex++] = "0"
                     } else {
-                      if (f[serverIndex2][j-1] == "1") {
+                      if (f[serverIndex2][j - 1] == "1") {
                         serverLocationVector[serverLocationVectorIndex++] = j + ""
                       } else {
                         serverLocationVector[serverLocationVectorIndex++] = "0"
@@ -600,7 +600,7 @@
                     if (k == 0) {
                       serverLocationVector[serverLocationVectorIndex++] = "0"
                     } else {
-                      if (f[serverIndex3][k-1] == "1") {
+                      if (f[serverIndex3][k - 1] == "1") {
                         serverLocationVector[serverLocationVectorIndex++] = k + ""
                       } else {
                         serverLocationVector[serverLocationVectorIndex++] = "0"
