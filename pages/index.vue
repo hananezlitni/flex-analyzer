@@ -35,7 +35,7 @@
                     Export Structure
                   </button>
 
-                  <button class="button button--action primary" type="submit" @click="printMsg">
+                  <button class="button button--action primary" type="submit" @click="generateConfigurations">
                       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
                           <path fill="#13191f" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"/>
                       </svg>
@@ -92,6 +92,8 @@
                 fMatrix: [],
                 arrivalRates: [],
                 serverRates: [],
+                configs: [],
+                configsServiceRateMatrix: [],
                 fMatrixValid: true,
                 numC: 0,			// Number of tasks
                 numS: 0,			// Number of servers
@@ -547,12 +549,87 @@
                 document.body.appendChild(element);
                 element.click();
                 document.body.removeChild(element);
-            },
+            },/*,
             printMsg() {
               axios.get('/test')
                 .then(response => (console.log("Message: " + JSON.stringify(response))))
-            }
+            }*/
+            generateConfigurations() {
+              let serverLocationMatrix = []
+              let serverLocationVector = []
+
+              let count = 0
+              let serverLocationMatrixIndex = 0
+              let serverLocationVectorIndex = 0
+
+              //server number corresponds to for loop number
+              let serverIndex1 = 0
+              let serverIndex2 = 1
+              let serverIndex3 = 2
+
+              let testNumOfTasks = 3
+              let testNumOfServers = 3 // = # of nested loops
+              let f = [["1","1","0"],["0","1","1"],["1","0","1"]]
+
+              //first configuration all zeros
+              serverLocationMatrix[serverLocationMatrixIndex++] = ["0","0","0"]
+
+              for (var i = 0; i <= testNumOfTasks; i++) {              
+                for (var j = 0; j <= testNumOfTasks; j++) {         
+                  for (var k = 0; k <= testNumOfTasks; k++) {
+                    if (i == 0) {
+                      serverLocationVector[serverLocationVectorIndex++] = "0"
+                    } else {
+                      if (f[serverIndex1][i-1] == "1") {
+                        serverLocationVector[serverLocationVectorIndex++] = i + ""
+                      } else {
+                        serverLocationVector[serverLocationVectorIndex++] = "0"
+                      }
+                    }
+
+                    if (j == 0) {
+                      serverLocationVector[serverLocationVectorIndex++] = "0"
+                    } else {
+                      if (f[serverIndex2][j-1] == "1") {
+                        serverLocationVector[serverLocationVectorIndex++] = j + ""
+                      } else {
+                        serverLocationVector[serverLocationVectorIndex++] = "0"
+                      }
+                    }
+
+                    if (k == 0) {
+                      serverLocationVector[serverLocationVectorIndex++] = "0"
+                    } else {
+                      if (f[serverIndex3][k-1] == "1") {
+                        serverLocationVector[serverLocationVectorIndex++] = k + ""
+                      } else {
+                        serverLocationVector[serverLocationVectorIndex++] = "0"
+                      }
+                    }
+
+                    //fill serverLocationMatrix then reset serverLocationVector
+                    if (serverLocationVector.length == testNumOfServers) {
+                      serverLocationMatrix[serverLocationMatrixIndex++] = serverLocationVector
+                      serverLocationVector = []
+                      serverLocationVectorIndex = 0
+                    }
+                  }
+                }
+              }
+
+            this.configs = this.removeDups(serverLocationMatrix)
+            console.log(this.configs)
         },
+        removeDups(arr) {
+          let unique = {};
+          arr.forEach((i) => {
+            if(!unique[i]) {
+              unique[i] = true
+            }
+          })
+          return Object.keys(unique);
+        }
+      }
     }
 </script>
 
