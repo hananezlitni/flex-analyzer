@@ -93,7 +93,7 @@
                 arrivalRates: [],
                 serverRates: [],
                 configs: [],
-                configsServiceRateMatrix: [],
+                configsServerRateMatrix: [],
                 fMatrixValid: true,
                 numC: 0,			// Number of tasks
                 numS: 0,			// Number of servers
@@ -557,8 +557,6 @@
             generateConfigurations() {
               let serverLocationMatrix = []
               let serverLocationVector = []
-
-              let count = 0
               let serverLocationMatrixIndex = 0
               let serverLocationVectorIndex = 0
 
@@ -569,7 +567,7 @@
 
               let testNumOfTasks = 3
               let testNumOfServers = 3 // = # of nested loops
-              let f = [["1","1","0"],["0","1","1"],["1","0","1"]]
+              let f = [["1","1","1"],["1","0","1"],["0","1","0"]]
 
               //first configuration all zeros
               serverLocationMatrix[serverLocationMatrixIndex++] = ["0","0","0"]
@@ -617,19 +615,95 @@
                 }
               }
 
-            this.configs = this.removeDups(serverLocationMatrix)
-            console.log(this.configs)
-        },
-        removeDups(arr) {
-          let unique = {};
-          arr.forEach((i) => {
-            if(!unique[i]) {
-              unique[i] = true
+              let temp = this.removeDuplicates(serverLocationMatrix)
+              let count = 0
+
+              for (var h = 0; h < temp.length; h++) {
+                this.configs[count++] = temp[h].split(',')
+              }
+
+              console.log(this.configs)
+              this.generateConfigsServerRateMatrix()
+            },
+            generateConfigsServerRateMatrix() {
+              let testServerRates = [["2","1","4"],["4","0","1"],["0","2","0"]]
+              let testNumOfTasks = 3
+              let testNumOfServers = 3 
+
+              //Set all entries of serverRateMatrix to zeros
+              for (var i = 0; i < this.configs.length; i++) {
+                this.configsServerRateMatrix[i] = ["0","0","0"] //note: length of one entry in matrix equals to num of tasks
+              }
+
+              //Update serverRateMatrix with server rates where appropriate
+              for (var z = 0; z < this.configs.length; z++) {
+                for (var l = 0; l < this.configs[z].length; l++) {
+                  if (this.configs[z][l] == "0") {
+                    continue
+                  } else {
+                    this.configsServerRateMatrix[z][parseInt(this.configs[z][l]) - 1] = testServerRates[l][parseInt(this.configs[z][l]) - 1]
+                  }
+                }
+
+                //If multiple servers are at the same task, add the corresponding server rates. 
+                //The implementation also takes into consideration if there are duplicates of more than 1 task.
+                var dups = this.getDuplicates(this.configs[z])
+
+                if (Object.keys(dups).length > 0) {
+                  var duplicatedTasks = Object.keys(dups)
+
+                  if (Object.keys(dups).includes("0") === false) {
+                    for (var n = 0; n < duplicatedTasks.length; n++) {
+                      var serverRateSum = 0
+
+                      for (var server in dups[duplicatedTasks[n]]) {
+                        serverRateSum += parseInt(testServerRates[parseInt(dups[duplicatedTasks[n]][server])][parseInt(duplicatedTasks[n]) - 1])
+                      }
+                    
+                      this.configsServerRateMatrix[z][parseInt(duplicatedTasks[n]) - 1] = serverRateSum + ""
+                    }
+                  }
+                }
+              }
+
+              console.log(this.configsServerRateMatrix)
+            },
+            removeDuplicates(arr) {
+              let unique = {};
+              arr.forEach((i) => {
+                if(!unique[i]) {
+                  unique[i] = true
+                }
+              })
+              return Object.keys(unique);
+            },
+            getDuplicates(arr) {
+              /*var unique = arr.map((entry) => {
+                  return {
+                    count: 1,
+                    entry: entry
+                  }
+                }).reduce((a, b) => {
+                  a[b.entry] = (a[b.entry] || 0) + b.count
+                  return a
+                }, {})
+
+              var duplicates = Object.keys(unique).filter((a) => unique[a] > 1)
+
+              return duplicates*/
+
+              var duplicates = {};
+              for (var i = 0; i < arr.length; i++) {
+                  if(duplicates.hasOwnProperty(arr[i])) {
+                      duplicates[arr[i]].push(i);
+                  } else if (arr.lastIndexOf(arr[i]) !== i) {
+                      duplicates[arr[i]] = [i];
+                  }
+              }
+
+              return duplicates;
             }
-          })
-          return Object.keys(unique);
         }
-      }
     }
 </script>
 
