@@ -105,6 +105,6 @@
   .button--not-filled {
     background-color: inherit;
     border: 2px solid $accent-color;
-    color: $accent-color;
+    color: $lightest-color;
   }
 </style>

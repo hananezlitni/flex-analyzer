@@ -8,13 +8,13 @@
 
                     <form class="import__vectors-form" @submit="$event.preventDefault()">
                         <div class="buttons-div">
-                          <input type="file" id="file-upload" class="import__vectors-form__input" @change="getVectorsFromCsv($event)" />
+                          <input type="file" id="file-upload" class="import__vectors-form__input" @change="displayCsvDataInTextArea"/>
                           <label for="file-upload" class="import__vectors-form__label">
                               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
                               Choose a file
                           </label>
 
-                          <button class="button button--action button--action--figure secondary" @click="generateFigure()">
+                          <button class="button button--action button--action--figure secondary" @click="storeInputs">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 640 512">
                               <path fill="#13191f" d="M384 320H256c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM192 32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v128c0 17.67 14.33 32 32 32h95.72l73.16 128.04C211.98 300.98 232.4 288 256 288h.28L192 175.51V128h224V64H192V32zM608 0H480c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V32c0-17.67-14.33-32-32-32z"/>
                             </svg>
@@ -24,10 +24,17 @@
 
                         <p id="errorMessage"></p>
                         
-                        <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" @keyup="parseCsvData($event)"/>
+                        <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" /> <!--@keyup="parseCsvData($event)"-->
                     </form>
                 </div>
                 <div class="buttons-div">
+                  <button class="button button--action button--not-filled" @click="clearAll">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 448 512">
+                      <path fill="#c7d6e9" d="M53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32zm70.11-175.8l89.38-94.26a15.41 15.41 0 0 1 22.62 0l89.38 94.26c10.08 10.62 2.94 28.8-11.32 28.8H256v112a16 16 0 0 1-16 16h-32a16 16 0 0 1-16-16V320h-57.37c-14.26 0-21.4-18.18-11.32-28.8zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"/>
+                    </svg>
+                    Clear All
+                  </button>
+
                   <button class="button button--action secondary" @click="exportStructure">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 576 512">
                         <path fill="#13191f" d="M384 121.9c0-6.3-2.5-12.4-7-16.9L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128zM571 308l-95.7-96.4c-10.1-10.1-27.4-3-27.4 11.3V288h-64v64h64v65.2c0 14.3 17.3 21.4 27.4 11.3L571 332c6.6-6.6 6.6-17.4 0-24zm-379 28v-32c0-8.8 7.2-16 16-16h176V160H248c-13.2 0-24-10.8-24-24V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V352H208c-8.8 0-16-7.2-16-16z"/>
@@ -123,122 +130,116 @@
                     tab.isActive = (tab.name == selectedTab.name);
                 });
             },
-            getVectorsFromCsv(e) {
-                let input = document.getElementById('file-upload');
-                let textarea = document.getElementById('textArea');
-                var self = this
+            clearAll() {
+              let textarea = document.getElementById('textArea');
 
-                if (textarea.value.length > 0) {
-                    textarea.value = ""
-                    this.numOfTasks = 5
-                    this.numOfServers = 5
-                    this.fMatrix = []
-                    this.arrivalRates = []
-                    this.serverRates = []
-                    document.getElementById("figure").innerHTML = ""
-                } else {
-                    if (input.files && input.files[0]) { 
-                        var myFile = input.files[0];
-                        var reader = new FileReader();
-                        reader.readAsBinaryString(myFile)
-
-                        reader.onload = function (e) {
-                            let csvdata = e.target.result; 
-                            let lines = csvdata.split('\n');
-                            for (var i = 0; i < lines.length; i++) {
-                                textarea.value += lines[i].replace(/['"]+/g, '')
-                            }
-
-                            let values = textarea.value.split("\n")
-                            self.numOfTasks = values[0]
-                            self.numOfServers = values[1]
-                            self.arrivalRates = values[2].split(',')
-
-                            let fMatrixStart = 3 + parseInt(self.numOfServers)
-                            let count = 0
-                            for (i = fMatrixStart; i < values.length; i++) {
-                                self.fMatrix[count++] = values[i].split(',')
-                            }
-
-                            let counter = 0
-                            for (var j = 3; j < fMatrixStart; j++) {
-                                self.serverRates[counter++] = values[j].split(',')
-                            } 
-                            //self.generateFigure()
-                        };
-                    }
-                }
+              textarea.value = ""
+              this.numOfTasks = 5
+              this.numOfServers = 5
+              this.fMatrix = []
+              this.arrivalRates = []
+              this.serverRates = []
+              document.getElementById("figure").innerHTML = ""
+              this.errorMessage("")
             },
-            parseCsvData(e) {
-                let textarea = e.target.value
-                
-                if (textarea.length > 0) {
-                    if (!(e.keyCode > 36 && e.keyCode < 41)) {
-                        this.fMatrix = []
-                        let values = textarea.split("\n")
+            displayCsvDataInTextArea() {
+              let input = document.getElementById('file-upload');
+              let textarea = document.getElementById('textArea');
 
-                        this.numOfTasks = values[0]
-                        this.numOfServers = values[1]
-                        this.arrivalRates = values[2].split(',')
+              if (input.files && input.files[0]) { 
+                //Reset anyway in case there's previous content
+                textarea.value = ""
+                this.numOfTasks = 5
+                this.numOfServers = 5
+                this.fMatrix = []
+                this.arrivalRates = []
+                this.serverRates = []
+                document.getElementById("figure").innerHTML = ""
+                this.errorMessage("")
 
-                        //if (this.numOfTasks != undefined && this.numOfServers != undefined && this.arrivalRates != undefined) {
-                            
+                //Display file content in text area
+                var myFile = input.files[0];
+                var reader = new FileReader();
+                reader.readAsBinaryString(myFile)
 
-                        let fMatrixStart = 3 + parseInt(this.numOfServers)
-                        let count = 0
-                        for (var j = fMatrixStart; j < values.length; j++) {
-                            this.fMatrix[count++] = values[j].split(',')
-                        }
+                reader.onload = function (e) {
+                  let csvdata = e.target.result; 
+                  let lines = csvdata.split('\n');
+                  for (var i = 0; i < lines.length; i++) {
+                      textarea.value += lines[i].replace(/['"]+/g, '')
+                  }
+                };
+              }
+            },
+            storeInputs() {
+              let input = document.getElementById('file-upload');
+              let textarea = document.getElementById('textArea');
 
-                        let counter = 0
-                        for (var l = 3; l < fMatrixStart; l++) {
-                            this.serverRates[counter++] = values[l].split(',')
-                        }
+              //Reset anyway in case there's previous content
+              this.numOfTasks = 5
+              this.numOfServers = 5
+              this.fMatrix = []
+              this.arrivalRates = []
+              this.serverRates = []
+              document.getElementById("figure").innerHTML = ""
+              this.errorMessage("")
+              
+              //Store inputs
+              let values = textarea.value.split("\n")
 
-                        //this.generateFigure()
-                        //}   
-                    }
-                } else {
-                    document.getElementById("figure").innerHTML = ""
-                    this.errorMessage("")
-                }
+              this.numOfTasks = values[0]
+              this.numOfServers = values[1]
+              this.arrivalRates = values[2].split(',')                    
+
+              let fMatrixStart = 3 + parseInt(this.numOfServers)
+              let count = 0
+              for (var j = fMatrixStart; j < values.length; j++) {
+                  this.fMatrix[count++] = values[j].split(',')
+              }
+
+              let counter = 0
+              for (var l = 3; l < fMatrixStart; l++) {
+                  this.serverRates[counter++] = values[l].split(',')
+              }
+
+              this.generateFigure()
             },
             generateFigure() {
-                if (this.fMatrix === undefined || this.fMatrix.length == 0) {
-                    this.errorMessage("Error: The f matrix is empty.")
-                } else {
-                    //Check fMatrix values are 0s and 1s only
-                    for (var i = 0; i < this.fMatrix.length; i++) {
-                        if (this.fMatrix[i].every(item => item === "0" || item === "1") === false) {
-                            this.fMatrixValid = false
-                            document.getElementById("figure").innerHTML = ""
-                            this.errorMessage("Error: The f matrix can only contain 0 and 1.")
-                            break
-                        } else if (i == this.fMatrix.length - 1) {
-                            this.fMatrixValid = true
-                        } else {
-                            continue
-                        }
-                    }
-                    //Check fMatrix dimensions
-                    for (var j = 0; j < this.fMatrix.length; j++) {
-                        if (this.fMatrix.length != this.numOfServers || this.fMatrix[j].length != this.numOfTasks) {
-                            this.fMatrixValid = false
-                            document.getElementById("figure").innerHTML = ""
-                            this.errorMessage("Error: The dimensions of the f matrix are incorrect.")
-                            break
-                        } else {
-                            continue
-                        }
-                    }
+              if (this.fMatrix === undefined || this.fMatrix.length == 0) {
+                  this.errorMessage("Error: The f matrix is empty.")
+              } else {
+                  //Check fMatrix values are 0s and 1s only
+                  for (var i = 0; i < this.fMatrix.length; i++) {
+                      if (this.fMatrix[i].every(item => item === "0" || item === "1") === false) {
+                          this.fMatrixValid = false
+                          document.getElementById("figure").innerHTML = ""
+                          this.errorMessage("Error: The f matrix can only contain 0 and 1.")
+                          break
+                      } else if (i == this.fMatrix.length - 1) {
+                          this.fMatrixValid = true
+                      } else {
+                          continue
+                      }
+                  }
+                  //Check fMatrix dimensions
+                  for (var j = 0; j < this.fMatrix.length; j++) {
+                      if (this.fMatrix.length != this.numOfServers || this.fMatrix[j].length != this.numOfTasks) {
+                          this.fMatrixValid = false
+                          document.getElementById("figure").innerHTML = ""
+                          this.errorMessage("Error: The dimensions of the f matrix are incorrect.")
+                          break
+                      } else {
+                          continue
+                      }
+                  }
 
-                    //Initialize figure if fMatrix is valid
-                    if (this.fMatrixValid) {
-                        this.errorMessage("")
-                        document.getElementById("figure").innerHTML = ""
-                        this.initCanvas(this.numOfTasks, this.numOfServers) 
-                    }
-                }
+                  //Initialize figure if fMatrix is valid
+                  if (this.fMatrixValid) {
+                      this.errorMessage("")
+                      document.getElementById("figure").innerHTML = ""
+                      this.initCanvas(this.numOfTasks, this.numOfServers) 
+                  }
+              }
             },
             initCanvas(C, S) {
                 this.order[0] = [];		// order of servers display
