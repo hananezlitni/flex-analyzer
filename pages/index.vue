@@ -13,14 +13,14 @@
                               <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
                               Choose a file
                           </label>
-
-                          <button class="button button--action button--action--figure secondary" @click="storeInputs">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 640 512">
-                              <path fill="#13191f" d="M384 320H256c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM192 32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v128c0 17.67 14.33 32 32 32h95.72l73.16 128.04C211.98 300.98 232.4 288 256 288h.28L192 175.51V128h224V64H192V32zM608 0H480c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V32c0-17.67-14.33-32-32-32z"/>
-                            </svg>
-                            Get Training Figure
-                          </button>
                         </div>
+
+                        <!--<label class="checkbox-label">
+                          <input type="checkbox"><span>Maximum number of servers: <input type="text" /></span>
+                        </label>
+                        <label class="checkbox-label">
+                          <input type="checkbox"><span>Maximum number of servers: <input type="text" /></span>
+                        </label>-->
 
                         <p id="errorMessage"></p>
                         
@@ -35,6 +35,13 @@
                     Clear All
                   </button>
 
+                  <button class="button button--action button--action--figure secondary" @click="generateFigure">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 640 512">
+                      <path fill="#13191f" d="M384 320H256c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM192 32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v128c0 17.67 14.33 32 32 32h95.72l73.16 128.04C211.98 300.98 232.4 288 256 288h.28L192 175.51V128h224V64H192V32zM608 0H480c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V32c0-17.67-14.33-32-32-32z"/>
+                    </svg>
+                    Get Training Figure
+                  </button>
+
                   <button class="button button--action secondary" @click="exportStructure">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 576 512">
                         <path fill="#13191f" d="M384 121.9c0-6.3-2.5-12.4-7-16.9L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128zM571 308l-95.7-96.4c-10.1-10.1-27.4-3-27.4 11.3V288h-64v64h64v65.2c0 14.3 17.3 21.4 27.4 11.3L571 332c6.6-6.6 6.6-17.4 0-24zm-379 28v-32c0-8.8 7.2-16 16-16h176V160H248c-13.2 0-24-10.8-24-24V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V352H208c-8.8 0-16-7.2-16-16z"/>
@@ -42,7 +49,7 @@
                     Export Structure
                   </button>
 
-                  <button class="button button--action primary" type="submit" @click="generateConfigurations">
+                  <button class="button button--action primary" type="submit" @click="areArrivalAndServerRatesValid"> 
                       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
                           <path fill="#13191f" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"/>
                       </svg>
@@ -99,9 +106,16 @@
                 fMatrix: [],
                 arrivalRates: [],
                 serverRates: [],
+                numOfConfigs: 0,
                 configs: [],
                 configsServerRateMatrix: [],
                 fMatrixValid: true,
+                arrivalRatesValid: true,
+                serverRatesValid: true,
+                ON: 1,
+                OFF: 0,
+                //serverLocationMatrix: [],
+                //serverLocationMatrixIndex: 0,
                 numC: 0,			// Number of tasks
                 numS: 0,			// Number of servers
                 active: [-1, -1],	// Holds selected task/server pair. -1 if none
@@ -154,6 +168,7 @@
                 this.fMatrix = []
                 this.arrivalRates = []
                 this.serverRates = []
+                this.numOfConfigs = 0
                 document.getElementById("figure").innerHTML = ""
                 this.errorMessage("")
 
@@ -171,7 +186,7 @@
                 };
               }
             },
-            storeInputs() {
+            storeInputs() { //make sure latest inputs are stored when click generate figure and submit structure buttons.. validation needs to happen for both as well in case f matrix was edited just before submission.
               let input = document.getElementById('file-upload');
               let textarea = document.getElementById('textArea');
 
@@ -181,41 +196,62 @@
               this.fMatrix = []
               this.arrivalRates = []
               this.serverRates = []
+              this.numOfConfigs = 0
               document.getElementById("figure").innerHTML = ""
               this.errorMessage("")
               
               //Store inputs
               let values = textarea.value.split("\n")
 
-              this.numOfTasks = values[0]
-              this.numOfServers = values[1]
-              this.arrivalRates = values[2].split(',')                    
+              this.numOfTasks = parseInt(values[0])
+              this.numOfServers = parseInt(values[1])
+              this.arrivalRates = values[2].split(',').map(Number)                   
 
-              let fMatrixStart = 3 + parseInt(this.numOfServers)
+              let fMatrixStart = 3 + this.numOfServers
               let count = 0
               for (var j = fMatrixStart; j < values.length; j++) {
-                  this.fMatrix[count++] = values[j].split(',')
+                  this.fMatrix[count++] = values[j].split(',').map(Number)
               }
 
               let counter = 0
               for (var l = 3; l < fMatrixStart; l++) {
-                  this.serverRates[counter++] = values[l].split(',')
+                  this.serverRates[counter++] = values[l].split(',').map(Number)
               }
 
-              this.generateFigure()
+              //Number of configurations
+              let configs = 1
+              for (var i = 0; i < this.numOfServers; i++) {
+                let count = 0
+                for (var j = 0; j < this.numOfTasks; j++) {
+                  if (this.fMatrix[i][j] === 1) {
+                    count++
+                  }
+                }
+                configs *= count + 1
+              }
+
+              this.numOfConfigs = configs
+
+              this.validateInputs()
             },
-            generateFigure() {
-              if (this.fMatrix === undefined || this.fMatrix.length == 0) {
+            validateInputs() {
+              //Reset
+              this.arrivalRatesValid = true
+              this.serverRatesValid = true
+              this.fMatrixValid = true
+
+              //Validate f matrix
+              if (this.fMatrix === undefined || this.fMatrix.length === 0) {
                   this.errorMessage("Error: The f matrix is empty.")
               } else {
                   //Check fMatrix values are 0s and 1s only
                   for (var i = 0; i < this.fMatrix.length; i++) {
-                      if (this.fMatrix[i].every(item => item === "0" || item === "1") === false) {
+                      if (this.fMatrix[i].every(item => item === 0 || item === 1) === false) {
                           this.fMatrixValid = false
                           document.getElementById("figure").innerHTML = ""
                           this.errorMessage("Error: The f matrix can only contain 0 and 1.")
                           break
-                      } else if (i == this.fMatrix.length - 1) {
+                      } else if (i === this.fMatrix.length - 1) {
                           this.fMatrixValid = true
                       } else {
                           continue
@@ -223,7 +259,7 @@
                   }
                   //Check fMatrix dimensions
                   for (var j = 0; j < this.fMatrix.length; j++) {
-                      if (this.fMatrix.length != this.numOfServers || this.fMatrix[j].length != this.numOfTasks) {
+                      if (this.fMatrix.length !== this.numOfServers || this.fMatrix[j].length !== this.numOfTasks) {
                           this.fMatrixValid = false
                           document.getElementById("figure").innerHTML = ""
                           this.errorMessage("Error: The dimensions of the f matrix are incorrect.")
@@ -232,13 +268,59 @@
                           continue
                       }
                   }
+              }
 
-                  //Initialize figure if fMatrix is valid
-                  if (this.fMatrixValid) {
-                      this.errorMessage("")
-                      document.getElementById("figure").innerHTML = ""
-                      this.initCanvas(this.numOfTasks, this.numOfServers) 
+              //Validate Arrival Rates
+              if (this.arrivalRates === undefined || this.arrivalRates.length === 0) {
+                this.arrivalRatesValid = false
+                this.errorMessage("Error: The arrival rates vector is empty.")
+              } else {
+                //Check length of arrivalRates
+                if (this.arrivalRates.length !== this.numOfTasks) {
+                  this.arrivalRatesValid = false
+                  this.errorMessage("Error: The length of the arrival rates vector is incorrect.")
+                }
+
+                //Check for negative values in arrival rates
+                if (this.arrivalRates.some(v => v < 0)) {
+                  this.arrivalRatesValid = false
+                  this.errorMessage("Error: The arrival rates vector should not contain negative values.")
+                }
+              }
+              
+              //Validate Server Rates
+              if (this.serverRates === undefined || this.serverRates.length === 0) {
+                this.serverRatesValid = false
+                this.errorMessage("Error: The server rates matrix is empty.")
+              } else {
+                //Check serverRates dimensions
+                for (var j = 0; j < this.serverRates.length; j++) {
+                  if (this.serverRates.length !== this.numOfServers || this.serverRates[j].length !== this.numOfTasks) {
+                    this.serverRatesValid = false
+                    this.errorMessage("Error: The dimensions of the server rates matrix are incorrect.")
+                    break
+                  } 
+                }
+
+                for (var j = 0; j < this.serverRates.length; j++) {
+                  //Check for negative values in server rates
+                  if (this.serverRates[j].some(v => v < 0)) {
+                    this.serverRatesValid = false
+                    this.errorMessage("Error: The server rates matrix should not contain negative values.")
+                    break
                   }
+                }
+              }
+            },
+            generateFigure() {
+              //Store inputs
+              this.storeInputs()
+
+              //Initialize figure if fMatrix is valid
+              if (this.fMatrixValid) {
+                  this.errorMessage("")
+                  document.getElementById("figure").innerHTML = ""
+                  this.initCanvas(this.numOfTasks, this.numOfServers) 
               }
             },
             initCanvas(C, S) {
@@ -508,57 +590,87 @@
                     return false;
                 }
             },
-            getConfigurationsFromCsv(e) {},
-            updateTextArea() {
-                var textarea = document.getElementById("textArea")
-                
-                textarea.value = this.numOfTasks + "\n" + this.numOfServers + "\n" + this.arrivalRates + "\n"
-
-                for (var z = 0; z < this.serverRates.length; z++) {
-                    textarea.value += this.serverRates[z] + "\n"
-                }
-
-                for (var n = 0; n < this.fMatrix.length; n++) {
-                    if (n == this.fMatrix.length - 1) {
-                        textarea.value += this.fMatrix[n]
-                    } else {
-                        textarea.value += this.fMatrix[n] + "\n"
-                    }
-                }
-            },
-            errorMessage(message) {
-                document.getElementById("errorMessage").innerHTML = message
-            },
             exportStructure() {
-                var csvRows = []
-                let structure = document.getElementById('textArea').value.split("\n")
-                var csvContent = ""
-                
-                for (var x = 0; x < structure.length; x++) {
-                    if (x == structure.length -1 ) {
-                        csvContent += structure[x]
-                    } else {
-                        csvContent += structure[x] + "\r\n"
-                    }
-                }
+              var csvRows = []
+              let structure = document.getElementById('textArea').value.split("\n")
+              var csvContent = ""
+              
+              for (var x = 0; x < structure.length; x++) {
+                  if (x == structure.length -1 ) {
+                      csvContent += structure[x]
+                  } else {
+                      csvContent += structure[x] + "\r\n"
+                  }
+              }
 
-                var element = document.createElement('a')
-                element.setAttribute('href', 'data:text/csv;base64,' + btoa(csvContent));
-                element.setAttribute('download', 'structure.csv');
-                element.style.display = 'none';
-                
-                document.body.appendChild(element);
-                element.click();
-                document.body.removeChild(element);
+              var element = document.createElement('a')
+              element.setAttribute('href', 'data:text/csv;base64,' + btoa(csvContent));
+              element.setAttribute('download', 'structure.csv');
+              element.style.display = 'none';
+              
+              document.body.appendChild(element);
+              element.click();
+              document.body.removeChild(element);
             },/*,
             printMsg() {
               axios.get('/test')
                 .then(response => (console.log("Message: " + JSON.stringify(response))))
             }*/
-            generateConfigurations() {
-              let serverLocationMatrix = []
+            areArrivalAndServerRatesValid() { //Store arrival and server rates here not in store inputs
+              //Store inputs
+              this.storeInputs()
+
+              //If arrival and server rates are valid, generate configurations
+              if (this.arrivalRatesValid && this.serverRatesValid) {
+                this.errorMessage("")
+                this.configs = this.computeConfigurations(this.numOfServers, this.numOfTasks, this.fMatrix)
+                console.log(this.configs)
+                this.computeServerRatesOfConfigurations()
+                console.log(this.configsServerRateMatrix)
+              }
+            },
+            computeConfigurations(numOfServers, numOfTasks, fMatrix) {
+              const ON = 1, OFF = 0;
+              let configs = {};
+
+              if (numOfServers > 0 && numOfTasks > 0) {
+                  numOfTasks += 1;
+                  // fix up fMatrix to include zero state in accordance with the number of tasks 
+                  fMatrix = fMatrix.map(function(row) {
+                      let deltaLength = numOfTasks - row.length;
+                      return new Array(deltaLength).fill(OFF).concat(row);
+                  });
+                  // start computing the configs
+                  this.computeConfigurationsHelper([], numOfServers, numOfTasks, fMatrix, configs);
+              }
+
+              // get the keys from the map and convert them to array 
+              return Object.keys(configs).map(function(vectorString) {
+                  return vectorString.split(",").map(function(task) {
+                      return parseInt(task);
+                  });
+              });
+            },
+            //Generate all of the premutations
+            computeConfigurationsHelper(vectorArray, numOfServers, numOfTasks, fMatrix, map) {
+              const ON = 1, OFF = 0;
+
+              if (vectorArray.length < numOfServers) {
+                  for (let i = 0; i < numOfTasks; i++) {
+                      // vectorArray.length is the server index in the fMatrix
+                      let valueToAdd = fMatrix[vectorArray.length][i] === ON ? i : OFF;
+                      this.computeConfigurationsHelper(vectorArray.concat([valueToAdd]), numOfServers, numOfTasks, fMatrix, map);
+                  }
+              } else {
+                  // we don't need a value here, we just need the map to make sure they are unique 
+                  // we could use a set as well
+                  map[vectorArray.toString()] = OFF;
+              }
+            },
+            /*generateConfigurations() {
+              let serverLocationMatrix = [] //global
               let serverLocationVector = []
-              let serverLocationMatrixIndex = 0
+              let serverLocationMatrixIndex = 0 //global
               let serverLocationVectorIndex = 0
 
               //server number corresponds to for loop number
@@ -566,20 +678,16 @@
               let serverIndex2 = 1
               let serverIndex3 = 2
 
-              let testNumOfTasks = 3
-              let testNumOfServers = 3 // = # of nested loops
-              let f = [["1","1","1"],["1","0","1"],["0","1","0"]]
-
               //first configuration all zeros
               serverLocationMatrix[serverLocationMatrixIndex++] = ["0","0","0"]
 
-              for (var i = 0; i <= testNumOfTasks; i++) {              
-                for (var j = 0; j <= testNumOfTasks; j++) {         
-                  for (var k = 0; k <= testNumOfTasks; k++) {
+              for (var i = 0; i <= this.numOfTasks; i++) {              
+                for (var j = 0; j <= this.numOfTasks; j++) {         
+                  for (var k = 0; k <= this.numOfTasks; k++) {
                     if (i == 0) {
                       serverLocationVector[serverLocationVectorIndex++] = "0"
                     } else {
-                      if (f[serverIndex1][i - 1] == "1") {
+                      if (this.fMatrix[serverIndex1][i - 1] == "1") {
                         serverLocationVector[serverLocationVectorIndex++] = i + ""
                       } else {
                         serverLocationVector[serverLocationVectorIndex++] = "0"
@@ -589,7 +697,7 @@
                     if (j == 0) {
                       serverLocationVector[serverLocationVectorIndex++] = "0"
                     } else {
-                      if (f[serverIndex2][j - 1] == "1") {
+                      if (this.fMatrix[serverIndex2][j - 1] == "1") {
                         serverLocationVector[serverLocationVectorIndex++] = j + ""
                       } else {
                         serverLocationVector[serverLocationVectorIndex++] = "0"
@@ -599,7 +707,7 @@
                     if (k == 0) {
                       serverLocationVector[serverLocationVectorIndex++] = "0"
                     } else {
-                      if (f[serverIndex3][k - 1] == "1") {
+                      if (this.fMatrix[serverIndex3][k - 1] == "1") {
                         serverLocationVector[serverLocationVectorIndex++] = k + ""
                       } else {
                         serverLocationVector[serverLocationVectorIndex++] = "0"
@@ -607,7 +715,7 @@
                     }
 
                     //fill serverLocationMatrix then reset serverLocationVector
-                    if (serverLocationVector.length == testNumOfServers) {
+                    if (serverLocationVector.length == this.numOfServers) {
                       serverLocationMatrix[serverLocationMatrixIndex++] = serverLocationVector
                       serverLocationVector = []
                       serverLocationVectorIndex = 0
@@ -625,24 +733,20 @@
 
               console.log(this.configs)
               this.generateConfigsServerRateMatrix()
-            },
-            generateConfigsServerRateMatrix() {
-              let testServerRates = [["2","1","4"],["4","0","1"],["0","2","0"]]
-              let testNumOfTasks = 3
-              let testNumOfServers = 3 
-
+            },*/
+            computeServerRatesOfConfigurations() {
               //Set all entries of serverRateMatrix to zeros
               for (var i = 0; i < this.configs.length; i++) {
-                this.configsServerRateMatrix[i] = ["0","0","0"] //note: length of one entry in matrix equals to num of tasks
+                this.configsServerRateMatrix[i] = (new Array(this.numOfTasks)).fill(0) //Length of one entry in matrix equals to num of tasks
               }
 
               //Update serverRateMatrix with server rates where appropriate
               for (var z = 0; z < this.configs.length; z++) {
                 for (var l = 0; l < this.configs[z].length; l++) {
-                  if (this.configs[z][l] == "0") {
+                  if (this.configs[z][l] === 0) {
                     continue
                   } else {
-                    this.configsServerRateMatrix[z][parseInt(this.configs[z][l]) - 1] = testServerRates[l][parseInt(this.configs[z][l]) - 1]
+                    this.configsServerRateMatrix[z][this.configs[z][l] - 1] = this.serverRates[l][this.configs[z][l] - 1]
                   }
                 }
 
@@ -658,16 +762,41 @@
                       var serverRateSum = 0
 
                       for (var server in dups[duplicatedTasks[n]]) {
-                        serverRateSum += parseInt(testServerRates[parseInt(dups[duplicatedTasks[n]][server])][parseInt(duplicatedTasks[n]) - 1])
+                        serverRateSum += this.serverRates[parseInt(dups[duplicatedTasks[n]][parseInt(server)])][parseInt(duplicatedTasks[n]) - 1]
                       }
                     
-                      this.configsServerRateMatrix[z][parseInt(duplicatedTasks[n]) - 1] = serverRateSum + ""
+                      this.configsServerRateMatrix[z][parseInt(duplicatedTasks[n]) - 1] = serverRateSum
                     }
                   }
                 }
               }
+            },
+            exportConfigs() {
+              var element = document.createElement('a')
+              element.setAttribute('href', 'data:text/csv;base64,' + btoa(this.configs));
+              element.setAttribute('download', 'configurations.csv');
+              element.style.display = 'none';
+              
+              document.body.appendChild(element);
+              element.click();
+              document.body.removeChild(element);
+            },
+            updateTextArea() {
+                var textarea = document.getElementById("textArea")
+                
+                textarea.value = this.numOfTasks + "\n" + this.numOfServers + "\n" + this.arrivalRates + "\n"
 
-              console.log(this.configsServerRateMatrix)
+                for (var z = 0; z < this.serverRates.length; z++) {
+                    textarea.value += this.serverRates[z] + "\n"
+                }
+
+                for (var n = 0; n < this.fMatrix.length; n++) {
+                    if (n == this.fMatrix.length - 1) {
+                        textarea.value += this.fMatrix[n]
+                    } else {
+                        textarea.value += this.fMatrix[n] + "\n"
+                    }
+                }
             },
             removeDuplicates(arr) {
               let unique = {};
@@ -679,20 +808,6 @@
               return Object.keys(unique);
             },
             getDuplicates(arr) {
-              /*var unique = arr.map((entry) => {
-                  return {
-                    count: 1,
-                    entry: entry
-                  }
-                }).reduce((a, b) => {
-                  a[b.entry] = (a[b.entry] || 0) + b.count
-                  return a
-                }, {})
-
-              var duplicates = Object.keys(unique).filter((a) => unique[a] > 1)
-
-              return duplicates*/
-
               var duplicates = {};
               for (var i = 0; i < arr.length; i++) {
                   if(duplicates.hasOwnProperty(arr[i])) {
@@ -703,7 +818,11 @@
               }
 
               return duplicates;
-            }
+            },
+            errorMessage(message) {
+                document.getElementById("errorMessage").innerHTML = message
+            },
+            getConfigurationsFromCsv(e) {}
         }
     }
 </script>
@@ -722,6 +841,7 @@
         display: flex;
         flex-direction: column;
         align-self: center;
+        align-items: center;
     }
     .import__vectors-form__textarea, .import__configurations-form__textarea {
         width: 550px;
@@ -780,6 +900,30 @@
       display: flex;
       align-content: center;
       justify-content: center;
+    }
+    .checkbox-label { 
+      margin-top: 1em;
+      span {
+        margin: 0 0.5em;
+        input[type="text"] {
+          font-family: $roboto;	
+          font-size: 1em;
+          color: $font-color;
+          text-align: center;
+          background-color: $background-color--main;
+          width: 70px;
+          height: 30px;
+          margin: 0 0.8em;
+          border-top: none;
+          border-left: none;
+          border-right: none;
+          border-bottom: 2px solid $font-color;
+          &:focus {
+            outline: none;
+            border-bottom: 2px solid $accent-color;
+          }
+        }
+      }
     }
     #figure {
         display: flex;
