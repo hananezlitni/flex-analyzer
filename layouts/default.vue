@@ -107,4 +107,77 @@
     border: 2px solid $accent-color;
     color: $lightest-color;
   }
+  /************************* IMPORT ****************************/
+  .import {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+  .import__title {
+    align-self: center;
+    font-size: 2em;
+  }
+  .import__file-upload {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+  .import__file-upload-label {
+    width: 185px;
+    height: 43px;
+    border: 2px solid $accent-color;
+    border-radius: 8px;
+    align-self: center;
+    text-align: center;
+    padding: 0.55em 0;
+    margin: 0 1em 1em 0;
+  }
+  .import__file-upload + label {
+    font-family: $roboto;	
+    font-size: 1.1em;
+    color: $font-color;
+    background-color: $background-color--main;
+    display: inline-block;
+    cursor: pointer; 
+  }
+  .import__file-upload:focus + label {
+      outline: 1px dotted #000;
+      outline: -webkit-focus-ring-color auto 5px;
+  }
+  .import__file-upload + label * {
+      pointer-events: none;
+  }
+  .import__file-name {
+    width: 300px;
+    height: 43px;
+    padding: 10px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 2px solid $accent-color;
+    background-color: $background-color--main;
+    color: $font-color;
+    font-size: 1em;
+    font-family: $roboto;
+    line-height: 1.5;
+    margin-right: 1.5em;
+    &:focus {
+      outline: none;
+    }
+  }
+  .buttons-div {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+  }
+  #errorMessage {
+    color: #ff4d4d;
+    font-size: 1.2em;
+    text-align: center;
+    padding: 5px;
+    margin: 5px;
+  }
 </style>
