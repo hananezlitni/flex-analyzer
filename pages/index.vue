@@ -159,6 +159,52 @@
             displayCsvDataInTextArea() {
               let input = document.getElementById('file-upload');
               let textarea = document.getElementById('textArea');
+              var self = this
+
+              if (textarea.value.length > 0) {
+                  textarea.value = ""
+                  this.numOfTasks = 5
+                  this.numOfServers = 5
+                  this.fMatrix = []
+                  this.arrivalRates = []
+                  this.serverRates = []
+                  document.getElementById("figure").innerHTML = ""
+                  this.errorMessage("")
+              } 
+
+              if (input.files && input.files[0]) { 
+                  var myFile = input.files[0];
+                  var reader = new FileReader();
+                  reader.readAsBinaryString(myFile)
+
+                  reader.onload = function (e) {
+                      let csvdata = e.target.result; 
+                      let lines = csvdata.split('\n');
+                      for (var i = 0; i < lines.length; i++) {
+                          textarea.value += lines[i].replace(/['"]+/g, '')
+                      }
+
+                      let values = textarea.value.split("\n")
+                      self.numOfTasks = parseInt(values[1])
+                      self.numOfServers = parseInt(values[3])
+                      self.arrivalRates = values[5].split(',').map(Number)
+
+                      let fMatrixStart = 7 + self.numOfServers + 1
+                      let count = 0
+                      for (i = fMatrixStart; i < values.length; i++) {
+                          self.fMatrix[count++] = values[i].split(',').map(Number)
+                      }
+
+                      let counter = 0
+                      for (var j = 7; j < fMatrixStart - 1; j++) {
+                          self.serverRates[counter++] = values[j].split(',').map(Number)
+                      } 
+                      //self.generateFigure()
+                  };
+              }
+            
+              /*let input = document.getElementById('file-upload');
+              let textarea = document.getElementById('textArea');
 
               if (input.files && input.files[0]) { 
                 //Reset anyway in case there's previous content
@@ -184,7 +230,7 @@
                       textarea.value += lines[i].replace(/['"]+/g, '')
                   }
                 };
-              }
+              }*/
             },
             storeInputs() { //make sure latest inputs are stored when click generate figure and submit structure buttons.. validation needs to happen for both as well in case f matrix was edited just before submission.
               let input = document.getElementById('file-upload');
@@ -203,18 +249,18 @@
               //Store inputs
               let values = textarea.value.split("\n")
 
-              this.numOfTasks = parseInt(values[0])
-              this.numOfServers = parseInt(values[1])
-              this.arrivalRates = values[2].split(',').map(Number)                   
+              this.numOfTasks = parseInt(values[1])
+              this.numOfServers = parseInt(values[3])
+              this.arrivalRates = values[5].split(',').map(Number)                   
 
-              let fMatrixStart = 3 + this.numOfServers
+              let fMatrixStart = 7 + this.numOfServers + 1
               let count = 0
               for (var j = fMatrixStart; j < values.length; j++) {
                   this.fMatrix[count++] = values[j].split(',').map(Number)
               }
 
               let counter = 0
-              for (var l = 3; l < fMatrixStart; l++) {
+              for (var l = 7; l < fMatrixStart - 1; l++) {
                   this.serverRates[counter++] = values[l].split(',').map(Number)
               }
 
@@ -231,6 +277,19 @@
               }
 
               this.numOfConfigs = configs
+
+              console.log("Tasks")
+              console.log(this.numOfTasks)
+              console.log("Servers")
+              console.log(this.numOfServers)
+              console.log("Arrival rates")
+              console.log(JSON.parse(JSON.stringify(this.arrivalRates)))
+              console.log("Server rates")
+              console.log(JSON.parse(JSON.stringify(this.serverRates)))
+              console.log("F Matrix")
+              console.log(JSON.parse(JSON.stringify(this.fMatrix)))
+              console.log("# of Configs")
+              console.log(this.numOfConfigs)
 
               this.validateInputs()
             },
@@ -611,11 +670,7 @@
               document.body.appendChild(element);
               element.click();
               document.body.removeChild(element);
-            },/*,
-            printMsg() {
-              axios.get('/test')
-                .then(response => (console.log("Message: " + JSON.stringify(response))))
-            }*/
+            },
             areArrivalAndServerRatesValid() { //Store arrival and server rates here not in store inputs
               //Store inputs
               this.storeInputs()
@@ -624,9 +679,9 @@
               if (this.arrivalRatesValid && this.serverRatesValid) {
                 this.errorMessage("")
                 this.configs = this.computeConfigurations(this.numOfServers, this.numOfTasks, this.fMatrix)
-                console.log(this.configs)
+                console.log(JSON.parse(JSON.stringify(this.configs)))
                 this.computeServerRatesOfConfigurations()
-                console.log(this.configsServerRateMatrix)
+                console.log(JSON.parse(JSON.stringify(this.configsServerRateMatrix)))
               }
             },
             computeConfigurations(numOfServers, numOfTasks, fMatrix) {
@@ -667,73 +722,6 @@
                   map[vectorArray.toString()] = OFF;
               }
             },
-            /*generateConfigurations() {
-              let serverLocationMatrix = [] //global
-              let serverLocationVector = []
-              let serverLocationMatrixIndex = 0 //global
-              let serverLocationVectorIndex = 0
-
-              //server number corresponds to for loop number
-              let serverIndex1 = 0
-              let serverIndex2 = 1
-              let serverIndex3 = 2
-
-              //first configuration all zeros
-              serverLocationMatrix[serverLocationMatrixIndex++] = ["0","0","0"]
-
-              for (var i = 0; i <= this.numOfTasks; i++) {              
-                for (var j = 0; j <= this.numOfTasks; j++) {         
-                  for (var k = 0; k <= this.numOfTasks; k++) {
-                    if (i == 0) {
-                      serverLocationVector[serverLocationVectorIndex++] = "0"
-                    } else {
-                      if (this.fMatrix[serverIndex1][i - 1] == "1") {
-                        serverLocationVector[serverLocationVectorIndex++] = i + ""
-                      } else {
-                        serverLocationVector[serverLocationVectorIndex++] = "0"
-                      }
-                    }
-
-                    if (j == 0) {
-                      serverLocationVector[serverLocationVectorIndex++] = "0"
-                    } else {
-                      if (this.fMatrix[serverIndex2][j - 1] == "1") {
-                        serverLocationVector[serverLocationVectorIndex++] = j + ""
-                      } else {
-                        serverLocationVector[serverLocationVectorIndex++] = "0"
-                      }
-                    }
-
-                    if (k == 0) {
-                      serverLocationVector[serverLocationVectorIndex++] = "0"
-                    } else {
-                      if (this.fMatrix[serverIndex3][k - 1] == "1") {
-                        serverLocationVector[serverLocationVectorIndex++] = k + ""
-                      } else {
-                        serverLocationVector[serverLocationVectorIndex++] = "0"
-                      }
-                    }
-
-                    //fill serverLocationMatrix then reset serverLocationVector
-                    if (serverLocationVector.length == this.numOfServers) {
-                      serverLocationMatrix[serverLocationMatrixIndex++] = serverLocationVector
-                      serverLocationVector = []
-                      serverLocationVectorIndex = 0
-                    }
-                  }
-                }
-              }
-
-              let temp = this.removeDuplicates(serverLocationMatrix)
-              let count = 0
-
-              for (var h = 0; h < temp.length; h++) {
-                this.configs[count++] = temp[h].split(',')
-              }
-
-              console.log(this.configs)
-              this.generateConfigsServerRateMatrix()
-            },*/
             computeServerRatesOfConfigurations() {
               //Set all entries of serverRateMatrix to zeros
               for (var i = 0; i < this.configs.length; i++) {
@@ -782,21 +770,21 @@
               document.body.removeChild(element);
             },
             updateTextArea() {
-                var textarea = document.getElementById("textArea")
-                
-                textarea.value = this.numOfTasks + "\n" + this.numOfServers + "\n" + this.arrivalRates + "\n"
+              var textarea = document.getElementById("textArea")
+              
+              textarea.value = this.numOfTasks + "\n" + this.numOfServers + "\n" + this.arrivalRates + "\n"
 
-                for (var z = 0; z < this.serverRates.length; z++) {
-                    textarea.value += this.serverRates[z] + "\n"
-                }
+              for (var z = 0; z < this.serverRates.length; z++) {
+                  textarea.value += this.serverRates[z] + "\n"
+              }
 
-                for (var n = 0; n < this.fMatrix.length; n++) {
-                    if (n == this.fMatrix.length - 1) {
-                        textarea.value += this.fMatrix[n]
-                    } else {
-                        textarea.value += this.fMatrix[n] + "\n"
-                    }
-                }
+              for (var n = 0; n < this.fMatrix.length; n++) {
+                  if (n == this.fMatrix.length - 1) {
+                      textarea.value += this.fMatrix[n]
+                  } else {
+                      textarea.value += this.fMatrix[n] + "\n"
+                  }
+              }
             },
             removeDuplicates(arr) {
               let unique = {};
@@ -901,7 +889,7 @@
       align-content: center;
       justify-content: center;
     }
-    .checkbox-label { 
+    /*.checkbox-label { 
       margin-top: 1em;
       span {
         margin: 0 0.5em;
@@ -924,7 +912,7 @@
           }
         }
       }
-    }
+    }*/
     #figure {
         display: flex;
         flex-direction: column;
