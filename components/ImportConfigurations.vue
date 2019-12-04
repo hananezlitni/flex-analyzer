@@ -2,10 +2,10 @@
     <section>
         <div class="import">
         <h1 class="import__title">Import a Structure: Configurations</h1>
-        <p class="import__note"><i>Please use the form below to import a structure as configurations. Please read <a href="/documentation" target="_blank">the documentation</a> for information about the format of the content.</i></p>
+        <p><i>Please use the form below to import a structure as configurations. Read <a href="/documentation" target="_blank">the documentation</a> for more information.</i></p>
 
         <form class="import__configurations-form" @submit="$event.preventDefault()">
-            <div class="buttons-div">
+            <div class="div-flex-center">
                 <input type="text" id="import-configurations__file-name" class="import__file-name" readonly />
                 <input type="file" id="import-configurations__file-upload" class="import__file-upload" @change="getConfigurationsFromCsv" />
                 <label for="import-configurations__file-upload" class="import__file-upload-label">

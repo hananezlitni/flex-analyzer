@@ -27,6 +27,9 @@
 
 <style lang="scss">
   /************************* BASE ****************************/
+  html {
+    scroll-behavior: smooth;
+  }
   #app {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
@@ -107,7 +110,7 @@
     border: 2px solid $accent-color;
     color: $lightest-color;
   }
-  /************************* IMPORT ****************************/
+  /************************* TOOL ****************************/
   .import {
     display: flex;
     flex-direction: column;
@@ -116,6 +119,7 @@
   .import__title {
     align-self: center;
     font-size: 2em;
+    margin-bottom: 1.5em;
   }
   .import__file-upload {
     width: 0.1px;
@@ -150,7 +154,7 @@
   .import__file-upload + label * {
       pointer-events: none;
   }
-  .import__file-name {
+  .import__file-name, .import__constraints-file-name {
     width: 300px;
     height: 43px;
     padding: 10px;
@@ -168,10 +172,28 @@
       outline: none;
     }
   }
-  .buttons-div {
+  .import__constraints-title {
+    align-self: center;
+    font-size: 1.5em;
+    margin-bottom: 1.3em;
+  }
+  .div-flex-center {
     display: flex;
     align-content: center;
     justify-content: center;
+  }
+  .buttons-div {
+    margin-bottom: 3em;
+  }
+  .result {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+  .result__title {
+    align-self: center;
+    font-size: 1.5em;
+    margin-bottom: 1.5em;
   }
   #errorMessage {
     color: #ff4d4d;

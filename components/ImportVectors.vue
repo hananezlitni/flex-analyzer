@@ -2,11 +2,10 @@
     <section>
         <div class="import">
             <h1 class="import__title">Import a Structure: Vectors</h1>
-            <p class="import__note"><i>Please use the form below to import a structure as vectors. Please read <a href="/documentation" target="_blank">the documentation</a> for information about the format of the content.</i></p>
 
             <form class="import__vectors-form" @submit="$event.preventDefault()">
-                <div class="buttons-div">
-                    <input type="text" id="file-name" class="import__file-name" readonly />
+                <div class="div-flex-center">
+                    <input type="text" id="file-name" class="import__file-name" placeholder="Import your vectors" readonly />
                     <input type="file" id="file-upload" class="import__file-upload" accept=".csv" @change="displayCsvDataInTextArea"/>
                     <label for="file-upload" class="import__file-upload-label">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
@@ -17,30 +16,62 @@
                 <p id="errorMessage"></p>
                 
                 <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" /> <!--@keyup="parseCsvData($event)"-->
+
+                <h2 class="import__constraints-title">Minimum Number of Servers at a Task</h2>
+
+                <div class="div-flex-center">
+                    <input type="text" id="constraints-file-name--min" class="import__constraints-file-name" placeholder="Import your constraints (optional)" readonly />
+                    <input type="file" id="constraints-file-upload--min" class="import__file-upload" accept=".csv" @change="importMinNumOfServers"/>
+                    <label for="constraints-file-upload--min" class="import__file-upload-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
+                        Choose a file
+                    </label>
+                </div>
+
+                <br><br>    
+
+                <h2 class="import__constraints-title">Maximum Number of Servers at a Task</h2>
+
+                <div class="div-flex-center">
+                    <input type="text" id="constraints-file-name--max" class="import__constraints-file-name" placeholder="Import your constraints (optional)" readonly />
+                    <input type="file" id="constraints-file-upload--max" class="import__file-upload" accept=".csv" @change="importMaxNumOfServers"/>
+                    <label for="constraints-file-upload--max" class="import__file-upload-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
+                        Choose a file
+                    </label>
+                </div>
             </form>
         </div>
-        <div class="buttons-div">
+
+        <div id="figure" class="figure"></div> 
+
+        <div id="result" class="result"></div>
+
+        <br>
+
+        <div class="div-flex-center buttons-div">
             <button class="button button--action button--not-filled" @click="clearAll">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 448 512">
-                <path fill="#c7d6e9" d="M53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32zm70.11-175.8l89.38-94.26a15.41 15.41 0 0 1 22.62 0l89.38 94.26c10.08 10.62 2.94 28.8-11.32 28.8H256v112a16 16 0 0 1-16 16h-32a16 16 0 0 1-16-16V320h-57.37c-14.26 0-21.4-18.18-11.32-28.8zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"/>
-            </svg>
-            Clear All
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 448 512">
+                    <path fill="#c7d6e9" d="M53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32zm70.11-175.8l89.38-94.26a15.41 15.41 0 0 1 22.62 0l89.38 94.26c10.08 10.62 2.94 28.8-11.32 28.8H256v112a16 16 0 0 1-16 16h-32a16 16 0 0 1-16-16V320h-57.37c-14.26 0-21.4-18.18-11.32-28.8zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"/>
+                </svg>
+                Clear All
             </button>
 
             <button class="button button--action button--action--figure secondary" @click="generateFigure">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 640 512">
-                <path fill="#13191f" d="M384 320H256c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM192 32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v128c0 17.67 14.33 32 32 32h95.72l73.16 128.04C211.98 300.98 232.4 288 256 288h.28L192 175.51V128h224V64H192V32zM608 0H480c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V32c0-17.67-14.33-32-32-32z"/>
-            </svg>
-            Get Training Figure
+            
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 640 512">
+                        <path fill="#13191f" d="M384 320H256c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V352c0-17.67-14.33-32-32-32zM192 32c0-17.67-14.33-32-32-32H32C14.33 0 0 14.33 0 32v128c0 17.67 14.33 32 32 32h95.72l73.16 128.04C211.98 300.98 232.4 288 256 288h.28L192 175.51V128h224V64H192V32zM608 0H480c-17.67 0-32 14.33-32 32v128c0 17.67 14.33 32 32 32h128c17.67 0 32-14.33 32-32V32c0-17.67-14.33-32-32-32z"/>
+                    </svg>
+                    Get Training Figure
             </button>
 
             <button class="button button--action secondary" @click="exportStructure">
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 576 512">
-                <path fill="#13191f" d="M384 121.9c0-6.3-2.5-12.4-7-16.9L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128zM571 308l-95.7-96.4c-10.1-10.1-27.4-3-27.4 11.3V288h-64v64h64v65.2c0 14.3 17.3 21.4 27.4 11.3L571 332c6.6-6.6 6.6-17.4 0-24zm-379 28v-32c0-8.8 7.2-16 16-16h176V160H248c-13.2 0-24-10.8-24-24V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V352H208c-8.8 0-16-7.2-16-16z"/>
-            </svg>
-            Export Structure
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 576 512">
+                    <path fill="#13191f" d="M384 121.9c0-6.3-2.5-12.4-7-16.9L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128zM571 308l-95.7-96.4c-10.1-10.1-27.4-3-27.4 11.3V288h-64v64h64v65.2c0 14.3 17.3 21.4 27.4 11.3L571 332c6.6-6.6 6.6-17.4 0-24zm-379 28v-32c0-8.8 7.2-16 16-16h176V160H248c-13.2 0-24-10.8-24-24V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V352H208c-8.8 0-16-7.2-16-16z"/>
+                </svg>
+                Export Structure
             </button>
-
+            
             <button class="button button--action primary" type="submit" @click="areArrivalAndServerRatesValid"> 
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
                     <path fill="#13191f" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"/>
@@ -48,47 +79,51 @@
                 Submit Structure
             </button>
         </div>
-
-        <br />
-
-        <div id="figure"></div> 
     </section>
 </template>
 
 <style lang="scss" scoped>
     .import__vectors-form {
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    align-items: center;
-  }
-  .import__vectors-form__textarea {
-    width: 550px;
-    height: 350px;
-    padding: 10px;
-    border: 2px solid $accent-color;
-    background-color: $background-color--main;
-    color: $font-color;
-    font-size: 1em;
-    font-family: $roboto;
-    line-height: 1.5;
-    resize: none;
-    margin: 0 auto;
-    &::placeholder {
+        display: flex;
+        flex-direction: column;
+        align-self: center;
+        align-items: center;
+    }
+    .import__vectors-form__textarea {
+        width: 550px;
+        height: 350px;
+        padding: 10px;
+        border: 2px solid $accent-color;
+        background-color: $background-color--main;
+        color: $font-color;
+        font-size: 1em;
+        font-family: $roboto;
+        line-height: 1.5;
+        resize: none;
+        margin-bottom: 3em;
+        &::placeholder {
+            font-style: italic;
+        }
+    }
+    .import__file-name::placeholder, .import__constraints-file-name::placeholder {
         font-style: italic;
     }
-  }
-  #figure {
-      display: flex;
-      flex-direction: column;
-      justify-items: center;
-      align-items: center;
-      padding-left: 4em;
-  }
+    .figure {
+        display: flex;
+        flex-direction: column;
+        justify-items: center;
+        align-items: center;
+        padding-left: 4em;
+    }
 </style>
 
 <script>
+    import solveLP from '../services/solver.js'
+
     export default {
+        components: {
+            solveLP
+        },
         data() {
             return {
                 numOfTasks: 5,
@@ -99,6 +134,8 @@
                 numOfConfigs: 0,
                 configs: [],
                 configsServerRateMatrix: [],
+                originalConfigs: [],
+                originalConfigsServerRateMatrix: [],
                 fMatrixValid: true,
                 arrivalRatesValid: true,
                 serverRatesValid: true,
@@ -136,6 +173,7 @@
                 this.arrivalRates = []
                 this.serverRates = []
                 document.getElementById("figure").innerHTML = ""
+                document.getElementById("result").innerHTML = ""
                 this.errorMessage("")
             },
             displayCsvDataInTextArea() {
@@ -151,6 +189,7 @@
                     this.arrivalRates = []
                     this.serverRates = []
                     document.getElementById("figure").innerHTML = ""
+                    document.getElementById("result").innerHTML = ""
                     this.errorMessage("")
                 } 
 
@@ -250,13 +289,13 @@
                 //Number of configurations
                 let configs = 1
                 for (var i = 0; i < this.numOfServers; i++) {
-                let count = 0
-                for (var j = 0; j < this.numOfTasks; j++) {
-                    if (this.fMatrix[i][j] === 1) {
-                    count++
+                    let count = 0
+                    for (var j = 0; j < this.numOfTasks; j++) {
+                        if (this.fMatrix[i][j] === 1) {
+                        count++
+                        }
                     }
-                }
-                configs *= count + 1
+                    configs *= count + 1
                 }
 
                 this.numOfConfigs = configs
@@ -355,6 +394,10 @@
                 }
             },
             generateFigure() {
+                //Scroll to div
+                var elementPosition = document.getElementById('figure').offsetTop;
+                window.scrollTo(0, elementPosition);
+
                 //Store inputs
                 this.storeInputs()
 
@@ -395,11 +438,12 @@
                 this.R_OFFSET = 380;		// Rect offset
 
                 this.paper = null;
-                this.p_height = 1;
+                this.p_height = 400;
                 this.P_WIDTH = 600;
 
                 //Initialize canvas
                 this.paper = Raphael("figure", this.P_WIDTH, this.p_height);
+
                 for (var i = 0; i < C; i++){
                     this.addTask();
                 }
@@ -632,39 +676,24 @@
                     return false;
                 }
             },
-            exportStructure() {
-                var csvRows = []
-                let structure = document.getElementById('textArea').value.split("\n")
-                var csvContent = ""
-                
-                for (var x = 0; x < structure.length; x++) {
-                    if (x == structure.length -1 ) {
-                        csvContent += structure[x]
-                    } else {
-                        csvContent += structure[x] + "\r\n"
-                    }
-                }
-
-                var element = document.createElement('a')
-                element.setAttribute('href', 'data:text/csv;base64,' + btoa(csvContent));
-                element.setAttribute('download', 'structure.csv');
-                element.style.display = 'none';
-                
-                document.body.appendChild(element);
-                element.click();
-                document.body.removeChild(element);
+            importMinNumOfServers() {
+                //[1,2,4]
+            },
+            importMaxNumOfServers() {
+                //[2,3,5]
             },
             areArrivalAndServerRatesValid() { //Store arrival and server rates here not in store inputs
+                //scroll to div
+                var elementPosition = document.getElementById('result').offsetTop;
+                window.scrollTo(0, elementPosition);
+
                 //Store inputs
                 this.storeInputs()
 
                 //If arrival and server rates are valid, generate configurations
                 if (this.arrivalRatesValid && this.serverRatesValid) {
                     this.errorMessage("")
-                    this.configs = this.computeConfigurations(this.numOfServers, this.numOfTasks, this.fMatrix)
-                    console.log(JSON.parse(JSON.stringify(this.configs)))
-                    this.computeServerRatesOfConfigurations()
-                    console.log(JSON.parse(JSON.stringify(this.configsServerRateMatrix)))
+                    this.solveOptimizationProblem()
                 }
             },
             computeConfigurations(numOfServers, numOfTasks, fMatrix) {
@@ -705,50 +734,167 @@
                     map[vectorArray.toString()] = OFF;
                 }
             },
-            computeServerRatesOfConfigurations() {
+            computeServerRatesOfConfigurations(configs, serverRates) {
                 //Reset
                 this.configsServerRateMatrix = []
 
+                let serverRateMatrix = []
+
                 //Set all entries of serverRateMatrix to zeros
-                for (var i = 0; i < this.configs.length; i++) {
-                this.configsServerRateMatrix[i] = (new Array(this.numOfTasks)).fill(0) //Length of one entry in matrix equals to num of tasks
+                for (var i = 0; i < configs.length; i++) {
+                    serverRateMatrix[i] = (new Array(this.numOfTasks)).fill(0) //Length of one entry in matrix equals to num of tasks
                 }
 
                 //Update serverRateMatrix with server rates where appropriate
-                for (var z = 0; z < this.configs.length; z++) {
-                    for (var l = 0; l < this.configs[z].length; l++) {
-                        if (this.configs[z][l] === 0) {
-                        continue
+                for (var z = 0; z < configs.length; z++) {
+                    for (var l = 0; l < configs[z].length; l++) {
+                        if (configs[z][l] === 0) {
+                            continue
                         } else {
-                        this.configsServerRateMatrix[z][this.configs[z][l] - 1] = this.serverRates[l][this.configs[z][l] - 1]
+                            serverRateMatrix[z][configs[z][l] - 1] = serverRates[l][configs[z][l] - 1]
+                        }
                     }
-                }
 
-                //If multiple servers are at the same task, add the corresponding server rates. 
-                //The implementation also takes into consideration if there are duplicates of more than 1 task.
-                var dups = this.getDuplicates(this.configs[z])
+                    //If multiple servers are at the same task, add the corresponding server rates. 
+                    //The implementation also takes into consideration if there are duplicates of more than 1 task.
+                    var dups = this.getDuplicates(configs[z])
 
-                if (Object.keys(dups).length > 0) {
-                    var duplicatedTasks = Object.keys(dups)
+                    if (Object.keys(dups).length > 0) {
+                        var duplicatedTasks = Object.keys(dups)
 
-                    if (Object.keys(dups).includes("0") === false) {
-                        for (var n = 0; n < duplicatedTasks.length; n++) {
-                            var serverRateSum = 0
+                        if (Object.keys(dups).includes("0") === false) {
+                            for (var n = 0; n < duplicatedTasks.length; n++) {
+                                var serverRateSum = 0
 
-                            for (var server in dups[duplicatedTasks[n]]) {
-                            serverRateSum += this.serverRates[parseInt(dups[duplicatedTasks[n]][parseInt(server)])][parseInt(duplicatedTasks[n]) - 1]
+                                for (var server in dups[duplicatedTasks[n]]) {
+                                serverRateSum += serverRates[parseInt(dups[duplicatedTasks[n]][parseInt(server)])][parseInt(duplicatedTasks[n]) - 1]
+                                }
+                            
+                                serverRateMatrix[z][parseInt(duplicatedTasks[n]) - 1] = serverRateSum
                             }
-                        
-                            this.configsServerRateMatrix[z][parseInt(duplicatedTasks[n]) - 1] = serverRateSum
                         }
                     }
                 }
+
+                return serverRateMatrix
+            },
+            solveOptimizationProblem() {
+                let results = {}
+                
+                //Original problem
+                results["originalProblem"] = this.solveOriginalProblem().optimum
+
+                //Fully Flexible Structure
+                results["fullyFlexible"] = this.solveForFullyFlexibleStructure().optimum
+
+                //Remove Task n
+                for (var n = 0; n < this.numOfTasks; n++) {
+                    console.log("**************** Remove Task " + (n + 1) + "****************")
+                    results["noTask" + (n + 1)] = this.solveWithoutTaskN(n).optimum
+                }
+                
+                console.log("**************** Final Output ****************")
+                console.log(results)
+
+                //Display output
+                document.getElementById('result').innerHTML = '<h1 class="result__title">Result</h1>'
+                document.getElementById('result').innerHTML += '<p>The capacity of the submitted structure is: ' + results["originalProblem"] + '</p>'
+                document.getElementById('result').innerHTML += '<p>The capacity of the fully flexible structure is: ' + results["fullyFlexible"] + '</p>'
+
+                for (var i = 1; i <= this.numOfTasks; i++) {
+                    document.getElementById('result').innerHTML += '<p>The capacity of the structure when task ' + i + ' is removed: ' + results["noTask" + i] + '</p>'
                 }
             },
-            exportConfigs() {
+            solveOriginalProblem() {
+                console.log("**************** Original Problem ****************")
+                this.configs = this.computeConfigurations(this.numOfServers, this.numOfTasks, this.fMatrix)
+                console.log(JSON.parse(JSON.stringify(this.configs)))
+
+                this.configsServerRateMatrix = this.computeServerRatesOfConfigurations(this.configs, this.serverRates)
+                console.log(JSON.parse(JSON.stringify(this.configsServerRateMatrix)))
+
+                let lpResult = solveLP(this.configsServerRateMatrix, this.arrivalRates)
+                console.log(lpResult.solution)
+
+                this.export('configurations', this.configs)
+                this.export('server-rate-matrix', this.configsServerRateMatrix)
+
+                return lpResult.solution
+            },
+            solveForFullyFlexibleStructure() {
+                console.log("**************** Fully Flexible Structure ****************")
+                //New configs & server rate matrix and reset
+                let configsNew = []
+                let configsServerRateMatrixNew = []
+                //let serverRatesNew = this.serverRates
+
+                configsNew = this.computeConfigurations(this.numOfServers, this.numOfTasks, new Array(this.numOfServers).fill(new Array(this.numOfTasks).fill(1)))
+                console.log(JSON.parse(JSON.stringify(configsNew)))
+
+                configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
+                console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
+
+                let lpResult = solveLP(configsServerRateMatrixNew, this.arrivalRates)
+                console.log(lpResult.solution)
+
+                return lpResult.solution
+            },
+            solveWithoutTaskN(n) {
+                let fMatrixNew = this.fMatrix
+                let arrivalRatesNew = this.arrivalRates
+
+                for (var row in fMatrixNew) {
+                    fMatrixNew[row][n] = 0
+                }
+
+                //arrivalRatesNew[n] = 0
+
+                //Compute configs and solve LP
+                let configsNew = this.configs.map((row) => row.map((entry) => entry === (n + 1) ? 0 : entry))
+                //let configsNew = this.configs.filter(row => row.includes(n + 1) === false)
+                console.log(JSON.parse(JSON.stringify(configsNew)))
+                let configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
+                console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
+
+                /*let configsNew = []
+                let configsServerRateMatrixNew = []
+                configsNew = this.computeConfigurations(this.numOfServers, this.numOfTasks, fMatrixNew)
+                console.log(JSON.parse(JSON.stringify(configsNew)))
+
+                configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew)
+                console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))*/
+
+                let lpResult = solveLP(configsServerRateMatrixNew, arrivalRatesNew)
+                console.log(lpResult.solution)
+
+                return lpResult.solution
+            },
+            exportStructure() {
+                var csvRows = []
+                let structure = document.getElementById('textArea').value.split("\n")
+                var csvContent = ""
+                
+                for (var x = 0; x < structure.length; x++) {
+                    if (x == structure.length -1 ) {
+                        csvContent += structure[x]
+                    } else {
+                        csvContent += structure[x] + "\r\n"
+                    }
+                }
+
                 var element = document.createElement('a')
-                element.setAttribute('href', 'data:text/csv;base64,' + btoa(this.configs));
-                element.setAttribute('download', 'configurations.csv');
+                element.setAttribute('href', 'data:text/csv;base64,' + btoa(csvContent));
+                element.setAttribute('download', 'structure.csv');
+                element.style.display = 'none';
+                
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            },
+            export(fileName, file) {
+                var element = document.createElement('a')
+                element.setAttribute('href', 'data:text/csv;base64,' + btoa(file));
+                element.setAttribute('download', fileName + '.csv');
                 element.style.display = 'none';
                 
                 document.body.appendChild(element);
