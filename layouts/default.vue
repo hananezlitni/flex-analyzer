@@ -177,6 +177,9 @@
     font-size: 1.5em;
     margin-bottom: 1.3em;
   }
+  .import__file-name::placeholder, .import__constraints-file-name::placeholder {
+    font-style: italic;
+  }
   .div-flex-center {
     display: flex;
     align-content: center;
