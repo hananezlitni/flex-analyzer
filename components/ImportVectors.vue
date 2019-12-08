@@ -138,8 +138,6 @@
                 serverRatesValid: true,
                 ON: 1,
                 OFF: 0,
-                //serverLocationMatrix: [],
-                //serverLocationMatrixIndex: 0,
                 numC: 0,			// Number of tasks
                 numS: 0,			// Number of servers
                 active: [-1, -1],	// Holds selected task/server pair. -1 if none
@@ -161,17 +159,56 @@
         }, 
         methods: {
             clearAll() {
-                let textarea = document.getElementById('textArea');
+                document.getElementById('textArea').value = "" 
+                document.getElementById("figure").innerHTML = ""
+                document.getElementById("result").innerHTML = ""
+                document.getElementById('file-name').value = ""
+                document.getElementById('file-upload').value = null
+                document.getElementById('import-vectors-constraints-file-name--min').value = ""
+                document.getElementById('import-vectors-constraints-file-upload--min').value = null
+                document.getElementById('import-vectors-constraints-file-name--max').value = ""
+                document.getElementById('import-vectors-constraints-file-upload--max').value = null
+                this.errorMessage("")
 
-                textarea.value = ""
+                /*this.numOfTasks = 5
+                this.numOfServers = 5
+                this.fMatrix = []
+                this.arrivalRates = []
+                this.serverRates = []*/
+            
+                //Reset all data
                 this.numOfTasks = 5
                 this.numOfServers = 5
                 this.fMatrix = []
                 this.arrivalRates = []
                 this.serverRates = []
-                document.getElementById("figure").innerHTML = ""
-                document.getElementById("result").innerHTML = ""
-                this.errorMessage("")
+                this.numOfConfigs = 0
+                this.configs = []
+                this.configsServerRateMatrix = []
+                this.originalConfigs = []
+                this.originalConfigsServerRateMatrix = []
+                this.fMatrixValid = true
+                this.arrivalRatesValid = true
+                this.serverRatesValid = true
+                this.ON = 1
+                this.OFF = 0
+                this.numC = 0			// Number of tasks
+                this.numS = 0			// Number of servers
+                this.active = [-1, -1]	// Holds selected task/server pair. -1 if none
+                this.line = []		// Container for line objects
+                this.stickyC = false
+                this.stickyS = false
+                this.circle = []		// Holds circle/task objects
+                this.rect = []	// Holds rect/server objects
+                this.ltext = []		// Holds task numbers
+                this.rtext = []		// Holds server numbers
+                this.order = []
+                this.MARGIN = 50		// Margin between rows
+                this.C_OFFSET = 50	// Circle offset
+                this.R_OFFSET = 400		// Rect offset
+                this.paper = null
+                this.p_height = 1
+                this.P_WIDTH = 500   
             },
             displayCsvDataInTextArea() {
                 let input = document.getElementById('file-upload');
@@ -674,10 +711,10 @@
                     return false;
                 }
             },
-            importMinNumOfServers() {
+            minNumOfServers() {
                 //[1,2,4]
             },
-            importMaxNumOfServers() {
+            maxNumOfServers() {
                 //[2,3,5]
             },
             areArrivalAndServerRatesValid() { //Store arrival and server rates here not in store inputs
@@ -812,7 +849,7 @@
                 console.log(JSON.parse(JSON.stringify(this.configsServerRateMatrix)))
 
                 let lpResult = solveLP(this.configsServerRateMatrix, this.arrivalRates)
-                console.log(lpResult.solution)
+                console.log(lpResult)
 
                 this.export('configurations', this.configs)
                 this.export('server-rate-matrix', this.configsServerRateMatrix)
@@ -824,7 +861,6 @@
                 //New configs & server rate matrix and reset
                 let configsNew = []
                 let configsServerRateMatrixNew = []
-                //let serverRatesNew = this.serverRates
 
                 configsNew = this.computeConfigurations(this.numOfServers, this.numOfTasks, new Array(this.numOfServers).fill(new Array(this.numOfTasks).fill(1)))
                 console.log(JSON.parse(JSON.stringify(configsNew)))
@@ -833,37 +869,32 @@
                 console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
 
                 let lpResult = solveLP(configsServerRateMatrixNew, this.arrivalRates)
-                console.log(lpResult.solution)
+                console.log(lpResult)
 
                 return lpResult.solution
             },
             solveWithoutTaskN(n) {
                 let fMatrixNew = this.fMatrix
-                let arrivalRatesNew = this.arrivalRates
 
                 for (var row in fMatrixNew) {
                     fMatrixNew[row][n] = 0
                 }
 
-                //arrivalRatesNew[n] = 0
+                let arrivalRatesNew = this.arrivalRates.slice()
+                arrivalRatesNew[n] = 0
+
+                console.log("New arrival rates: ")
+                console.log(arrivalRatesNew)
 
                 //Compute configs and solve LP
                 let configsNew = this.configs.map((row) => row.map((entry) => entry === (n + 1) ? 0 : entry))
-                //let configsNew = this.configs.filter(row => row.includes(n + 1) === false)
                 console.log(JSON.parse(JSON.stringify(configsNew)))
+
                 let configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
                 console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
 
-                /*let configsNew = []
-                let configsServerRateMatrixNew = []
-                configsNew = this.computeConfigurations(this.numOfServers, this.numOfTasks, fMatrixNew)
-                console.log(JSON.parse(JSON.stringify(configsNew)))
-
-                configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew)
-                console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))*/
-
                 let lpResult = solveLP(configsServerRateMatrixNew, arrivalRatesNew)
-                console.log(lpResult.solution)
+                console.log(lpResult)
 
                 return lpResult.solution
             },

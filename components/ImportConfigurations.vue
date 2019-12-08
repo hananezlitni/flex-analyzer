@@ -7,7 +7,7 @@
             <p id="errorMessage"></p>
 
             <div class="div-flex-center">
-                <input type="text" id="file-name" class="import__file-name" placeholder="Import your vectors" readonly />
+                <input type="text" id="import-configurations__file-name" class="import__file-name" placeholder="Import your configurations" readonly />
                 <input type="file" id="import-configurations__file-upload" class="import__file-upload" accept=".csv" @change="getConfigurationsFromCsv"/>
                 <label for="import-configurations__file-upload" class="import__file-upload-label">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
@@ -74,90 +74,165 @@
 </style>
 
 <script>
-export default {
-    data() {
-        return {
-            numOfTasks: 0,
-            numOfServers: 0,
-            configurations: [],
-            serverRateMatrix: []
-        }
-    },
-    methods: {
-        /********** Import configurations **********/
-        getConfigurationsFromCsv() {
-          console.log("Hello")
-          let input = document.getElementById('import-configurations__file-upload');
-          var self = this
+    import minNumOfServers from '../services/constraints.js'
+    import maxNumOfServers from '../services/constraints.js'
 
-          if (input.files && input.files[0]) { 
-              
-              var myFile = input.files[0];
-              var reader = new FileReader();
-
-              document.getElementById('import-configurations__file-name').value = myFile.name
-              reader.readAsBinaryString(myFile)
-
-              reader.onload = function (e) {
-                  let csvdata = e.target.result; 
-                  /*let lines = csvdata.split('\n');
-                  for (var i = 0; i < lines.length; i++) {
-                      textarea.value += lines[i].replace(/['"]+/g, '')
-                  }
-
-                  let values = textarea.value.split("\n")
-                  self.numOfTasks = parseInt(values[1])
-                  self.numOfServers = parseInt(values[3])
-                  self.arrivalRates = values[5].split(',').map(Number)
-
-                  let fMatrixStart = 7 + self.numOfServers + 1
-                  let count = 0
-                  for (i = fMatrixStart; i < values.length; i++) {
-                      self.fMatrix[count++] = values[i].split(',').map(Number)
-                  }
-
-                  let counter = 0
-                  for (var j = 7; j < fMatrixStart - 1; j++) {
-                      self.serverRates[counter++] = values[j].split(',').map(Number)
-                  } */
-              };
-          }
+    export default {
+        components: {
+            minNumOfServers, maxNumOfServers
         },
-        validateConfigurations() {
-            //Length of each configuration equals to number of servers
-            if(!this.configurations.every((config) => config.length === this.numOfServers)) {
-                this.errorMessage("The length of a configuration should equal to the number of servers.")
-            }
-
-            //Valid entries in configs
-            if(!this.configurations.every((config) => config.every((entry) => entry <= this.numOfTasks))) {
-                this.errorMessage("The configurations should not contain a number greater than " + this.numOfTasks)
-            }
-
-            //Negative values in configs
-            if(!this.configurations.every((config) => config.every((entry) => entry > 0))) {
-                this.errorMessage("The configurations should not contain negative values.")
+        data() {
+            return {
+                numberOfTasks: 0,
+                numberOfServers: 0,
+                configurations: [],
+                serverRateMatrix: [],
+                minNumOfServersPerTask: [],
+                maxNumOfServersPerTask: []
             }
         },
-        validateServerRateMatrix() {
-            //Length of each server rate vector equals to number of tasks
-            if(!this.serverRateMatrix.every((vector) => vector.length === this.numOfTasks)) {
-                this.errorMessage("The length of a server rate vector should equal to the number of tasks.")
-            }
+        methods: {
+            /********** Import configurations **********/
+            getConfigurationsFromCsv() {
+                let input = document.getElementById('import-configurations__file-upload');
+                var self = this
 
-            //Negative values in server rate matrix
-            if(!this.serverRateMatrix.every((vector) => vector.every((entry) => entry > 0))) {
-                this.errorMessage("The server rate vectors should not contain negative values.")
+                if (input.files && input.files[0]) { 
+                    var myFile = input.files[0];
+                    var reader = new FileReader();
+
+                    document.getElementById('import-configurations__file-name').value = myFile.name
+                    reader.readAsBinaryString(myFile)
+
+                    reader.onload = function (e) {
+                        let csvdata = e.target.result; 
+                        let lines = csvdata.split('\n')
+                        
+                        for (var i = 0; i < lines.length; i++) {
+                            lines[i] = lines[i].replace(/['"]+/g, '')
+                        }
+
+                        console.log(lines)
+
+                        self.numberOfTasks = parseInt(lines[1])
+                        self.numberOfServers = parseInt(lines[3])
+
+                        let count = 0
+                        for (var i = 5; i < lines.length; i++) {
+                            if (lines[i].trim() === "Server Rates:") {
+                                break
+                            } else {
+                                self.configurations[count++] = lines[i].split(',').map(Number)
+                            }
+                        }
+
+                        count = 0
+                        for (var j = 5 + self.configurations.length + 1; j < lines.length; j++) {
+                            self.serverRateMatrix[count++] = lines[j].split(',').map(Number)
+                        }
+                    };
+                }
+            },
+            validateConfigurations() {
+                //Length of each configuration equals to number of servers
+                if(!this.configurations.every((config) => config.length === this.numOfServers)) {
+                    this.errorMessage("The length of a configuration should equal to the number of servers.")
+                }
+
+                //Valid entries in configs
+                if(!this.configurations.every((config) => config.every((entry) => entry <= this.numOfTasks))) {
+                    this.errorMessage("The configurations should not contain a number greater than " + this.numOfTasks)
+                }
+
+                //Negative values in configs
+                if(!this.configurations.every((config) => config.every((entry) => entry > 0))) {
+                    this.errorMessage("The configurations should not contain negative values.")
+                }
+            },
+            validateServerRateMatrix() {
+                //Length of each server rate vector equals to number of tasks
+                if(!this.serverRateMatrix.every((vector) => vector.length === this.numOfTasks)) {
+                    this.errorMessage("The length of a server rate vector should equal to the number of tasks.")
+                }
+
+                //Negative values in server rate matrix
+                if(!this.serverRateMatrix.every((vector) => vector.every((entry) => entry > 0))) {
+                    this.errorMessage("The server rate vectors should not contain negative values.")
+                }
+            },
+            importMinNumOfServers() {
+                let minConstraint = document.getElementById('import-configurations-constraints-file-upload--min')
+                var self = this
+                
+                //If user imported min # of servers per task
+                if (minConstraint.files && minConstraint.files[0]) {
+                    //Store constraints
+                    var myFile = minConstraint.files[0];
+                    var reader = new FileReader();
+
+                    document.getElementById('import-configurations-constraints-file-name--min').value = myFile.name
+                    reader.readAsBinaryString(myFile)
+
+                    reader.onload = function (e) {
+                        let constraints = e.target.result; 
+                        self.minNumOfServersPerTask = constraints.split(',').map(Number)
+
+                        console.log(self.minNumOfServersPerTask)
+                    }
+                }
+            },
+            importMaxNumOfServers() {
+                let maxConstraint = document.getElementById('import-configurations-constraints-file-upload--max')
+                var self = this
+
+                //If user imported min # of servers per task
+                if (maxConstraint.files && maxConstraint.files[0]) {
+                    //Store constraints
+                    var myFile = maxConstraint.files[0];
+                    var reader = new FileReader();
+
+                    document.getElementById('import-configurations-constraints-file-name--max').value = myFile.name
+                    reader.readAsBinaryString(myFile)
+
+                    reader.onload = function (e) {
+                        let constraints = e.target.result; 
+                        self.maxNumOfServersPerTask = constraints.split(',').map(Number)
+
+                        console.log(self.maxNumOfServersPerTask)
+                    }
+                }
+            },
+            submitStructure() {
+                //Minimum # of servers at a task
+                let minServerOutput = minNumOfServers(this.minNumOfServersPerTask, this.configurations, this.serverRateMatrix)
+
+                this.configurations = minServerOutput.configs
+                this.serverRateMatrix = minServerOutput.serverRates
+
+                //Maximum # of servers at a task
+                let maxServerOutput = maxNumOfServers(this.maxNumOfServersPerTask, this.configurations, this.serverRateMatrix)
+
+                this.configurations = maxServerOutput.configs
+                this.serverRateMatrix = maxServerOutput.serverRates
+
+                //Solve LP
+            },
+            clearAll() {
+                document.getElementById('import-configurations__file-name').value = ""
+                document.getElementById('import-configurations__file-upload').value = null
+                document.getElementById("result").innerHTML = ""
+                this.errorMessage("")
+
+                //Reset all data
+                this.numberOfTasks = 0
+                this.numberOfServers = 0
+                this.configurations = []
+                this.serverRateMatrix = []
+            },
+            /********** Helper functions **********/
+            errorMessage(message) {
+                document.getElementById("errorMessage").innerHTML += message
             }
-        },
-        importMinNumOfServers() {},
-        importMaxNumOfServers() {},
-        submitStructure() {},
-        clearAll() {},
-        /********** Helper functions **********/
-        errorMessage(message) {
-            document.getElementById("errorMessage").innerHTML += message
         }
     }
-}
 </script>

@@ -27,6 +27,9 @@ function solveLP(serverRateVector, arrivalRates) {
     A.push(new Array(A[0].length).fill(1))
     A[A.length - 1][A[A.length - 1].length - 1] = 0
 
+    console.log("A")
+    console.log(A)
+
     /* Build objective function */
     for (var i = 0; i < A[0].length; i++) {
         if (i === A[0].length - 1) {
@@ -35,6 +38,9 @@ function solveLP(serverRateVector, arrivalRates) {
             objective["x" + (i + 1)] = 0
         }
     }
+
+    console.log("Objective")
+    console.log(objective)
 
     /* Build constraints */
     for (var i = 0; i < A.length; i++) {
@@ -61,6 +67,9 @@ function solveLP(serverRateVector, arrivalRates) {
         constraints: constraints,
         optimizationType: 'max',
     });
+
+    console.log("Solver")
+    console.log(solver)
     
     /* Call the solve method with a method name */
     const result = solver.solve({
