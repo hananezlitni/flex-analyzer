@@ -1,4 +1,4 @@
- function minNumOfServers(constraints, configs, serverRates) {
+ export function minNumOfServers(constraints, configs, serverRates) {
     //[1, 2, 1] => index: task #, entry: minimum # of servers
 
     for (var task = 1; task <= constraints.length; task++) {
@@ -24,7 +24,7 @@
     }
 }
 
-function maxNumOfServers(constraints, configs, serverRates) {
+export function maxNumOfServers(constraints, configs, serverRates) {
     //[1, 2, 1] => index: task #, entry: maximum # of servers
 
     for (var task = 1; task <= constraints.length; task++) {

@@ -74,8 +74,7 @@
 </style>
 
 <script>
-    import minNumOfServers from '../services/constraints.js'
-    import maxNumOfServers from '../services/constraints.js'
+    import { minNumOfServers, maxNumOfServers } from '../services/constraints.js'
 
     export default {
         components: {
