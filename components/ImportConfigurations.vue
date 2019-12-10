@@ -4,7 +4,7 @@
         <h1 class="import__title">Import a Structure: Configurations</h1>
 
         <form class="import__configurations-form" @submit="$event.preventDefault()">
-            <p id="errorMessage"></p>
+            <div id="import-configs-errorMessage"></div>
 
             <div class="div-flex-center">
                 <input type="text" id="import-configurations__file-name" class="import__file-name" placeholder="Import your configurations" readonly />
@@ -39,7 +39,7 @@
         </form>
     </div>
 
-    <div id="result" class="result"></div>
+    <div id="import-configs-result" class="result"></div>
 
     <br>
 
@@ -51,7 +51,7 @@
             Clear All
         </button>
         
-        <button class="button button--action primary" type="submit" @click="submitStructure"> 
+        <button class="button button--action primary" type="submit" @click="solveLP"> 
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
                 <path fill="#13191f" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"/>
             </svg>
@@ -75,19 +75,22 @@
 
 <script>
     import { minNumOfServers, maxNumOfServers } from '../services/constraints.js'
+    import { buildMatrixA } from '../services/data-processing.js'
+    import { solveLPinPython } from '../services/solver.js'
 
     export default {
-        components: {
-            minNumOfServers, maxNumOfServers
-        },
         data() {
             return {
                 numberOfTasks: 0,
                 numberOfServers: 0,
+                arrivalRatesVector: [],
                 configurations: [],
-                serverRateMatrix: [],
+                serverRatesMatrix: [],
                 minNumOfServersPerTask: [],
-                maxNumOfServersPerTask: []
+                maxNumOfServersPerTask: [],
+                arrivalRatesVectorValid: true,
+                configurationsValid: true,
+                serverRatesMatrixValid: true
             }
         },
         methods: {
@@ -111,51 +114,95 @@
                             lines[i] = lines[i].replace(/['"]+/g, '')
                         }
 
-                        console.log(lines)
-
                         self.numberOfTasks = parseInt(lines[1])
                         self.numberOfServers = parseInt(lines[3])
 
+                        if (lines[5] !== undefined) {
+                            self.arrivalRatesVector = lines[5].split(',').map(Number)
+                        }
+
                         let count = 0
-                        for (var i = 5; i < lines.length; i++) {
-                            if (lines[i].trim() === "Server Rates:") {
-                                break
+                        for (var i = 7; i < lines.length; i++) {
+                            if (lines[i] !== undefined || lines[i] !== '') {
+                                if (lines[i].trim() === "Server Rates:") {
+                                    break
+                                } else {
+                                    self.configurations[count++] = lines[i].split(',').map(Number)
+                                }
                             } else {
-                                self.configurations[count++] = lines[i].split(',').map(Number)
+                                break
                             }
                         }
 
                         count = 0
-                        for (var j = 5 + self.configurations.length + 1; j < lines.length; j++) {
-                            self.serverRateMatrix[count++] = lines[j].split(',').map(Number)
+                        for (var j = 7 + self.configurations.length + 1; j < lines.length; j++) {  
+                            if (lines[j] !== undefined || lines[j] !== '') {
+                                self.serverRatesMatrix[count++] = lines[j].split(',').map(Number)
+                            } else {
+                                break
+                            }
                         }
+
+                        console.log("Number of tasks")
+                        console.log(self.numberOfTasks)
+                        console.log("Number of Servers")
+                        console.log(self.numberOfServers)
+                        console.log("Arrival rates")
+                        console.log(self.arrivalRatesVector)
+                        console.log("Configurations")
+                        console.log(self.configurations)
+                        console.log("Server rates")
+                        console.log(self.serverRatesMatrix)
+
+                        //validate inputs
+                        self.validateArrivalRates()
+                        self.validateConfigurations()
+                        self.validateServerRatesMatrix()
                     };
+                }
+            },
+            validateArrivalRates() {
+                //Length of arrival rates equals to number of tasks
+                if (this.arrivalRatesVector.length !== this.numberOfTasks) {
+                    this.arrivalRatesVectorValid = false
+                    this.errorMessage("Error: The length of the arrival rates vector is incorrect.")
+                }
+
+                //Check for negative values in arrival rates
+                if (this.arrivalRatesVector.some(v => v < 0)) {
+                    this.arrivalRatesVectorValid = false
+                    this.errorMessage("Error: The arrival rates vector should not contain negative values.")
                 }
             },
             validateConfigurations() {
                 //Length of each configuration equals to number of servers
-                if(!this.configurations.every((config) => config.length === this.numOfServers)) {
+                if(this.configurations.every((config) => config.length !== this.numberOfServers)) {
+                    this.configurationsValid = false
                     this.errorMessage("The length of a configuration should equal to the number of servers.")
                 }
 
                 //Valid entries in configs
-                if(!this.configurations.every((config) => config.every((entry) => entry <= this.numOfTasks))) {
-                    this.errorMessage("The configurations should not contain a number greater than " + this.numOfTasks)
+                if(this.configurations.every((config) => config.every((entry) => entry > this.numberOfTasks))) {
+                    this.configurationsValid = false
+                    this.errorMessage("The configurations should not contain a number greater than " + this.numberOfTasks)
                 }
 
                 //Negative values in configs
-                if(!this.configurations.every((config) => config.every((entry) => entry > 0))) {
+                if(this.configurations.every((config) => config.every((entry) => entry < 0))) {
+                    this.configurationsValid = false
                     this.errorMessage("The configurations should not contain negative values.")
                 }
             },
-            validateServerRateMatrix() {
+            validateServerRatesMatrix() {
                 //Length of each server rate vector equals to number of tasks
-                if(!this.serverRateMatrix.every((vector) => vector.length === this.numOfTasks)) {
+                if(this.serverRatesMatrix.every((vector) => vector.length !== this.numberOfTasks)) {
+                    this.serverRatesMatrixValid = false
                     this.errorMessage("The length of a server rate vector should equal to the number of tasks.")
                 }
 
                 //Negative values in server rate matrix
-                if(!this.serverRateMatrix.every((vector) => vector.every((entry) => entry > 0))) {
+                if(this.serverRatesMatrix.every((vector) => vector.every((entry) => entry < 0))) {
+                    this.serverRatesMatrixValid = false
                     this.errorMessage("The server rate vectors should not contain negative values.")
                 }
             },
@@ -173,18 +220,31 @@
                     reader.readAsBinaryString(myFile)
 
                     reader.onload = function (e) {
-                        let constraints = e.target.result; 
-                        self.minNumOfServersPerTask = constraints.split(',').map(Number)
+                        let csvConstraints = e.target.result;
+                        let constraints = csvConstraints.split('\n')
+
+                        for (var i = 0; i < constraints.length; i++) {
+                            constraints[i] = constraints[i].replace(/['"]+/g, '')
+                        }
+
+                        self.minNumOfServersPerTask = constraints[1].split(',').map(Number)
 
                         console.log(self.minNumOfServersPerTask)
+
+                        let appliedConstraints = minNumOfServers(self.minNumOfServersPerTask, self.configurations, self.serverRatesMatrix)
+                        self.configurations = appliedConstraints.configs
+                        self.serverRatesMatrix = appliedConstraints.serverRates
+
+                        console.log(self.configurations)
+                        console.log(self.serverRatesMatrix)
                     }
                 }
             },
             importMaxNumOfServers() {
                 let maxConstraint = document.getElementById('import-configurations-constraints-file-upload--max')
                 var self = this
-
-                //If user imported min # of servers per task
+                
+                //If user imported max # of servers per task
                 if (maxConstraint.files && maxConstraint.files[0]) {
                     //Store constraints
                     var myFile = maxConstraint.files[0];
@@ -194,43 +254,80 @@
                     reader.readAsBinaryString(myFile)
 
                     reader.onload = function (e) {
-                        let constraints = e.target.result; 
-                        self.maxNumOfServersPerTask = constraints.split(',').map(Number)
+                        let csvConstraints = e.target.result;
+                        let constraints = csvConstraints.split('\n')
+
+                        for (var i = 0; i < constraints.length; i++) {
+                            constraints[i] = constraints[i].replace(/['"]+/g, '')
+                        }
+
+                        self.maxNumOfServersPerTask = constraints[1].split(',').map(Number)
 
                         console.log(self.maxNumOfServersPerTask)
+
+                        let appliedConstraints = maxNumOfServers(self.maxNumOfServersPerTask, self.configurations, self.serverRatesMatrix)
+                        self.configurations = appliedConstraints.configs
+                        self.serverRatesMatrix = appliedConstraints.serverRates
+
+                        console.log(self.configurations)
+                        console.log(self.serverRatesMatrix)
                     }
                 }
             },
-            submitStructure() {
-                //Minimum # of servers at a task
-                let minServerOutput = minNumOfServers(this.minNumOfServersPerTask, this.configurations, this.serverRateMatrix)
+            async solveLP() {
+                //scroll to div
+                var elementPosition = document.getElementById('import-configs-result').offsetTop;
+                window.scrollTo(0, elementPosition);
 
-                this.configurations = minServerOutput.configs
-                this.serverRateMatrix = minServerOutput.serverRates
+                if (this.arrivalRatesVectorValid && this.configurationsValid && this.serverRatesMatrixValid) {
+                    this.errorMessage("")
 
-                //Maximum # of servers at a task
-                let maxServerOutput = maxNumOfServers(this.maxNumOfServersPerTask, this.configurations, this.serverRateMatrix)
+                    //Build A matrix
+                    let A = buildMatrixA(this.serverRatesMatrix, this.arrivalRatesVector)
 
-                this.configurations = maxServerOutput.configs
-                this.serverRateMatrix = maxServerOutput.serverRates
+                    //Solve optimization problem
+                    let results = {}
+                    
+                    //Original problem
+                    results["lp"] = await solveLPinPython(A)
 
-                //Solve LP
+                    console.log("**************** Final Output (from import configs) ****************")
+                    console.log(results)
+
+                    //Display output
+                    document.getElementById('import-configs-result').innerHTML = '<h1 class="result__title">Results</h1>'
+                    document.getElementById('import-configs-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["lp"].output.gamma + '</p>'
+                }
             },
             clearAll() {
                 document.getElementById('import-configurations__file-name').value = ""
                 document.getElementById('import-configurations__file-upload').value = null
-                document.getElementById("result").innerHTML = ""
+                document.getElementById('import-configurations-constraints-file-name--min').value = ""
+                document.getElementById('import-configurations-constraints-file-upload--min').value = null
+                document.getElementById('import-configurations-constraints-file-name--max').value = ""
+                document.getElementById('import-configurations-constraints-file-upload--max').value = null
+                document.getElementById("import-configs-result").innerHTML = ""
                 this.errorMessage("")
 
                 //Reset all data
                 this.numberOfTasks = 0
                 this.numberOfServers = 0
                 this.configurations = []
-                this.serverRateMatrix = []
+                this.serverRatesMatrix = []
+                this.arrivalRatesVector = []
+                this.minNumOfServersPerTask = []
+                this.maxNumOfServersPerTask = []
+                this.arrivalRatesVectorValid = true
+                this.configurationsValid = true
+                this.serverRatesMatrixValid = true
             },
             /********** Helper functions **********/
             errorMessage(message) {
-                document.getElementById("errorMessage").innerHTML += message
+                if (message.length === 0) {
+                    document.getElementById("import-configs-errorMessage").innerHTML = message
+                } else {
+                    document.getElementById("import-configs-errorMessage").innerHTML += '<p class="error-message">' + message + '</p>'
+                }
             }
         }
     }

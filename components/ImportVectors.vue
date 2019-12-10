@@ -13,7 +13,7 @@
                     </label>
                 </div>
 
-                <div id="errorMessage"></div>
+                <div id="import-vectors-errorMessage"></div>
                 
                 <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" /> <!--@keyup="parseCsvData($event)"-->
 
@@ -45,7 +45,7 @@
 
         <div id="figure" class="figure"></div> 
 
-        <div id="result" class="result"></div>
+        <div id="import-vectors-result" class="result"></div>
 
         <br>
 
@@ -115,15 +115,11 @@
 </style>
 
 <script>
-    import solveLP from '../services/solver.js'
     import { minNumOfServers, maxNumOfServers } from '../services/constraints.js'
     import { buildMatrixA } from '../services/data-processing.js'
-    import axios from 'axios'
+    import { solveLPinPython } from '../services/solver.js'
 
     export default {
-        components: {
-            solveLP, minNumOfServers, maxNumOfServers
-        },
         data() {
             return {
                 numOfTasks: 5,
@@ -134,8 +130,8 @@
                 numOfConfigs: 0,
                 configs: [],
                 configsServerRateMatrix: [],
-                originalConfigs: [],
-                originalConfigsServerRateMatrix: [],
+                minServersPerTask: [],
+                maxServersPerTask: [],
                 fMatrixValid: true,
                 arrivalRatesValid: true,
                 serverRatesValid: true,
@@ -188,8 +184,6 @@
                 this.numOfConfigs = 0
                 this.configs = []
                 this.configsServerRateMatrix = []
-                this.originalConfigs = []
-                this.originalConfigsServerRateMatrix = []
                 this.fMatrixValid = true
                 this.arrivalRatesValid = true
                 this.serverRatesValid = true
@@ -230,7 +224,7 @@
                 this.arrivalRatesValid = true
                 this.serverRatesValid = true
                 document.getElementById("figure").innerHTML = ""
-                document.getElementById("result").innerHTML = ""
+                document.getElementById("import-vectors-result").innerHTML = ""
                 this.errorMessage("")
                 
                 //Read uploaded file
@@ -308,7 +302,7 @@
                 this.arrivalRatesValid = true
                 this.serverRatesValid = true
                 document.getElementById("figure").innerHTML = ""
-                document.getElementById("result").innerHTML = ""
+                document.getElementById("import-vectors-result").innerHTML = ""
                 this.errorMessage("")
                 
                 //Store inputs
@@ -737,14 +731,76 @@
                 }
             },
             minNumOfServers() {
-                //[1,2,4]
+                let minConstr = document.getElementById('import-vectors-constraints-file-upload--min')
+                var self = this
+                
+                //If user imported min # of servers per task
+                if (minConstr.files && minConstr.files[0]) {
+                    //Store constraints
+                    var myFile = minConstr.files[0];
+                    var reader = new FileReader();
+
+                    document.getElementById('import-vectors-constraints-file-name--min').value = myFile.name
+                    reader.readAsBinaryString(myFile)
+
+                    reader.onload = function (e) {
+                        let csvConstraints = e.target.result;
+                        let constraints = csvConstraints.split('\n')
+
+                        for (var i = 0; i < constraints.length; i++) {
+                            constraints[i] = constraints[i].replace(/['"]+/g, '')
+                        }
+
+                        self.minServersPerTask = constraints[1].split(',').map(Number)
+
+                        console.log(self.minServersPerTask)
+
+                        let appliedConstraints = minNumOfServers(self.minServersPerTask, self.configs, self.configsServerRateMatrix)
+                        self.configs = appliedConstraints.configs
+                        self.configsServerRateMatrix = appliedConstraints.serverRates
+
+                        console.log(self.configs)
+                        console.log(self.configsServerRateMatrix)
+                    }
+                }
             },
             maxNumOfServers() {
-                //[2,3,5]
+                let maxConstr = document.getElementById('import-vectors-constraints-file-upload--max')
+                var self = this
+                
+                //If user imported min # of servers per task
+                if (maxConstr.files && maxConstr.files[0]) {
+                    //Store constraints
+                    var myFile = minConstr.files[0];
+                    var reader = new FileReader();
+
+                    document.getElementById('import-vectors-constraints-file-name--max').value = myFile.name
+                    reader.readAsBinaryString(myFile)
+
+                    reader.onload = function (e) {
+                        let csvConstraints = e.target.result;
+                        let constraints = csvConstraints.split('\n')
+
+                        for (var i = 0; i < constraints.length; i++) {
+                            constraints[i] = constraints[i].replace(/['"]+/g, '')
+                        }
+
+                        self.maxServersPerTask = constraints[1].split(',').map(Number)
+
+                        console.log(self.maxServersPerTask)
+
+                        let appliedConstraints = maxNumOfServers(self.maxServersPerTask, self.configs, self.configsServerRateMatrix)
+                        self.configs = appliedConstraints.configs
+                        self.configsServerRateMatrix = appliedConstraints.serverRates
+
+                        console.log(self.configs)
+                        console.log(self.configsServerRateMatrix)
+                    }
+                }
             },
             /*areArrivalAndServerRatesValid() { //Store arrival and server rates here not in store inputs
                 //scroll to div
-                var elementPosition = document.getElementById('result').offsetTop;
+                var elementPosition = document.getElementById('import-vectors-result').offsetTop;
                 window.scrollTo(0, elementPosition);
 
                 //Store inputs
@@ -758,7 +814,7 @@
             },*/
             async solveOptimizationProblem() {
                 //scroll to div
-                var elementPosition = document.getElementById('result').offsetTop;
+                var elementPosition = document.getElementById('import-vectors-result').offsetTop;
                 window.scrollTo(0, elementPosition);
 
                 //Store inputs in case user changes values in the textarea
@@ -786,13 +842,13 @@
                     console.log(results)
 
                     //Display output
-                    document.getElementById('result').innerHTML = '<h1 class="result__title">Results</h1>'
-                    document.getElementById('result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["originalProblem"].output.gamma + '</p>'
-                    document.getElementById('result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + results["fullyFlexible"].output.gamma + '</p>'
-                    document.getElementById('result').innerHTML += '<p class="asterisks">*****</p>'
+                    document.getElementById('import-vectors-result').innerHTML = '<h1 class="result__title">Results</h1>'
+                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["originalProblem"].output.gamma + '</p>'
+                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + results["fullyFlexible"].output.gamma + '</p>'
+                    document.getElementById('import-vectors-result').innerHTML += '<p class="asterisks">*****</p>'
 
                     for (var i = 1; i <= this.numOfTasks; i++) {
-                        document.getElementById('result').innerHTML += '<p class="lp-result"><b>The capacity of the structure when task <em>' + i + '</em> is removed: </b>' + results["noTask" + i].output.gamma + '</p>'
+                        document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the structure when task <em>' + i + '</em> is removed: </b>' + results["noTask" + i].output.gamma + '</p>'
                     }
                 }
             },
@@ -815,7 +871,7 @@
                 this.export('server-rate-matrix', this.configsServerRateMatrix)
 
                 //Pass A matrix to Python solver and get results
-                let lpResult = this.solveLPinPython(A)
+                let lpResult = solveLPinPython(A)
 
                 return lpResult
             },
@@ -836,7 +892,7 @@
                 let A = buildMatrixA(configsServerRateMatrixNew, this.arrivalRates)
 
                 //Pass A matrix to Python solver and get results
-                let lpResult = this.solveLPinPython(A)
+                let lpResult = solveLPinPython(A)
                 
                 return lpResult
             },
@@ -867,7 +923,7 @@
                 let A = buildMatrixA(configsServerRateMatrixNew, arrivalRatesNew)
 
                 //Pass A matrix to Python solver and get results
-                let lpResult = this.solveLPinPython(A)
+                let lpResult = solveLPinPython(A)
 
                 return lpResult
             },
@@ -953,15 +1009,7 @@
 
                 return serverRateMatrix
             },
-            /********** Test python **********/
-            solveLPinPython(A) {
-                /*let A = [
-                    '-2, -2, 0, -1, -1, 1',
-                    '-3, 0, -5, -5, -2, 1',
-                    '-1, -3, -1, 0, -3, 1',
-                    '1, 1, 1, 1, 1, 0'
-                ]*/
-
+            /*solveLPinPython(A) {
                 const path = `http://localhost:5000/`
                 const data = A;
                 const axiosConfig = {
@@ -976,7 +1024,7 @@
                 }).catch(error => {
                     console.log(error)
                 })
-            },
+            },*/
             exportStructure() {
                 var csvRows = []
                 let structure = document.getElementById('textArea').value.split("\n")
@@ -1062,9 +1110,9 @@
             },
             errorMessage(message) {
                 if (message.length === 0) {
-                    document.getElementById("errorMessage").innerHTML = message
+                    document.getElementById("import-vectors-errorMessage").innerHTML = message
                 } else {
-                    document.getElementById("errorMessage").innerHTML += '<p class="error-message">' + message + '</p>'
+                    document.getElementById("import-vectors-errorMessage").innerHTML += '<p class="error-message">' + message + '</p>'
                 }
             }
         }

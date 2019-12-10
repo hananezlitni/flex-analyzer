@@ -2,6 +2,8 @@ Number of Tasks:
 3
 Number of Servers:
 3
+Arrival Rates:
+"64,53,123"
 Configurations:
 "0,0,0"
 "0,0,2"

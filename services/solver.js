@@ -1,19 +1,39 @@
-const SimpleSimplex = require('simple-simplex');
+import axios from 'axios'
 
-/*let serverRateVector = [
-	[2,3,1],
-	[2,0,3],
-	[0,5,1],
-	[1,5,0],
-	[1,2,3]
-]*/
+export function solveLPinPython(A) {
+    /*let A = [
+        '-2, -2, 0, -1, -1, 1',
+        '-3, 0, -5, -5, -2, 1',
+        '-1, -3, -1, 0, -3, 1',
+        '1, 1, 1, 1, 1, 0'
+    ]*/
+
+    const path = `http://localhost:5000/`
+    const data = A;
+    const axiosConfig = {
+        headers: {
+            'Content-Type': 'application/json',
+            "Access-Control-Allow-Origin": "*",
+        }
+    }
+
+    return axios.post(path, data, axiosConfig).then(response => {
+        return response.data
+    }).catch(error => {
+        console.log(error)
+    })
+}
+
+
+/*const SimpleSimplex = require('simple-simplex');
+
+
 
 function solveLP(serverRateVector, arrivalRates) {  
     let objective = {}
     let constraints = []
     let A = []
 
-    /* Build A */
     A = serverRateVector.reduce((prev, next) => next.map((item, i) =>
     (prev[i] || []).concat(next[i])
     ), [])
@@ -30,7 +50,6 @@ function solveLP(serverRateVector, arrivalRates) {
     console.log("A")
     console.log(A)
 
-    /* Build objective function */
     for (var i = 0; i < A[0].length; i++) {
         if (i === A[0].length - 1) {
             objective["gamma"] = 1
@@ -42,7 +61,6 @@ function solveLP(serverRateVector, arrivalRates) {
     console.log("Objective")
     console.log(objective)
 
-    /* Build constraints */
     for (var i = 0; i < A.length; i++) {
         let constraint = {}
 
@@ -61,7 +79,6 @@ function solveLP(serverRateVector, arrivalRates) {
     console.log("Constraints")
     console.log(constraints)
 
-    /* Initialize a solver */
     const solver = new SimpleSimplex({
         objective: objective,
         constraints: constraints,
@@ -71,7 +88,6 @@ function solveLP(serverRateVector, arrivalRates) {
     console.log("Solver")
     console.log(solver)
     
-    /* Call the solve method with a method name */
     const result = solver.solve({
         methodName: 'simplex',
     });
@@ -93,4 +109,4 @@ function buildNamedVector(i, A) {
     return namedVector
 }
 
-export default solveLP;
+export default solveLP;*/
