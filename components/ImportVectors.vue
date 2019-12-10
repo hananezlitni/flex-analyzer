@@ -13,7 +13,7 @@
                     </label>
                 </div>
 
-                <p id="errorMessage"></p>
+                <div id="errorMessage"></div>
                 
                 <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" /> <!--@keyup="parseCsvData($event)"-->
 
@@ -72,7 +72,7 @@
                 Export Structure
             </button>
             
-            <button class="button button--action primary" type="submit" @click="areArrivalAndServerRatesValid"> 
+            <button class="button button--action primary" type="submit" @click="solveOptimizationProblem">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
                     <path fill="#13191f" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"/>
                 </svg>
@@ -117,6 +117,8 @@
 <script>
     import solveLP from '../services/solver.js'
     import { minNumOfServers, maxNumOfServers } from '../services/constraints.js'
+    import { buildMatrixA } from '../services/data-processing.js'
+    import axios from 'axios'
 
     export default {
         components: {
@@ -216,18 +218,22 @@
                 let textarea = document.getElementById('textArea');
                 var self = this
 
-                if (textarea.value.length > 0) {
-                    textarea.value = ""
-                    this.numOfTasks = 5
-                    this.numOfServers = 5
-                    this.fMatrix = []
-                    this.arrivalRates = []
-                    this.serverRates = []
-                    document.getElementById("figure").innerHTML = ""
-                    document.getElementById("result").innerHTML = ""
-                    this.errorMessage("")
-                } 
-
+                //Reset in case there's previous content
+                textarea.value = ""
+                this.numOfTasks = 5
+                this.numOfServers = 5
+                this.fMatrix = []
+                this.arrivalRates = []
+                this.serverRates = []
+                this.numOfConfigs = 0
+                this.fMatrixValid = true
+                this.arrivalRatesValid = true
+                this.serverRatesValid = true
+                document.getElementById("figure").innerHTML = ""
+                document.getElementById("result").innerHTML = ""
+                this.errorMessage("")
+                
+                //Read uploaded file
                 if (input.files && input.files[0]) { 
                     var myFile = input.files[0];
                     var reader = new FileReader();
@@ -245,61 +251,62 @@
                         let values = textarea.value.split("\n")
                         self.numOfTasks = parseInt(values[1])
                         self.numOfServers = parseInt(values[3])
-                        self.arrivalRates = values[5].split(',').map(Number)
+                        
+                        //Store arrival rates
+                        if (values[5] !== undefined) {
+                            self.arrivalRates = values[5].split(',').map(Number)
+                        }
 
+                        //Store F matrix
                         let fMatrixStart = 7 + self.numOfServers + 1
                         let count = 0
                         for (i = fMatrixStart; i < values.length; i++) {
-                            self.fMatrix[count++] = values[i].split(',').map(Number)
+                            if (values[i] !== undefined || values[i] !== '') {
+                                self.fMatrix[count++] = values[i].split(',').map(Number)
+                            } else {
+                                break
+                            }
                         }
 
+                        //Store server rates matrix
                         let counter = 0
                         for (var j = 7; j < fMatrixStart - 1; j++) {
-                            self.serverRates[counter++] = values[j].split(',').map(Number)
-                        } 
-                        //self.generateFigure()
+                            if (values[j] !== undefined || values[j] !== '') {
+                                self.serverRates[counter++] = values[j].split(',').map(Number)
+                            } else {
+                                break
+                            }
+                        }
+                        
+                        //Number of configurations
+                        let configs = 1
+                        for (var i = 0; i < self.numOfServers; i++) {
+                            let count = 0
+                            for (var j = 0; j < self.numOfTasks; j++) {
+                                if (self.fMatrix[i][j] === 1) {
+                                count++
+                                }
+                            }
+                            configs *= count + 1
+                        }
+
+                        self.numOfConfigs = configs
                     };
                 }
-            
-                /*let input = document.getElementById('file-upload');
-                let textarea = document.getElementById('textArea');
-
-                if (input.files && input.files[0]) { 
-                //Reset anyway in case there's previous content
-                textarea.value = ""
-                this.numOfTasks = 5
-                this.numOfServers = 5
-                this.fMatrix = []
-                this.arrivalRates = []
-                this.serverRates = []
-                this.numOfConfigs = 0
-                document.getElementById("figure").innerHTML = ""
-                this.errorMessage("")
-
-                //Display file content in text area
-                var myFile = input.files[0];
-                var reader = new FileReader();
-                reader.readAsBinaryString(myFile)
-
-                reader.onload = function (e) {
-                    let csvdata = e.target.result; 
-                    let lines = csvdata.split('\n');
-                    for (var i = 0; i < lines.length; i++) {
-                        textarea.value += lines[i].replace(/['"]+/g, '')
-                    }
-                };
-                }*/
             },
-            storeInputs() { //make sure latest inputs are stored when click generate figure and submit structure buttons.. validation needs to happen for both as well in case f matrix was edited just before submission.
+            storeInputs() {
                 let textarea = document.getElementById('textArea');
 
-                //Reset anyway in case there's previous content
+                //Reset in case there's previous content
                 this.numOfTasks = 5
                 this.numOfServers = 5
                 this.fMatrix = []
                 this.arrivalRates = []
                 this.serverRates = []
                 this.numOfConfigs = 0
+                this.fMatrixValid = true
+                this.arrivalRatesValid = true
+                this.serverRatesValid = true
                 document.getElementById("figure").innerHTML = ""
                 document.getElementById("result").innerHTML = ""
                 this.errorMessage("")
@@ -309,17 +316,31 @@
 
                 this.numOfTasks = parseInt(values[1])
                 this.numOfServers = parseInt(values[3])
-                this.arrivalRates = values[5].split(',').map(Number)                   
 
+                //Store arrival rates
+                if (values[5] !== undefined) {
+                    this.arrivalRates = values[5].split(',').map(Number)
+                }
+                
+                //Store F matrix
                 let fMatrixStart = 7 + this.numOfServers + 1
                 let count = 0
                 for (var j = fMatrixStart; j < values.length; j++) {
-                    this.fMatrix[count++] = values[j].split(',').map(Number)
+                    if (values[j] !== undefined || values[j] !== '') {
+                        this.fMatrix[count++] = values[j].split(',').map(Number)
+                    } else {
+                        break
+                    }
                 }
 
+                //Store server rates matrix
                 let counter = 0
                 for (var l = 7; l < fMatrixStart - 1; l++) {
-                    this.serverRates[counter++] = values[l].split(',').map(Number)
+                    if (values[l] !== undefined || values[l] !== '') {
+                        this.serverRates[counter++] = values[l].split(',').map(Number)
+                    } else {
+                        break
+                    }
                 }
 
                 //Number of configurations
@@ -349,6 +370,7 @@
                 console.log("# of Configs")
                 console.log(this.numOfConfigs)
 
+                //Validate inputs
                 this.validateInputs()
             },
             validateInputs() {
@@ -356,9 +378,11 @@
                 this.arrivalRatesValid = true
                 this.serverRatesValid = true
                 this.fMatrixValid = true
+                this.errorMessage("")
 
-                //Validate f matrix
+                //Validate F matrix
                 if (this.fMatrix === undefined || this.fMatrix.length === 0) {
+                    this.fMatrixValid = false
                     this.errorMessage("Error: The f matrix is empty.")
                 } else {
                     //Check fMatrix values are 0s and 1s only
@@ -389,44 +413,44 @@
 
                 //Validate Arrival Rates
                 if (this.arrivalRates === undefined || this.arrivalRates.length === 0) {
-                this.arrivalRatesValid = false
-                this.errorMessage("Error: The arrival rates vector is empty.")
+                    this.arrivalRatesValid = false
+                    this.errorMessage("Error: The arrival rates vector is empty.")
                 } else {
-                //Check length of arrivalRates
-                if (this.arrivalRates.length !== this.numOfTasks) {
-                    this.arrivalRatesValid = false
-                    this.errorMessage("Error: The length of the arrival rates vector is incorrect.")
-                }
+                    //Check length of arrivalRates
+                    if (this.arrivalRates.length !== this.numOfTasks) {
+                        this.arrivalRatesValid = false
+                        this.errorMessage("Error: The length of the arrival rates vector is incorrect.")
+                    }
 
-                //Check for negative values in arrival rates
-                if (this.arrivalRates.some(v => v < 0)) {
-                    this.arrivalRatesValid = false
-                    this.errorMessage("Error: The arrival rates vector should not contain negative values.")
-                }
+                    //Check for negative values in arrival rates
+                    if (this.arrivalRates.some(v => v < 0)) {
+                        this.arrivalRatesValid = false
+                        this.errorMessage("Error: The arrival rates vector should not contain negative values.")
+                    }
                 }
                 
                 //Validate Server Rates
                 if (this.serverRates === undefined || this.serverRates.length === 0) {
-                this.serverRatesValid = false
-                this.errorMessage("Error: The server rates matrix is empty.")
+                    this.serverRatesValid = false
+                    this.errorMessage("Error: The server rates matrix is empty.")
                 } else {
-                //Check serverRates dimensions
-                for (var j = 0; j < this.serverRates.length; j++) {
-                    if (this.serverRates.length !== this.numOfServers || this.serverRates[j].length !== this.numOfTasks) {
-                    this.serverRatesValid = false
-                    this.errorMessage("Error: The dimensions of the server rates matrix are incorrect.")
-                    break
-                    } 
-                }
-
-                for (var j = 0; j < this.serverRates.length; j++) {
-                    //Check for negative values in server rates
-                    if (this.serverRates[j].some(v => v < 0)) {
-                    this.serverRatesValid = false
-                    this.errorMessage("Error: The server rates matrix should not contain negative values.")
-                    break
+                    //Check serverRates dimensions
+                    for (var j = 0; j < this.serverRates.length; j++) {
+                        if (this.serverRates.length !== this.numOfServers || this.serverRates[j].length !== this.numOfTasks) {
+                            this.serverRatesValid = false
+                            this.errorMessage("Error: The dimensions of the server rates matrix are incorrect.")
+                            break
+                        } 
                     }
-                }
+
+                    for (var j = 0; j < this.serverRates.length; j++) {
+                        //Check for negative values in server rates
+                        if (this.serverRates[j].some(v => v < 0)) {
+                            this.serverRatesValid = false
+                            this.errorMessage("Error: The server rates matrix should not contain negative values.")
+                            break
+                        }
+                    }
                 }
             },
             generateFigure() {
@@ -434,7 +458,7 @@
                 var elementPosition = document.getElementById('figure').offsetTop;
                 window.scrollTo(0, elementPosition);
 
-                //Store inputs
+                //Store inputs in case the user changed the values in the text area
                 this.storeInputs()
 
                 //Initialize figure if fMatrix is valid
@@ -718,7 +742,7 @@
             maxNumOfServers() {
                 //[2,3,5]
             },
-            areArrivalAndServerRatesValid() { //Store arrival and server rates here not in store inputs
+            /*areArrivalAndServerRatesValid() { //Store arrival and server rates here not in store inputs
                 //scroll to div
                 var elementPosition = document.getElementById('result').offsetTop;
                 window.scrollTo(0, elementPosition);
@@ -731,6 +755,121 @@
                     this.errorMessage("")
                     this.solveOptimizationProblem()
                 }
+            },*/
+            async solveOptimizationProblem() {
+                //scroll to div
+                var elementPosition = document.getElementById('result').offsetTop;
+                window.scrollTo(0, elementPosition);
+
+                //Store inputs in case user changes values in the textarea
+                this.storeInputs()
+
+                if (this.arrivalRatesValid && this.serverRatesValid && this.fMatrixValid) {
+                    this.errorMessage("")
+
+                    //Solve optimization problem
+                    let results = {}
+                    
+                    //Original problem
+                    results["originalProblem"] = await this.solveOriginalProblem()
+
+                    //Fully Flexible Structure
+                    results["fullyFlexible"] = await this.solveForFullyFlexibleStructure()
+
+                    //Remove Task n
+                    for (var n = 0; n < this.numOfTasks; n++) {
+                        console.log("**************** Remove Task " + (n + 1) + "****************")
+                        results["noTask" + (n + 1)] = await this.solveWithoutTaskN(n)
+                    }
+
+                    console.log("**************** Final Output ****************")
+                    console.log(results)
+
+                    //Display output
+                    document.getElementById('result').innerHTML = '<h1 class="result__title">Results</h1>'
+                    document.getElementById('result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["originalProblem"].output.gamma + '</p>'
+                    document.getElementById('result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + results["fullyFlexible"].output.gamma + '</p>'
+                    document.getElementById('result').innerHTML += '<p class="asterisks">*****</p>'
+
+                    for (var i = 1; i <= this.numOfTasks; i++) {
+                        document.getElementById('result').innerHTML += '<p class="lp-result"><b>The capacity of the structure when task <em>' + i + '</em> is removed: </b>' + results["noTask" + i].output.gamma + '</p>'
+                    }
+                }
+            },
+            solveOriginalProblem() {
+                console.log("**************** Original Problem ****************")
+                //Generate configurations
+                this.configs = this.computeConfigurations(this.numOfServers, this.numOfTasks, this.fMatrix)
+                console.log(JSON.parse(JSON.stringify(this.configs)))
+
+                //Generate server rates from configurations
+                this.configsServerRateMatrix = this.computeServerRatesOfConfigurations(this.configs, this.serverRates)
+                console.log(JSON.parse(JSON.stringify(this.configsServerRateMatrix)))
+
+                //Build A matrix
+                //let A = ["-2,-2,0,-1,-1,64", "-3,0,-5,-5,-2,53", "-1,-3,-1,0,-3,123", "1,1,1,1,1,0"]
+                let A = buildMatrixA(this.configsServerRateMatrix, this.arrivalRates)
+
+                //Export configs and server rates
+                this.export('configurations', this.configs)
+                this.export('server-rate-matrix', this.configsServerRateMatrix)
+
+                //Pass A matrix to Python solver and get results
+                let lpResult = this.solveLPinPython(A)
+
+                return lpResult
+            },
+            solveForFullyFlexibleStructure() {
+                console.log("**************** Fully Flexible Structure ****************")
+                let configsNew = []
+                let configsServerRateMatrixNew = []
+
+                //Generate configurations
+                configsNew = this.computeConfigurations(this.numOfServers, this.numOfTasks, new Array(this.numOfServers).fill(new Array(this.numOfTasks).fill(1)))
+                console.log(JSON.parse(JSON.stringify(configsNew)))
+
+                //Generate server rates from configurations
+                configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
+                console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
+
+                //Build A matrix
+                let A = buildMatrixA(configsServerRateMatrixNew, this.arrivalRates)
+
+                //Pass A matrix to Python solver and get results
+                let lpResult = this.solveLPinPython(A)
+                
+                return lpResult
+            },
+            solveWithoutTaskN(n) {
+                let fMatrixNew = this.fMatrix
+
+                //Modify F matrix
+                for (var row in fMatrixNew) {
+                    fMatrixNew[row][n] = 0
+                }
+
+                //Modify arrival rates
+                let arrivalRatesNew = this.arrivalRates.slice()
+                arrivalRatesNew[n] = 0
+
+                console.log("New arrival rates: ")
+                console.log(arrivalRatesNew)
+
+                //Modify configurations
+                let configsNew = this.configs.map((row) => row.map((entry) => entry === (n + 1) ? 0 : entry))
+                console.log(JSON.parse(JSON.stringify(configsNew)))
+
+                //Generate server rates from configurations
+                let configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
+                console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
+
+                //Build A matrix
+                let A = buildMatrixA(configsServerRateMatrixNew, arrivalRatesNew)
+
+                //Pass A matrix to Python solver and get results
+                let lpResult = this.solveLPinPython(A)
+
+                return lpResult
             },
             computeConfigurations(numOfServers, numOfTasks, fMatrix) {
                 const ON = 1, OFF = 0;
@@ -814,90 +953,29 @@
 
                 return serverRateMatrix
             },
-            solveOptimizationProblem() {
-                let results = {}
-                
-                //Original problem
-                results["originalProblem"] = this.solveOriginalProblem().optimum
+            /********** Test python **********/
+            solveLPinPython(A) {
+                /*let A = [
+                    '-2, -2, 0, -1, -1, 1',
+                    '-3, 0, -5, -5, -2, 1',
+                    '-1, -3, -1, 0, -3, 1',
+                    '1, 1, 1, 1, 1, 0'
+                ]*/
 
-                //Fully Flexible Structure
-                results["fullyFlexible"] = this.solveForFullyFlexibleStructure().optimum
-
-                //Remove Task n
-                for (var n = 0; n < this.numOfTasks; n++) {
-                    console.log("**************** Remove Task " + (n + 1) + "****************")
-                    results["noTask" + (n + 1)] = this.solveWithoutTaskN(n).optimum
-                }
-                
-                console.log("**************** Final Output ****************")
-                console.log(results)
-
-                //Display output
-                document.getElementById('result').innerHTML = '<h1 class="result__title">Result</h1>'
-                document.getElementById('result').innerHTML += '<p>The capacity of the submitted structure is: ' + results["originalProblem"] + '</p>'
-                document.getElementById('result').innerHTML += '<p>The capacity of the fully flexible structure is: ' + results["fullyFlexible"] + '</p>'
-
-                for (var i = 1; i <= this.numOfTasks; i++) {
-                    document.getElementById('result').innerHTML += '<p>The capacity of the structure when task ' + i + ' is removed: ' + results["noTask" + i] + '</p>'
-                }
-            },
-            solveOriginalProblem() {
-                console.log("**************** Original Problem ****************")
-                this.configs = this.computeConfigurations(this.numOfServers, this.numOfTasks, this.fMatrix)
-                console.log(JSON.parse(JSON.stringify(this.configs)))
-
-                this.configsServerRateMatrix = this.computeServerRatesOfConfigurations(this.configs, this.serverRates)
-                console.log(JSON.parse(JSON.stringify(this.configsServerRateMatrix)))
-
-                let lpResult = solveLP(this.configsServerRateMatrix, this.arrivalRates)
-                console.log(lpResult)
-
-                this.export('configurations', this.configs)
-                this.export('server-rate-matrix', this.configsServerRateMatrix)
-
-                return lpResult.solution
-            },
-            solveForFullyFlexibleStructure() {
-                console.log("**************** Fully Flexible Structure ****************")
-                //New configs & server rate matrix and reset
-                let configsNew = []
-                let configsServerRateMatrixNew = []
-
-                configsNew = this.computeConfigurations(this.numOfServers, this.numOfTasks, new Array(this.numOfServers).fill(new Array(this.numOfTasks).fill(1)))
-                console.log(JSON.parse(JSON.stringify(configsNew)))
-
-                configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
-                console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
-
-                let lpResult = solveLP(configsServerRateMatrixNew, this.arrivalRates)
-                console.log(lpResult)
-
-                return lpResult.solution
-            },
-            solveWithoutTaskN(n) {
-                let fMatrixNew = this.fMatrix
-
-                for (var row in fMatrixNew) {
-                    fMatrixNew[row][n] = 0
+                const path = `http://localhost:5000/`
+                const data = A;
+                const axiosConfig = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Access-Control-Allow-Origin": "*",
+                    }
                 }
 
-                let arrivalRatesNew = this.arrivalRates.slice()
-                arrivalRatesNew[n] = 0
-
-                console.log("New arrival rates: ")
-                console.log(arrivalRatesNew)
-
-                //Compute configs and solve LP
-                let configsNew = this.configs.map((row) => row.map((entry) => entry === (n + 1) ? 0 : entry))
-                console.log(JSON.parse(JSON.stringify(configsNew)))
-
-                let configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
-                console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
-
-                let lpResult = solveLP(configsServerRateMatrixNew, arrivalRatesNew)
-                console.log(lpResult)
-
-                return lpResult.solution
+                return axios.post(path, data, axiosConfig).then(response => {
+                    return response.data
+                }).catch(error => {
+                    console.log(error)
+                })
             },
             exportStructure() {
                 var csvRows = []
@@ -922,8 +1000,18 @@
                 document.body.removeChild(element);
             },
             export(fileName, file) {
+                var csvContent = ""
+                
+                for (var x = 0; x < file.length; x++) {
+                    if (x == file.length -1 ) {
+                        csvContent += file[x]
+                    } else {
+                        csvContent += file[x] + "\r\n"
+                    }
+                }
+
                 var element = document.createElement('a')
-                element.setAttribute('href', 'data:text/csv;base64,' + btoa(file));
+                element.setAttribute('href', 'data:text/csv;base64,' + btoa(csvContent));
                 element.setAttribute('download', fileName + '.csv');
                 element.style.display = 'none';
                 
@@ -973,7 +1061,11 @@
                 return duplicates;
             },
             errorMessage(message) {
-                document.getElementById("errorMessage").innerHTML = message
+                if (message.length === 0) {
+                    document.getElementById("errorMessage").innerHTML = message
+                } else {
+                    document.getElementById("errorMessage").innerHTML += '<p class="error-message">' + message + '</p>'
+                }
             }
         }
     }   

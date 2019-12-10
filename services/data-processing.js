@@ -1,4 +1,4 @@
-module.exports = function buildMatrixA(serverRates, arrivalRates) {
+export function buildMatrixA(serverRates, arrivalRates) {
     let A = []
     
     /* Build A */
@@ -13,8 +13,7 @@ module.exports = function buildMatrixA(serverRates, arrivalRates) {
     A.push(new Array(A[0].length).fill(1))
     A[A.length - 1][A[A.length - 1].length - 1] = 0
 
-    console.log("A")
-    console.log(A)
+    A = A.map((row) => row.join())
 
     return A
 }

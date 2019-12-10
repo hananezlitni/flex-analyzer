@@ -198,11 +198,18 @@
     font-size: 1.5em;
     margin-bottom: 1.5em;
   }
-  #errorMessage {
+  .lp-result {
+    padding: 3px;
+    margin: 5px;
+  }
+  .asterisks {
+    text-align: center;
+  }
+  .error-message {
     color: #ff4d4d;
     font-size: 1.2em;
     text-align: center;
-    padding: 5px;
+    padding: 3px;
     margin: 5px;
   }
 </style>
