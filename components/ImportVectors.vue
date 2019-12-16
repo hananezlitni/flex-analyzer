@@ -21,7 +21,7 @@
 
                 <div class="div-flex-center">
                     <input type="text" id="import-vectors-constraints-file-name--min" class="import__constraints-file-name" placeholder="Import your constraints (optional)" readonly />
-                    <input type="file" id="import-vectors-constraints-file-upload--min" class="import__file-upload" accept=".csv" @change="minNumOfServers"/>
+                    <input type="file" id="import-vectors-constraints-file-upload--min" class="import__file-upload" accept=".csv" /> <!--@change="minNumOfServers"-->
                     <label for="import-vectors-constraints-file-upload--min" class="import__file-upload-label">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
                         Choose a file
@@ -34,7 +34,7 @@
 
                 <div class="div-flex-center">
                     <input type="text" id="import-vectors-constraints-file-name--max" class="import__constraints-file-name" placeholder="Import your constraints (optional)" readonly />
-                    <input type="file" id="import-vectors-constraints-file-upload--max" class="import__file-upload" accept=".csv" @change="maxNumOfServers"/>
+                    <input type="file" id="import-vectors-constraints-file-upload--max" class="import__file-upload" accept=".csv" /> <!--@change="maxNumOfServers"-->
                     <label for="import-vectors-constraints-file-upload--max" class="import__file-upload-label">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
                         Choose a file
@@ -160,7 +160,7 @@
             clearAll() {
                 document.getElementById('textArea').value = "" 
                 document.getElementById("figure").innerHTML = ""
-                document.getElementById("result").innerHTML = ""
+                document.getElementById("import-vectors-result").innerHTML = ""
                 document.getElementById('file-name').value = ""
                 document.getElementById('file-upload').value = null
                 document.getElementById('import-vectors-constraints-file-name--min').value = ""
@@ -220,6 +220,8 @@
                 this.arrivalRates = []
                 this.serverRates = []
                 this.numOfConfigs = 0
+                this.configs = []
+                this.configsServerRateMatrix = []
                 this.fMatrixValid = true
                 this.arrivalRatesValid = true
                 this.serverRatesValid = true
@@ -298,6 +300,8 @@
                 this.arrivalRates = []
                 this.serverRates = []
                 this.numOfConfigs = 0
+                this.configs = []
+                this.configsServerRateMatrix = []
                 this.fMatrixValid = true
                 this.arrivalRatesValid = true
                 this.serverRatesValid = true
@@ -449,8 +453,7 @@
             },
             generateFigure() {
                 //Scroll to div
-                var elementPosition = document.getElementById('figure').offsetTop;
-                window.scrollTo(0, elementPosition);
+                this.$el.querySelector("#figure").scrollIntoView(true)
 
                 //Store inputs in case the user changed the values in the text area
                 this.storeInputs()
@@ -814,8 +817,7 @@
             },*/
             async solveOptimizationProblem() {
                 //scroll to div
-                var elementPosition = document.getElementById('import-vectors-result').offsetTop;
-                window.scrollTo(0, elementPosition);
+                this.$el.querySelector("#import-vectors-result").scrollIntoView(true)
 
                 //Store inputs in case user changes values in the textarea
                 this.storeInputs()
@@ -862,6 +864,10 @@
                 this.configsServerRateMatrix = this.computeServerRatesOfConfigurations(this.configs, this.serverRates)
                 console.log(JSON.parse(JSON.stringify(this.configsServerRateMatrix)))
 
+                //Apply constraints
+                this.minNumOfServers()
+                this.maxNumOfServers()
+
                 //Build A matrix
                 //let A = ["-2,-2,0,-1,-1,64", "-3,0,-5,-5,-2,53", "-1,-3,-1,0,-3,123", "1,1,1,1,1,0"]
                 let A = buildMatrixA(this.configsServerRateMatrix, this.arrivalRates)
@@ -887,6 +893,10 @@
                 //Generate server rates from configurations
                 configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
                 console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
+
+                //Apply constraints
+                this.minNumOfServers()
+                this.maxNumOfServers()
 
                 //Build A matrix
                 let A = buildMatrixA(configsServerRateMatrixNew, this.arrivalRates)

@@ -99,6 +99,20 @@
                 let input = document.getElementById('import-configurations__file-upload');
                 var self = this
 
+                //Reset in case there's previous content
+                this.numberOfTasks = 0
+                this.numberOfServers = 0
+                this.arrivalRatesVector = []
+                this.configurations = []
+                this.serverRatesMatrix = []
+                this.minNumOfServersPerTask = [],
+                this.maxNumOfServersPerTask = [],
+                this.arrivalRatesVectorValid = true
+                this.configurationsValid = true
+                this.serverRatesMatrixValid = true
+                document.getElementById("import-configs-result").innerHTML = ""
+                this.errorMessage("")
+
                 if (input.files && input.files[0]) { 
                     var myFile = input.files[0];
                     var reader = new FileReader();
@@ -276,10 +290,22 @@
             },
             async solveLP() {
                 //scroll to div
-                var elementPosition = document.getElementById('import-configs-result').offsetTop;
-                window.scrollTo(0, elementPosition);
+                this.$el.querySelector("#import-configs-result").scrollIntoView(true)
+                
+                //Check if arrival rates are empty
+                if (this.arrivalRatesVector === undefined || this.arrivalRatesVector.length === 0) {
+                    this.arrivalRatesVectorValid = false
+                    this.errorMessage("The arrival rates vector is empty.")
+                } 
+                
+                //Check if server rates are empty
+                if (this.serverRatesMatrix === undefined || this.serverRatesMatrix.length === 0) {
+                    this.serverRatesMatrixValid = false
+                    this.errorMessage("The server rates matrix is empty.")
+                }
 
-                if (this.arrivalRatesVectorValid && this.configurationsValid && this.serverRatesMatrixValid) {
+                //If all is valid solve LP
+                if (this.arrivalRatesVector.length > 0 && this.serverRatesMatrix.length > 0 && this.arrivalRatesVectorValid && this.configurationsValid && this.serverRatesMatrixValid) {
                     this.errorMessage("")
 
                     //Build A matrix

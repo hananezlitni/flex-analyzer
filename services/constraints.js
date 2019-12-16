@@ -27,10 +27,10 @@ export function maxNumOfServers(constraints, configs, serverRates) {
         if (constraints[task] === 0) {
             continue
         } else {
-            for (var i = 0; i < configs.length; i++) {
-                if (getOccurrence(configs[i], task + 1) > constraints[task]) {
-                    configs[i] = configs[i].fill(0)
-                    serverRates[i] = serverRates[i].fill(0)
+            for (var n = 0; n < configs.length; n++) {
+                if (getOccurrence(configs[n], task + 1) > constraints[task]) {
+                    configs[n] = configs[n].fill(0)
+                    serverRates[n] = serverRates[n].fill(0)
                 } else {
                     continue
                 }

@@ -5,9 +5,9 @@
       <p class="header__team">
         Team leads: <a href="https://www2.isye.gatech.edu/people/faculty/Sigrun_Andradottir/" target="_blank">Sigrún Andradóttir</a>, <a href="https://www.isye.gatech.edu/users/hayriye-ayhan?entry=hs41" target="_blank">Hayriye Ayhan</a>, <a href="http://www.cas.mcmaster.ca/~downd/" target="_blank">Douglas G. Down</a>
         <br>
-        Student contributors (initial version): Matt Fielding, Edward Peng, and Alvin Poon
+        Student contributors of the initial version: Matt Fielding, Edward Peng, and Alvin Poon
         <br>
-        Re-designed &amp; developed by Hanane Zlitni
+        Re-designed &amp; re-developed by Hanane Zlitni
       </p>
 		</header> 
     <app-nav />
