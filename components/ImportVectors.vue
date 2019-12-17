@@ -21,7 +21,7 @@
 
                 <div class="div-flex-center">
                     <input type="text" id="import-vectors-constraints-file-name--min" class="import__constraints-file-name" placeholder="Import your constraints (optional)" readonly />
-                    <input type="file" id="import-vectors-constraints-file-upload--min" class="import__file-upload" accept=".csv" /> <!--@change="minNumOfServers"-->
+                    <input type="file" id="import-vectors-constraints-file-upload--min" class="import__file-upload" accept=".csv" @change="minNumOfServers" />
                     <label for="import-vectors-constraints-file-upload--min" class="import__file-upload-label">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
                         Choose a file
@@ -34,7 +34,7 @@
 
                 <div class="div-flex-center">
                     <input type="text" id="import-vectors-constraints-file-name--max" class="import__constraints-file-name" placeholder="Import your constraints (optional)" readonly />
-                    <input type="file" id="import-vectors-constraints-file-upload--max" class="import__file-upload" accept=".csv" /> <!--@change="maxNumOfServers"-->
+                    <input type="file" id="import-vectors-constraints-file-upload--max" class="import__file-upload" accept=".csv" @change="maxNumOfServers" />
                     <label for="import-vectors-constraints-file-upload--max" class="import__file-upload-label">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
                         Choose a file
@@ -743,7 +743,7 @@
                     var myFile = minConstr.files[0];
                     var reader = new FileReader();
 
-                    document.getElementById('import-vectors-constraints-file-name--min').value = myFile.name
+                    document.getElementById('import-vectors-constraints-file-name--min').value = minConstr.files[0].name
                     reader.readAsBinaryString(myFile)
 
                     reader.onload = function (e) {
@@ -756,15 +756,9 @@
 
                         self.minServersPerTask = constraints[1].split(',').map(Number)
 
+                        console.log("Minimum servers per task")
                         console.log(self.minServersPerTask)
-
-                        let appliedConstraints = minNumOfServers(self.minServersPerTask, self.configs, self.configsServerRateMatrix)
-                        self.configs = appliedConstraints.configs
-                        self.configsServerRateMatrix = appliedConstraints.serverRates
-
-                        console.log(self.configs)
-                        console.log(self.configsServerRateMatrix)
-                    }
+                    }  
                 }
             },
             maxNumOfServers() {
@@ -774,7 +768,7 @@
                 //If user imported min # of servers per task
                 if (maxConstr.files && maxConstr.files[0]) {
                     //Store constraints
-                    var myFile = minConstr.files[0];
+                    var myFile = maxConstr.files[0];
                     var reader = new FileReader();
 
                     document.getElementById('import-vectors-constraints-file-name--max').value = myFile.name
@@ -790,14 +784,8 @@
 
                         self.maxServersPerTask = constraints[1].split(',').map(Number)
 
+                        console.log("Maximum servers per task")
                         console.log(self.maxServersPerTask)
-
-                        let appliedConstraints = maxNumOfServers(self.maxServersPerTask, self.configs, self.configsServerRateMatrix)
-                        self.configs = appliedConstraints.configs
-                        self.configsServerRateMatrix = appliedConstraints.serverRates
-
-                        console.log(self.configs)
-                        console.log(self.configsServerRateMatrix)
                     }
                 }
             },
@@ -858,21 +846,46 @@
                 console.log("**************** Original Problem ****************")
                 //Generate configurations
                 this.configs = this.computeConfigurations(this.numOfServers, this.numOfTasks, this.fMatrix)
+                console.log("Original configurations")
                 console.log(JSON.parse(JSON.stringify(this.configs)))
 
                 //Generate server rates from configurations
                 this.configsServerRateMatrix = this.computeServerRatesOfConfigurations(this.configs, this.serverRates)
+                console.log("Original server rates")
                 console.log(JSON.parse(JSON.stringify(this.configsServerRateMatrix)))
 
-                //Apply constraints
-                this.minNumOfServers()
-                this.maxNumOfServers()
+                //Apply minNumOfServers constraints
+                if (this.minServersPerTask.length > 0) {
+                    let appliedMinConstraints = minNumOfServers(this.minServersPerTask, this.configs, this.configsServerRateMatrix)
+                    this.configs = appliedMinConstraints.configs
+                    this.configsServerRateMatrix = appliedMinConstraints.serverRates
+
+                    console.log("Configurations with minNumOfServers")
+                    console.log(this.configs)
+
+                    console.log("Server rates with minNumOfServers")
+                    console.log(this.configsServerRateMatrix)
+                }   
+
+                //Apply maxNumOfServers constraints
+                if (this.maxServersPerTask.length > 0) {
+                    let appliedMaxConstraints = maxNumOfServers(this.maxServersPerTask, this.configs, this.configsServerRateMatrix)
+                    this.configs = appliedMaxConstraints.configs
+                    this.configsServerRateMatrix = appliedMaxConstraints.serverRates
+
+                    console.log("Configurations with maxNumOfServers")
+                    console.log(this.configs)
+
+                    console.log("Server rates with maxNumOfServers")
+                    console.log(this.configsServerRateMatrix)
+                }  
 
                 //Build A matrix
                 //let A = ["-2,-2,0,-1,-1,64", "-3,0,-5,-5,-2,53", "-1,-3,-1,0,-3,123", "1,1,1,1,1,0"]
                 let A = buildMatrixA(this.configsServerRateMatrix, this.arrivalRates)
 
                 //Export configs and server rates
+                //Note: right now, the configs after applying constraints are being exported. modify it based on Dr. Down's reponse
                 this.export('configurations', this.configs)
                 this.export('server-rate-matrix', this.configsServerRateMatrix)
 
@@ -888,15 +901,39 @@
 
                 //Generate configurations
                 configsNew = this.computeConfigurations(this.numOfServers, this.numOfTasks, new Array(this.numOfServers).fill(new Array(this.numOfTasks).fill(1)))
+                console.log("Fully flexible structure configurations")
                 console.log(JSON.parse(JSON.stringify(configsNew)))
 
                 //Generate server rates from configurations
                 configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
+                console.log("Fully flexible structure server rates")
                 console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
 
-                //Apply constraints
-                this.minNumOfServers()
-                this.maxNumOfServers()
+                //Apply minNumOfServers constraints
+                if (this.minServersPerTask.length > 0) {
+                    let appliedMinConstraints = minNumOfServers(this.minServersPerTask, configsNew, configsServerRateMatrixNew)
+                    configsNew = appliedMinConstraints.configs
+                    configsServerRateMatrixNew = appliedMinConstraints.serverRates
+
+                    console.log("Fully flexible structure configurations with minNumOfServers")
+                    console.log(configsNew)
+
+                    console.log("Fully flexible structure server rates with minNumOfServers")
+                    console.log(configsServerRateMatrixNew)
+                }   
+
+                //Apply maxNumOfServers constraints
+                if (this.maxServersPerTask.length > 0) {
+                    let appliedMaxConstraints = maxNumOfServers(this.maxServersPerTask, configsNew, configsServerRateMatrixNew)
+                    configsNew = appliedMaxConstraints.configs
+                    configsServerRateMatrixNew = appliedMaxConstraints.serverRates
+
+                    console.log("Fully flexible structure configurations with maxNumOfServers")
+                    console.log(configsNew)
+
+                    console.log("Fully flexible structure server rates with maxNumOfServers")
+                    console.log(configsServerRateMatrixNew)
+                }  
 
                 //Build A matrix
                 let A = buildMatrixA(configsServerRateMatrixNew, this.arrivalRates)
@@ -923,10 +960,12 @@
 
                 //Modify configurations
                 let configsNew = this.configs.map((row) => row.map((entry) => entry === (n + 1) ? 0 : entry))
+                console.log("Configurations")
                 console.log(JSON.parse(JSON.stringify(configsNew)))
 
                 //Generate server rates from configurations
                 let configsServerRateMatrixNew = this.computeServerRatesOfConfigurations(configsNew, this.serverRates)
+                console.log("Server rates")
                 console.log(JSON.parse(JSON.stringify(configsServerRateMatrixNew)))
 
                 //Build A matrix

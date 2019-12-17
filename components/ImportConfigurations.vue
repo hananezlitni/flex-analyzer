@@ -243,13 +243,17 @@
 
                         self.minNumOfServersPerTask = constraints[1].split(',').map(Number)
 
+                        console.log("Minimum servers per task")
                         console.log(self.minNumOfServersPerTask)
 
                         let appliedConstraints = minNumOfServers(self.minNumOfServersPerTask, self.configurations, self.serverRatesMatrix)
                         self.configurations = appliedConstraints.configs
                         self.serverRatesMatrix = appliedConstraints.serverRates
 
+                        console.log("Configurations")
                         console.log(self.configurations)
+
+                        console.log("Server rates")
                         console.log(self.serverRatesMatrix)
                     }
                 }
@@ -277,13 +281,17 @@
 
                         self.maxNumOfServersPerTask = constraints[1].split(',').map(Number)
 
+                        console.log("Maximum servers per task")
                         console.log(self.maxNumOfServersPerTask)
 
                         let appliedConstraints = maxNumOfServers(self.maxNumOfServersPerTask, self.configurations, self.serverRatesMatrix)
                         self.configurations = appliedConstraints.configs
                         self.serverRatesMatrix = appliedConstraints.serverRates
 
+                        console.log("Configurations")
                         console.log(self.configurations)
+
+                        console.log("Server rates")
                         console.log(self.serverRatesMatrix)
                     }
                 }
