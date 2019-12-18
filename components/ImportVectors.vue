@@ -849,6 +849,9 @@
                 console.log("Original configurations")
                 console.log(JSON.parse(JSON.stringify(this.configs)))
 
+                //Export configs
+                this.export('configurations', this.configs)
+
                 //Generate service rates from configurations
                 this.configsServiceRatesMatrix = this.computeServiceRatesOfConfigurations(this.configs, this.serviceRates)
                 console.log("Original service rates")
@@ -863,7 +866,7 @@
                     console.log("Configurations with minNumOfServers")
                     console.log(this.configs)
 
-                    console.log("service rates with minNumOfServers")
+                    console.log("Service rates with minNumOfServers")
                     console.log(this.configsServiceRatesMatrix)
                 }   
 
@@ -884,10 +887,8 @@
                 //let A = ["-2,-2,0,-1,-1,64", "-3,0,-5,-5,-2,53", "-1,-3,-1,0,-3,123", "1,1,1,1,1,0"]
                 let A = buildMatrixA(this.configsServiceRatesMatrix, this.arrivalRates)
 
-                //Export configs and service rates
-                //Note: right now, the configs after applying constraints are being exported. modify it based on Dr. Down's reponse
-                this.export('configurations', this.configs)
-                this.export('server-rate-matrix', this.configsServiceRatesMatrix)
+                //Export service rates after applying constraints (if any)
+                this.export('service-rate-matrix', this.configsServiceRatesMatrix)
 
                 //Pass A matrix to Python solver and get results
                 let lpResult = solveLPinPython(A)
