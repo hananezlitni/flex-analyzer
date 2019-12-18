@@ -1,8 +1,8 @@
-export function buildMatrixA(serverRates, arrivalRates) {
+export function buildMatrixA(serviceRates, arrivalRates) {
     let A = []
     
     /* Build A */
-    A = serverRates.reduce((prev, next) => next.map((item, i) => (prev[i] || []).concat(next[i])), [])
+    A = serviceRates.reduce((prev, next) => next.map((item, i) => (prev[i] || []).concat(next[i])), [])
 
     A = A.map((row) => row.map((entry) => entry === 0 ? 0 : entry * -1))	
     

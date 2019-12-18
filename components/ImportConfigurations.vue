@@ -85,12 +85,12 @@
                 numberOfServers: 0,
                 arrivalRatesVector: [],
                 configurations: [],
-                serverRatesMatrix: [],
+                serviceRatesMatrix: [],
                 minNumOfServersPerTask: [],
                 maxNumOfServersPerTask: [],
                 arrivalRatesVectorValid: true,
                 configurationsValid: true,
-                serverRatesMatrixValid: true
+                serviceRatesMatrixValid: true
             }
         },
         methods: {
@@ -104,12 +104,12 @@
                 this.numberOfServers = 0
                 this.arrivalRatesVector = []
                 this.configurations = []
-                this.serverRatesMatrix = []
+                this.serviceRatesMatrix = []
                 this.minNumOfServersPerTask = [],
                 this.maxNumOfServersPerTask = [],
                 this.arrivalRatesVectorValid = true
                 this.configurationsValid = true
-                this.serverRatesMatrixValid = true
+                this.serviceRatesMatrixValid = true
                 document.getElementById("import-configs-result").innerHTML = ""
                 this.errorMessage("")
 
@@ -138,7 +138,7 @@
                         let count = 0
                         for (var i = 7; i < lines.length; i++) {
                             if (lines[i] !== undefined || lines[i] !== '') {
-                                if (lines[i].trim() === "Server Rates:") {
+                                if (lines[i].trim() === "Service Rates:") {
                                     break
                                 } else {
                                     self.configurations[count++] = lines[i].split(',').map(Number)
@@ -151,7 +151,7 @@
                         count = 0
                         for (var j = 7 + self.configurations.length + 1; j < lines.length; j++) {  
                             if (lines[j] !== undefined || lines[j] !== '') {
-                                self.serverRatesMatrix[count++] = lines[j].split(',').map(Number)
+                                self.serviceRatesMatrix[count++] = lines[j].split(',').map(Number)
                             } else {
                                 break
                             }
@@ -165,8 +165,8 @@
                         console.log(self.arrivalRatesVector)
                         console.log("Configurations")
                         console.log(self.configurations)
-                        console.log("Server rates")
-                        console.log(self.serverRatesMatrix)
+                        console.log("Service rates")
+                        console.log(self.serviceRatesMatrix)
 
                         //validate inputs
                         self.validateArrivalRates()
@@ -209,14 +209,14 @@
             },
             validateServerRatesMatrix() {
                 //Length of each server rate vector equals to number of tasks
-                if(this.serverRatesMatrix.every((vector) => vector.length !== this.numberOfTasks)) {
-                    this.serverRatesMatrixValid = false
+                if(this.serviceRatesMatrix.every((vector) => vector.length !== this.numberOfTasks)) {
+                    this.serviceRatesMatrixValid = false
                     this.errorMessage("The length of a server rate vector should equal to the number of tasks.")
                 }
 
                 //Negative values in server rate matrix
-                if(this.serverRatesMatrix.every((vector) => vector.every((entry) => entry < 0))) {
-                    this.serverRatesMatrixValid = false
+                if(this.serviceRatesMatrix.every((vector) => vector.every((entry) => entry < 0))) {
+                    this.serviceRatesMatrixValid = false
                     this.errorMessage("The server rate vectors should not contain negative values.")
                 }
             },
@@ -246,15 +246,15 @@
                         console.log("Minimum servers per task")
                         console.log(self.minNumOfServersPerTask)
 
-                        let appliedConstraints = minNumOfServers(self.minNumOfServersPerTask, self.configurations, self.serverRatesMatrix)
+                        let appliedConstraints = minNumOfServers(self.minNumOfServersPerTask, self.configurations, self.serviceRatesMatrix)
                         self.configurations = appliedConstraints.configs
-                        self.serverRatesMatrix = appliedConstraints.serverRates
+                        self.serviceRatesMatrix = appliedConstraints.serviceRates
 
                         console.log("Configurations")
                         console.log(self.configurations)
 
-                        console.log("Server rates")
-                        console.log(self.serverRatesMatrix)
+                        console.log("Service rates")
+                        console.log(self.serviceRatesMatrix)
                     }
                 }
             },
@@ -284,15 +284,15 @@
                         console.log("Maximum servers per task")
                         console.log(self.maxNumOfServersPerTask)
 
-                        let appliedConstraints = maxNumOfServers(self.maxNumOfServersPerTask, self.configurations, self.serverRatesMatrix)
+                        let appliedConstraints = maxNumOfServers(self.maxNumOfServersPerTask, self.configurations, self.serviceRatesMatrix)
                         self.configurations = appliedConstraints.configs
-                        self.serverRatesMatrix = appliedConstraints.serverRates
+                        self.serviceRatesMatrix = appliedConstraints.serviceRates
 
                         console.log("Configurations")
                         console.log(self.configurations)
 
-                        console.log("Server rates")
-                        console.log(self.serverRatesMatrix)
+                        console.log("Service rates")
+                        console.log(self.serviceRatesMatrix)
                     }
                 }
             },
@@ -307,17 +307,17 @@
                 } 
                 
                 //Check if server rates are empty
-                if (this.serverRatesMatrix === undefined || this.serverRatesMatrix.length === 0) {
-                    this.serverRatesMatrixValid = false
+                if (this.serviceRatesMatrix === undefined || this.serviceRatesMatrix.length === 0) {
+                    this.serviceRatesMatrixValid = false
                     this.errorMessage("The server rates matrix is empty.")
                 }
 
                 //If all is valid solve LP
-                if (this.arrivalRatesVector.length > 0 && this.serverRatesMatrix.length > 0 && this.arrivalRatesVectorValid && this.configurationsValid && this.serverRatesMatrixValid) {
+                if (this.arrivalRatesVector.length > 0 && this.serviceRatesMatrix.length > 0 && this.arrivalRatesVectorValid && this.configurationsValid && this.serviceRatesMatrixValid) {
                     this.errorMessage("")
 
                     //Build A matrix
-                    let A = buildMatrixA(this.serverRatesMatrix, this.arrivalRatesVector)
+                    let A = buildMatrixA(this.serviceRatesMatrix, this.arrivalRatesVector)
 
                     //Solve optimization problem
                     let results = {}
@@ -347,13 +347,13 @@
                 this.numberOfTasks = 0
                 this.numberOfServers = 0
                 this.configurations = []
-                this.serverRatesMatrix = []
+                this.serviceRatesMatrix = []
                 this.arrivalRatesVector = []
                 this.minNumOfServersPerTask = []
                 this.maxNumOfServersPerTask = []
                 this.arrivalRatesVectorValid = true
                 this.configurationsValid = true
-                this.serverRatesMatrixValid = true
+                this.serviceRatesMatrixValid = true
             },
             /********** Helper functions **********/
             errorMessage(message) {

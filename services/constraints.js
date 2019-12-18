@@ -1,4 +1,4 @@
- export function minNumOfServers(constraints, configs, serverRates) {
+ export function minNumOfServers(constraints, configs, serviceRates) {
     //[1, 1, 1] => index: task #, entry: minimum # of servers
     for (var task = 0; task < constraints.length; task++) {
         if (constraints[task] === 0) {
@@ -7,7 +7,7 @@
             for (var i = 0; i < configs.length; i++) {
                 if (getOccurrence(configs[i], task + 1) < constraints[task]) {
                     configs[i] = configs[i].fill(0)
-                    serverRates[i] = serverRates[i].fill(0)
+                    serviceRates[i] = serviceRates[i].fill(0)
                 } else {
                     continue
                 }
@@ -17,11 +17,11 @@
 
     return {
         configs: configs,
-        serverRates: serverRates,
+        serviceRates: serviceRates,
     }
 }
 
-export function maxNumOfServers(constraints, configs, serverRates) {
+export function maxNumOfServers(constraints, configs, serviceRates) {
     //[1, 2, 1] => index: task #, entry: maximum # of servers
     for (var task = 0; task < constraints.length; task++) {
         if (constraints[task] === 0) {
@@ -30,7 +30,7 @@ export function maxNumOfServers(constraints, configs, serverRates) {
             for (var n = 0; n < configs.length; n++) {
                 if (getOccurrence(configs[n], task + 1) > constraints[task]) {
                     configs[n] = configs[n].fill(0)
-                    serverRates[n] = serverRates[n].fill(0)
+                    serviceRates[n] = serviceRates[n].fill(0)
                 } else {
                     continue
                 }
@@ -40,11 +40,11 @@ export function maxNumOfServers(constraints, configs, serverRates) {
 
     return {
         configs: configs,
-        serverRates: serverRates,
+        serviceRates: serviceRates,
     }
 }
 
-/*export function maxNumOfServers(constraints, configs, serverRates) {
+/*export function maxNumOfServers(constraints, configs, serviceRates) {
     //[1, 2, 1] => index: task #, entry: maximum # of servers
 
     for (var task = 1; task <= constraints.length; task++) {
@@ -58,7 +58,7 @@ export function maxNumOfServers(constraints, configs, serverRates) {
 
                 indexesOfOccurence.forEach(index => {
                     configs[index] = configs[index].fill(0)
-                    serverRates[index] = serverRates[index].fill(0)
+                    serviceRates[index] = serviceRates[index].fill(0)
                 })
             }
         }
@@ -66,7 +66,7 @@ export function maxNumOfServers(constraints, configs, serverRates) {
 
     return {
         configs: configs,
-        serverRates: serverRates,
+        serviceRates: serviceRates,
     }
 }*/
 
