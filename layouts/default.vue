@@ -65,6 +65,14 @@
   a {
     color: $accent-color;
   }
+  ol {
+    padding: 15px;
+    margin: 10px 28px;
+  }
+  ol li {
+    line-height: 1.5;
+    padding: 15px;
+  }
   .header {
     grid-column: 1 / -1;
     padding: 25px 15px;
