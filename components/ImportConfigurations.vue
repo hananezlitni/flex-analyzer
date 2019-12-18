@@ -171,7 +171,7 @@
                         //validate inputs
                         self.validateArrivalRates()
                         self.validateConfigurations()
-                        self.validateServerRatesMatrix()
+                        self.validateServiceRatesMatrix()
                     };
                 }
             },
@@ -190,34 +190,34 @@
             },
             validateConfigurations() {
                 //Length of each configuration equals to number of servers
-                if(this.configurations.every((config) => config.length !== this.numberOfServers)) {
+                if(this.configurations.some((config) => config.length !== this.numberOfServers)) {
                     this.configurationsValid = false
                     this.errorMessage("The length of a configuration should equal to the number of servers.")
                 }
 
                 //Valid entries in configs
-                if(this.configurations.every((config) => config.every((entry) => entry > this.numberOfTasks))) {
+                if(this.configurations.some((config) => config.some((entry) => entry > this.numberOfTasks))) {
                     this.configurationsValid = false
                     this.errorMessage("The configurations should not contain a number greater than " + this.numberOfTasks)
                 }
 
                 //Negative values in configs
-                if(this.configurations.every((config) => config.every((entry) => entry < 0))) {
+                if(this.configurations.some((config) => config.some((entry) => entry < 0))) {
                     this.configurationsValid = false
                     this.errorMessage("The configurations should not contain negative values.")
                 }
             },
-            validateServerRatesMatrix() {
+            validateServiceRatesMatrix() {
                 //Length of each server rate vector equals to number of tasks
-                if(this.serviceRatesMatrix.every((vector) => vector.length !== this.numberOfTasks)) {
+                if(this.serviceRatesMatrix.some((vector) => vector.length !== this.numberOfTasks)) {
                     this.serviceRatesMatrixValid = false
-                    this.errorMessage("The length of a server rate vector should equal to the number of tasks.")
+                    this.errorMessage("The length of a service rate vector should equal to the number of tasks.")
                 }
 
                 //Negative values in server rate matrix
-                if(this.serviceRatesMatrix.every((vector) => vector.every((entry) => entry < 0))) {
+                if(this.serviceRatesMatrix.some((vector) => vector.some((entry) => entry < 0))) {
                     this.serviceRatesMatrixValid = false
-                    this.errorMessage("The server rate vectors should not contain negative values.")
+                    this.errorMessage("The service rate vectors should not contain negative values.")
                 }
             },
             importMinNumOfServers() {
