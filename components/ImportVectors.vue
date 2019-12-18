@@ -834,7 +834,12 @@
                     //Display output
                     document.getElementById('import-vectors-result').innerHTML = '<h1 class="result__title">Results</h1>'
                     document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["originalProblem"].output.gamma + '</p>'
-                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + results["fullyFlexible"].output.gamma + '</p>'
+                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + results["fullyFlexible"].output.gamma + '</p><br>'
+                    if (results["originalProblem"].output.gamma >= results["fullyFlexible"].output.gamma) {
+                        document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result">The submitted structure is as efficient as a fully flexible system.</p>'
+                    } else {
+                        document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result">The submitted structure is <em>not</em> as efficient as a fully flexible system.</p>'
+                    }
                     document.getElementById('import-vectors-result').innerHTML += '<p class="asterisks">*****</p>'
 
                     for (var i = 1; i <= this.numOfTasks; i++) {
