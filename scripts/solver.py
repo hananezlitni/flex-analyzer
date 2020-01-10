@@ -11,7 +11,7 @@ def solveLP(A):
     for i in range(0, len(aMatrix)):
         aMatrix[i] = aMatrix[i].split(',')
         for j in range(0, len(aMatrix[i])):
-            aMatrix[i][j] = int(aMatrix[i][j])
+            aMatrix[i][j] = float(aMatrix[i][j])
     
     #****************** Optimization ******************
     m = Model(sense=MAXIMIZE)
