@@ -245,48 +245,101 @@
                         }
 
                         let values = textarea.value.split("\n")
-                        self.numOfTasks = parseInt(values[1])
-                        self.numOfServers = parseInt(values[3])
+
+                        //Store number of tasks and servers
+                        if (values[0] !== '' && values[0] !== undefined) {
+                            if (values[0].trim().toLowerCase() === 'number of tasks:') {
+                                self.numOfTasks = parseInt(values[1])
+                            } else {
+                                self.errorMessage('The number of tasks is missing')
+                            }
+                        } else {
+                            self.errorMessage('The number of tasks is missing')
+                        }
+
+                        if (values[2] !== '' && values[2] !== undefined) {
+                            if (values[2].trim().toLowerCase() === 'number of servers:') {
+                                self.numOfServers = parseInt(values[3])
+                            } else {
+                                self.errorMessage('The number of tasks is missing')
+                            }
+                        } else {
+                            self.errorMessage('The number of tasks is missing')
+                        }
                         
                         //Store arrival rates
-                        if (values[5] !== undefined) {
-                            self.arrivalRates = values[5].split(',').map(Number)
+                        if (values[4] !== '' && values[4] !== undefined) {
+                            if (values[4].trim().toLowerCase() === 'arrival rates:') {
+                                self.arrivalRates = values[5].split(',').map((entry) => parseFloat(entry))
+                            } else {
+                                self.errorMessage('The arrival rates vector is empty')
+                            }
+                        } else {
+                            self.errorMessage('The arrival rates vector is empty')
                         }
 
                         //Store F matrix
                         let fMatrixStart = 7 + self.numOfServers + 1
-                        let count = 0
-                        for (i = fMatrixStart; i < values.length; i++) {
-                            if (values[i] !== undefined || values[i] !== '') {
-                                self.fMatrix[count++] = values[i].split(',').map(Number)
+
+                        if (values[fMatrixStart - 1] !== '' && values[fMatrixStart - 1] !== undefined) {
+                            if (values[fMatrixStart - 1].trim().toLowerCase() === 'f matrix:') {
+                                let count = 0
+                                for (i = fMatrixStart; i < values.length; i++) {
+                                    if (values[i] !== undefined || values[i] !== '') {
+                                        self.fMatrix[count++] = values[i].split(',').map((entry) => entry.includes('.') ? self.fMatrixValid = false : parseInt(entry))
+
+                                        if (self.fMatrixValid === false) {
+                                            self.errorMessage('Error: The F matrix should only contain 0 and 1')
+                                            break
+                                        } else {
+                                            continue
+                                        }
+                                    } else {
+                                        self.errorMessage('Error: The F matrix is empty')
+                                        break
+                                    }
+                                }
                             } else {
-                                break
+                                self.errorMessage('The F matrix is empty')
                             }
+                        } else {
+                            self.errorMessage('The F matrix is empty')
                         }
 
                         //Store service rates matrix
-                        let counter = 0
-                        for (var j = 7; j < fMatrixStart - 1; j++) {
-                            if (values[j] !== undefined || values[j] !== '') {
-                                self.serviceRates[counter++] = values[j].split(',').map(Number)
+                        if (values[6] !== '' && values[6] !== undefined) {
+                            if (values[6].trim().toLowerCase() === 'service rates:') {
+                                let counter = 0
+                                for (var l = 7; l < fMatrixStart - 1; l++) {
+                                    if (values[l] !== undefined || values[l] !== '') {
+                                        self.serviceRates[counter++] = values[l].split(',').map((entry) => parseFloat(entry))
+                                    } else {
+                                        self.errorMessage('Error: The service rates matrix is empty')
+                                        break
+                                    }
+                                }
                             } else {
-                                break
+                                self.errorMessage('The service rates matrix is empty')
                             }
+                        } else {
+                            self.errorMessage('The service rates matrix is empty')
                         }
                         
                         //Number of configurations
-                        let configs = 1
-                        for (var i = 0; i < self.numOfServers; i++) {
-                            let count = 0
-                            for (var j = 0; j < self.numOfTasks; j++) {
-                                if (self.fMatrix[i][j] === 1) {
-                                count++
+                        if (self.fMatrix.length > 0 && self.fMatrixValid === true) {
+                            let configs = 1
+                            for (var i = 0; i < self.numOfServers; i++) {
+                                let count = 0
+                                for (var j = 0; j < self.numOfTasks; j++) {
+                                    if (self.fMatrix[i][j] === 1) {
+                                    count++
+                                    }
                                 }
+                                configs *= count + 1
                             }
-                            configs *= count + 1
-                        }
 
-                        self.numOfConfigs = configs
+                            self.numOfConfigs = configs
+                        } 
                     };
                 }
             },
@@ -312,48 +365,100 @@
                 //Store inputs
                 let values = textarea.value.split("\n")
 
-                this.numOfTasks = parseInt(values[1])
-                this.numOfServers = parseInt(values[3])
+                //Store number of tasks and servers
+                if (values[0] !== '' && values[0] !== undefined) {
+                    if (values[0].trim().toLowerCase() === 'number of tasks:') {
+                        this.numOfTasks = parseInt(values[1])
+                    } else {
+                        this.errorMessage('The number of tasks is missing')
+                    }
+                } else {
+                    this.errorMessage('The number of tasks is missing')
+                }
+
+                if (values[2] !== '' && values[2] !== undefined) {
+                    if (values[2].trim().toLowerCase() === 'number of servers:') {
+                        this.numOfServers = parseInt(values[3])
+                    } else {
+                        this.errorMessage('The number of tasks is missing')
+                    }
+                } else {
+                    this.errorMessage('The number of tasks is missing')
+                }
 
                 //Store arrival rates
-                if (values[5] !== undefined) {
-                    this.arrivalRates = values[5].split(',').map(Number)
+                if (values[4] !== '' && values[4] !== undefined) {
+                    if (values[4].trim().toLowerCase() === 'arrival rates:') {
+                        this.arrivalRates = values[5].split(',').map((entry) => parseFloat(entry))
+                    } else {
+                        this.errorMessage('The arrival rates vector is empty')
+                    }
+                } else {
+                    this.errorMessage('The arrival rates vector is empty')
                 }
                 
                 //Store F matrix
                 let fMatrixStart = 7 + this.numOfServers + 1
-                let count = 0
-                for (var j = fMatrixStart; j < values.length; j++) {
-                    if (values[j] !== undefined || values[j] !== '') {
-                        this.fMatrix[count++] = values[j].split(',').map(Number)
+
+                if (values[fMatrixStart - 1] !== '' && values[fMatrixStart - 1] !== undefined) {
+                    if (values[fMatrixStart - 1].trim().toLowerCase() === 'f matrix:') {
+                        let count = 0
+                        for (i = fMatrixStart; i < values.length; i++) {
+                            if (values[i] !== undefined || values[i] !== '') {
+                                this.fMatrix[count++] = values[i].split(',').map((entry) => entry.includes('.') ? this.fMatrixValid = false : parseInt(entry))
+
+                                if (this.fMatrixValid === false) {
+                                    this.errorMessage('Error: The F matrix should only contain 0 and 1')
+                                    break
+                                } else {
+                                    continue
+                                }
+                            } else {
+                                this.errorMessage('Error: The F matrix is empty')
+                                break
+                            }
+                        }
                     } else {
-                        break
+                        this.errorMessage('The F matrix is empty')
                     }
+                } else {
+                    this.errorMessage('The F matrix is empty')
                 }
 
                 //Store service rates matrix
-                let counter = 0
-                for (var l = 7; l < fMatrixStart - 1; l++) {
-                    if (values[l] !== undefined || values[l] !== '') {
-                        this.serviceRates[counter++] = values[l].split(',').map(Number)
+                if (values[6] !== '' && values[6] !== undefined) {
+                    if (values[6].trim().toLowerCase() === 'service rates:') {
+                        let counter = 0
+                        for (var l = 7; l < fMatrixStart - 1; l++) {
+                            if (values[l] !== undefined || values[l] !== '') {
+                                this.serviceRates[counter++] = values[l].split(',').map((entry) => parseFloat(entry))
+                            } else {
+                                this.errorMessage('Error: The service rates matrix is empty')
+                                break
+                            }
+                        }
                     } else {
-                        break
+                        this.errorMessage('The service rates matrix is empty')
                     }
+                } else {
+                    this.errorMessage('The service rates matrix is empty')
                 }
 
                 //Number of configurations
-                let configs = 1
-                for (var i = 0; i < this.numOfServers; i++) {
-                    let count = 0
-                    for (var j = 0; j < this.numOfTasks; j++) {
-                        if (this.fMatrix[i][j] === 1) {
-                        count++
+                if (this.fMatrix.length > 0 && this.fMatrixValid === true) {
+                    let configs = 1
+                    for (var i = 0; i < this.numOfServers; i++) {
+                        let count = 0
+                        for (var j = 0; j < this.numOfTasks; j++) {
+                            if (this.fMatrix[i][j] === 1) {
+                            count++
+                            }
                         }
+                        configs *= count + 1
                     }
-                    configs *= count + 1
-                }
 
-                this.numOfConfigs = configs
+                    this.numOfConfigs = configs
+                }
 
                 console.log("Tasks")
                 console.log(this.numOfTasks)
@@ -833,9 +938,9 @@
 
                     //Display output
                     document.getElementById('import-vectors-result').innerHTML = '<h1 class="result__title">Results</h1>'
-                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["originalProblem"].output.gamma + '</p>'
-                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + results["fullyFlexible"].output.gamma + '</p><br>'
-                    if (results["originalProblem"].output.gamma >= results["fullyFlexible"].output.gamma) {
+                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["originalProblem"].output.gamma.toFixed(5) + '</p>'
+                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + results["fullyFlexible"].output.gamma.toFixed(5) + '</p><br>'
+                    if (results["originalProblem"].output.gamma.toFixed(5) >= results["fullyFlexible"].output.gamma.toFixed(5)) {
                         document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result">The submitted structure is as efficient as a fully flexible system.</p>'
                     } else {
                         document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result">The submitted structure is <em>not</em> as efficient as a fully flexible system.</p>'
@@ -843,7 +948,7 @@
                     document.getElementById('import-vectors-result').innerHTML += '<p class="asterisks">*****</p>'
 
                     for (var i = 1; i <= this.numOfTasks; i++) {
-                        document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the structure when task <em>' + i + '</em> is removed: </b>' + results["noTask" + i].output.gamma + '</p>'
+                        document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the structure when task <em>' + i + '</em> is removed: </b>' + results["noTask" + i].output.gamma.toFixed(5) + '</p>'
                     }
                 }
             },

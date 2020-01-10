@@ -131,27 +131,30 @@
                         self.numberOfTasks = parseInt(lines[1])
                         self.numberOfServers = parseInt(lines[3])
 
+                        //Arrival rates
                         if (lines[5] !== undefined) {
-                            self.arrivalRatesVector = lines[5].split(',').map(Number)
+                            self.arrivalRatesVector = lines[5].split(',').map((entry) => parseFloat(entry))
                         }
 
+                        //Configurations
                         let count = 0
                         for (var i = 7; i < lines.length; i++) {
                             if (lines[i] !== undefined || lines[i] !== '') {
-                                if (lines[i].trim() === "Service Rates:") {
+                                if (lines[i].trim().toLowerCase() === "service rates:") {
                                     break
                                 } else {
-                                    self.configurations[count++] = lines[i].split(',').map(Number)
+                                    self.configurations[count++] = lines[i].split(',').map((entry) => parseInt(entry))
                                 }
                             } else {
                                 break
                             }
                         }
 
+                        //Service rates
                         count = 0
                         for (var j = 7 + self.configurations.length + 1; j < lines.length; j++) {  
                             if (lines[j] !== undefined || lines[j] !== '') {
-                                self.serviceRatesMatrix[count++] = lines[j].split(',').map(Number)
+                                self.serviceRatesMatrix[count++] = lines[j].split(',').map((entry) => parseFloat(entry))
                             } else {
                                 break
                             }
@@ -330,7 +333,7 @@
 
                     //Display output
                     document.getElementById('import-configs-result').innerHTML = '<h1 class="result__title">Results</h1>'
-                    document.getElementById('import-configs-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["lp"].output.gamma + '</p>'
+                    document.getElementById('import-configs-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["lp"].output.gamma.toFixed(5) + '</p>'
                 }
             },
             clearAll() {
