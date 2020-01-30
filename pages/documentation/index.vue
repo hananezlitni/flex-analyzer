@@ -27,53 +27,78 @@
     <h2>Importing Vectors</h2>
     <br>
     <div class="div-flex-center">
-      <button class="button button--action button--not-filled" @click="downloadVectorsSampleFile">
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
-        Sample file
-      </button>
+      <a v-bind:href="importVectors.loc" download="import-vectors">
+        <button class="button button--action button--not-filled">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
+            <path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
+          </svg>
+          Sample file
+        </button>
+      </a>
     </div>
     <p>The "Import Vectors" variation of the tool allows importing inputs as a CSV file as well as entering inputs on-screen. A sample file can be downloaded by clicking the button above for guidance. The inputs must be entered row-by-row in the CSV file, or line-by-line on-screen, in the following order:</p>
     <ol>
-      <li>Number of tasks:
+      <li>Number of Tasks:
       <br><em>*number of tasks*</em></li>
-      <li>Number of servers:
+      <li>Number of Servers:
       <br><em>*number of servers*</em></li>
-      <li>Arrival rates:
+      <li>Arrival Rates:
       <br><em>*arrival rates vector*</em></li>
-      <li>Service rates:
+      <li>Service Rates:
       <br><em>*service rates matrix*</em></li>
-      <li>F matrix:
+      <li>F Matrix:
       <br><em>*F matrix*</em></li>
     </ol>
+
+    <h3>Importing Large Structures</h3>
+    <div class="div-flex-center">
+      <a v-bind:href="configsScript.loc" download="generate-configs">
+        <button class="button button--action button--not-filled">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
+            <path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
+          </svg>
+          Script
+        </button>
+      </a>
+    </div>
+    <p>*import large structures*</p>
     
     <h2>Importing Configurations</h2>
     <br>
     <div class="div-flex-center">
-      <button class="button button--action button--not-filled" @click="downloadConfigurationsSampleFile">
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
-        Sample file
-      </button>
+      <a v-bind:href="importConfigs.loc" download="import-configs">
+        <button class="button button--action button--not-filled">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
+            <path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
+          </svg>
+          Sample file
+        </button>
+      </a>
     </div>
     <p>The "Import Configurations" variation of the tool allows directly importing the configurations and service rates as a CSV file. A sample file can be downloaded by clicking the button above for guidance. The inputs must be entered row-by-row in the CSV file in the following order</p>
     <ol>
-      <li>Number of tasks:
+      <li>Number of Tasks:
       <br><em>*number of tasks*</em></li>
-      <li>Number of servers:
+      <li>Number of Servers:
       <br><em>*number of servers*</em></li>
-      <li>Arrival rates:
+      <li>Arrival Rates:
       <br><em>*arrival rates vector*</em></li>
       <li>Configurations:
       <br><em>*configurations*</em></li>
-      <li>Service rates:
+      <li>Service Rates:
       <br><em>*service rates*</em></li>
     </ol>
 
     <h2>Importing Constraints</h2>
     <div class="div-flex-center">
-      <button class="button button--action button--not-filled" @click="downloadConstraints">
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
-        Sample files
-      </button>
+      <a v-bind:href="constraints.loc" download="constraints">
+        <button class="button button--action button--not-filled">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
+            <path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
+          </svg>
+          Sample file
+        </button>
+      </a>
     </div>
     <p>Both variations of the tool allow importing the minimum and maximum number of servers at a task as CSV files. Sample files can be downloaded by clicking the button above for guidance. The constraints are imported row-by-row in the CSV files in the following order:</p>
     <ol>
@@ -85,15 +110,31 @@
 </template>
 
 <script>
+import importVectors from "../../files/import-vectors(v2).csv"
+import configsScript from "../../files/configs.js"
+import importConfigs from "../../files/import-configurations--valid.csv"
+import constraints from "../../files/constraints-max.csv"
+
 export default {
+  data() {
+    return {
+      importVectors: { title: 'import-vectors', loc: require('../../files/import-vectors(v2).csv') },
+      configsScript: { title: 'generate-configs', loc: require('../../files/configs.js') },
+      importConfigs: { title: 'import-configs', loc: require('../../files/import-configurations--valid.csv') },
+      constraints: { title: 'constraints', loc: require('../../files/constraints-max.csv') }
+    }
+  },
   methods: {
     downloadVectorsSampleFile() {
-
+      
     },
     downloadConfigurationsSampleFile() {
 
     },
     downloadConstraints() {
+
+    },
+    downloadConfigsScript() {
 
     }
   }
