@@ -160,17 +160,6 @@
                             }
                         }
 
-                        console.log("Number of tasks")
-                        console.log(self.numberOfTasks)
-                        console.log("Number of Servers")
-                        console.log(self.numberOfServers)
-                        console.log("Arrival rates")
-                        console.log(self.arrivalRatesVector)
-                        console.log("Configurations")
-                        console.log(self.configurations)
-                        console.log("Service rates")
-                        console.log(self.serviceRatesMatrix)
-
                         //validate inputs
                         self.validateArrivalRates()
                         self.validateConfigurations()
@@ -246,18 +235,9 @@
 
                         self.minNumOfServersPerTask = constraints[1].split(',').map(Number)
 
-                        console.log("Minimum servers per task")
-                        console.log(self.minNumOfServersPerTask)
-
                         let appliedConstraints = minNumOfServers(self.minNumOfServersPerTask, self.configurations, self.serviceRatesMatrix)
                         self.configurations = appliedConstraints.configs
                         self.serviceRatesMatrix = appliedConstraints.serviceRates
-
-                        console.log("Configurations")
-                        console.log(self.configurations)
-
-                        console.log("Service rates")
-                        console.log(self.serviceRatesMatrix)
                     }
                 }
             },
@@ -284,18 +264,9 @@
 
                         self.maxNumOfServersPerTask = constraints[1].split(',').map(Number)
 
-                        console.log("Maximum servers per task")
-                        console.log(self.maxNumOfServersPerTask)
-
                         let appliedConstraints = maxNumOfServers(self.maxNumOfServersPerTask, self.configurations, self.serviceRatesMatrix)
                         self.configurations = appliedConstraints.configs
                         self.serviceRatesMatrix = appliedConstraints.serviceRates
-
-                        console.log("Configurations")
-                        console.log(self.configurations)
-
-                        console.log("Service rates")
-                        console.log(self.serviceRatesMatrix)
                     }
                 }
             },
@@ -327,9 +298,6 @@
                     
                     //Original problem
                     results["lp"] = await solveLPinPython(A)
-
-                    console.log("**************** Final Output (from import configs) ****************")
-                    console.log(results)
 
                     //Display output
                     document.getElementById('import-configs-result').innerHTML = '<h1 class="result__title">Results</h1>'

@@ -15,8 +15,6 @@ def random_number():
 
     output = solver.solveLP(A)
 
-    print(output)
-
     result = {
         'output': output
     } 

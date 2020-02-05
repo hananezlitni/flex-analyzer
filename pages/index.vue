@@ -9,12 +9,10 @@
           </tab>
         </tabs>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js" />
-        <!--<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js" />-->
     </main>
 </template>
 
 <script>
-    //import * as d3 from "d3";
     import Tab from '../components/Tab';
     import Tabs from '../components/Tabs';
     import ImportVectors from '../components/ImportVectors'

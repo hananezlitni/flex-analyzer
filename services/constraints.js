@@ -44,52 +44,6 @@ export function maxNumOfServers(constraints, configs, serviceRates) {
     }
 }
 
-/*export function maxNumOfServers(constraints, configs, serviceRates) {
-    //[1, 2, 1] => index: task #, entry: maximum # of servers
-
-    for (var task = 1; task <= constraints.length; task++) {
-        if (constraints[task] === 0) {
-            continue
-        } else {
-            let configsColumn = getColumn(configs, task)
-
-            if (getOccurrence(configsColumn, task) > constraints[task]) {
-                let indexesOfOccurence = getIndexesOfOccurence(configsColumn, task)
-
-                indexesOfOccurence.forEach(index => {
-                    configs[index] = configs[index].fill(0)
-                    serviceRates[index] = serviceRates[index].fill(0)
-                })
-            }
-        }
-    }
-
-    return {
-        configs: configs,
-        serviceRates: serviceRates,
-    }
-}*/
-
-/*function getColumn(arr, col) {
-    return arr.map(function(row) {
-        return row[col]
-    })
-}*/
-
-
-
 function getOccurrence(array, value) {
     return array.filter((v) => (v === value)).length;
 }
-
-/*function getIndexesOfOccurence(array, task) {
-    let results = [];
-
-    for (var i = 0; i < array.length; i++ ){
-        if (array[i] === task){
-            results.push(i);
-        }
-    }
-
-    return results
-}*/
