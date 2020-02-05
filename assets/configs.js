@@ -1,4 +1,4 @@
-module.exports.computeConfigurations = function(numOfServers, numOfTasks, fMatrix, serviceRates) {
+exports.computeConfigurations = function(numOfServers, numOfTasks, fMatrix, serviceRates) {
   const ON = 1, OFF = 0;
   let configs = {};
 

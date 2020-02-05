@@ -55,13 +55,25 @@ export default {
       // ..
       config.module.rules.push(
         {
-          test: /\.(csv|xlsx|xls)$/,
+          test: /\.(csv)$/,
+          loader: 'file-loader',
+          options: {
+              name: `files/[name].[ext]`
+          }
+        },
+        {
+          type: 'javascript/auto',
+          test: /configs.js$/,
           loader: 'file-loader',
           options: {
               name: `files/[name].[ext]`
           }
         }
-      )
+      ) 
+
+      config.node = {
+        fs: 'empty'
+      }
     }
   }
 }

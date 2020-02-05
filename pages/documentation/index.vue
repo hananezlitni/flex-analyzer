@@ -38,21 +38,23 @@
     </div>
     <p>The "Import Vectors" variation of the tool allows importing inputs as a CSV file as well as entering inputs on-screen. A sample file can be downloaded by clicking the button above for guidance. The inputs must be entered row-by-row in the CSV file, or line-by-line on-screen, in the following order:</p>
     <ol>
-      <li>Number of Tasks:
-      <br><em>*number of tasks*</em></li>
-      <li>Number of Servers:
-      <br><em>*number of servers*</em></li>
-      <li>Arrival Rates:
-      <br><em>*arrival rates vector*</em></li>
-      <li>Service Rates:
-      <br><em>*service rates matrix*</em></li>
-      <li>F Matrix:
-      <br><em>*F matrix*</em></li>
+      <li>Number of Tasks:</li>
+      <li><em>*number of tasks*</em></li>
+      <li>Number of Servers:</li>
+      <li><em>*number of servers*</em></li>
+      <li>Arrival Rates:</li>
+      <li><em>*arrival rates vector*</em></li>
+      <li>Service Rates:</li>
+      <li><em>*service rates matrix*</em></li>
+      <li>F Matrix:</li>
+      <li><em>*F matrix*</em></li>
     </ol>
+
+    <p><strong><em>Important note: If you wish to re-import a structure, please make sure to click the "Clear All" button first so previous inputs are deleted.</em></strong></p>
 
     <h3>Importing Large Structures</h3>
     <div class="div-flex-center">
-      <a v-bind:href="configsScript.loc" download="generate-configs">
+      <a v-bind:href="configsScript.loc" download="configs">
         <button class="button button--action button--not-filled">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
             <path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
@@ -61,8 +63,29 @@
         </button>
       </a>
     </div>
-    <p>*import large structures*</p>
-    
+    <p>
+      Large structures and structures with many task-server assignments (i.e. the number of 1's in the F matrix) produce a very large number of configurations, which can cause errors in the tool.
+    </p> 
+    <p>      
+      To prevent such errors, please follow the steps below to compute the configurations and the corresponding service rates locally on your device:
+    </p> 
+    <ol>
+      <li>Node.js is required to run the script. It can be downloaded at: <a href="https://nodejs.org/en/download/" target="_blank">https://nodejs.org/en/download/</a></li>
+      <li>Download the script that generates the configurations and service rates by clicking the "Script" button above.</li>
+      <li>Using the command line/terminal, navigate to the directory where the script is located.</li>
+      <li>Copy the following command and execute it in the command line/terminal: 
+        <p class="code">
+          node -p "require('./configs.js').computeConfigurations(<em>*number of servers*</em>,<em>*number of tasks*</em>,<em>*f matrix*</em>,<em>*service rates*</em>)"
+        </p>
+        <br>
+        Below is an example of the command with inputs of a 3x3 structure:
+        <p class="code">
+          node -p "require('./configs.js').computeConfigurations(3,3,[[1,1,1],[1,0,1],[0,1,0]],[[2,1,4],[4,0,1],[0,2,0]])"
+        </p>
+      </li>
+      <li>A CSV file containing the configurations and the corresponding service rates should be generated in the same directory where the script is located. After adding the required additional inputs (see sample file in the next section), the generated CSV file can be imported to the tool for analysis.</li>
+    </ol>
+  
     <h2>Importing Configurations</h2>
     <br>
     <div class="div-flex-center">
@@ -75,19 +98,21 @@
         </button>
       </a>
     </div>
-    <p>The "Import Configurations" variation of the tool allows directly importing the configurations and service rates as a CSV file. A sample file can be downloaded by clicking the button above for guidance. The inputs must be entered row-by-row in the CSV file in the following order</p>
+    <p>The "Import Configurations" variation of the tool allows directly importing the configurations and service rates as a CSV file. A sample file can be downloaded by clicking the button above for guidance. The inputs must be entered row-by-row in the CSV file in the following order:</p>
     <ol>
-      <li>Number of Tasks:
-      <br><em>*number of tasks*</em></li>
-      <li>Number of Servers:
-      <br><em>*number of servers*</em></li>
-      <li>Arrival Rates:
-      <br><em>*arrival rates vector*</em></li>
-      <li>Configurations:
-      <br><em>*configurations*</em></li>
-      <li>Service Rates:
-      <br><em>*service rates*</em></li>
+      <li>Number of Tasks:</li>
+      <li><em>*number of tasks*</em></li>
+      <li>Number of Servers:</li>
+      <li><em>*number of servers*</em></li>
+      <li>Arrival Rates:</li>
+      <li><em>*arrival rates vector*</em></li>
+      <li>Configurations:</li>
+      <li><em>*configurations*</em></li>
+      <li>Service Rates:</li>
+      <li><em>*service rates*</em></li>
     </ol>
+
+    <p><strong><em>Important note: If you wish to re-import a structure, please make sure to click the "Clear All" button first so previous inputs are deleted.</em></strong></p>
 
     <h2>Importing Constraints</h2>
     <div class="div-flex-center">
@@ -102,40 +127,39 @@
     </div>
     <p>Both variations of the tool allow importing the minimum and maximum number of servers at a task as CSV files. Sample files can be downloaded by clicking the button above for guidance. The constraints are imported row-by-row in the CSV files in the following order:</p>
     <ol>
-      <li>Constraints:
-      <br><em>*constraints vector*</em></li>
+      <li>Constraints:</li>
+      <li><em>*constraints vector*</em></li>
     </ol>
     <p>The indeces in the constraints vector represent the task number, while the entry in each index represents the minimum or maximum number of servers at the corresponding task.</p>
+  
+    <p><strong><em>Important note: If you wish to re-import constraints, please make sure to click the "Clear All" button first so previous constraints are deleted.</em></strong></p>
   </main>
 </template>
 
+<style lang="scss" scoped>
+  .code {
+    font-family: $roboto-mono;
+    font-size: 0.9em;
+    color: $accent-color;
+    background-color: $background-color--app;
+    padding: 1em;
+    border-radius: 5px;
+  }
+</style>
+
 <script>
 import importVectors from "../../files/import-vectors(v2).csv"
-import configsScript from "../../files/configs.js"
+import configsScript from "../../assets/configs.js"
 import importConfigs from "../../files/import-configurations--valid.csv"
 import constraints from "../../files/constraints-max.csv"
 
 export default {
   data() {
     return {
-      importVectors: { title: 'import-vectors', loc: require('../../files/import-vectors(v2).csv') },
-      configsScript: { title: 'generate-configs', loc: require('../../files/configs.js') },
-      importConfigs: { title: 'import-configs', loc: require('../../files/import-configurations--valid.csv') },
-      constraints: { title: 'constraints', loc: require('../../files/constraints-max.csv') }
-    }
-  },
-  methods: {
-    downloadVectorsSampleFile() {
-      
-    },
-    downloadConfigurationsSampleFile() {
-
-    },
-    downloadConstraints() {
-
-    },
-    downloadConfigsScript() {
-
+      importVectors: { title: 'import-vectors', loc: require('../../files/import-vectors(v2).csv').default },
+      configsScript: { title: 'configs', loc: require('../../assets/configs.js').default },
+      importConfigs: { title: 'import-configs', loc: require('../../files/import-configurations--valid.csv').default },
+      constraints: { title: 'constraints', loc: require('../../files/constraints-max.csv').default }
     }
   }
 }
