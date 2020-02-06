@@ -8,7 +8,6 @@
             <ImportConfigurations></ImportConfigurations>
           </tab>
         </tabs>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js" />
     </main>
 </template>
 
