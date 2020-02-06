@@ -1,1 +1,1 @@
-web: cd scripts && gunicorn app:application
+web: nuxt start && cd scripts && gunicorn app:application
