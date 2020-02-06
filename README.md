@@ -2,7 +2,7 @@
 
 ### Site: [https://flexibility-structure-analyzer.herokuapp.com/](https://flexibility-structure-analyzer.herokuapp.com/)
 
-The Flexibility Structure Analyzer is a web-based tool that allows people who wish to design a flexible system to check and verify whether their designed system's structure is as efficient or robust as a fully flexible system and to compare it with systems.
+The Flexibility Structure Analyzer is a web-based tool that allows people who wish to design a flexible system to check and verify whether their designed system's structure is as efficient as a fully flexible system.
 
 Team leads: [Sigrún Andradóttir](https://www2.isye.gatech.edu/people/faculty/Sigrun_Andradottir/), [Hayriye Ayhan](https://www.isye.gatech.edu/users/hayriye-ayhan?entry=hs41), [Douglas G. Down](http://www.cas.mcmaster.ca/~downd/).
 
