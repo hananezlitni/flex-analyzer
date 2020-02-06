@@ -18,7 +18,7 @@ export default {
     ]
   },
   env: {
-    HOST_URL: process.env.HOST_URL || 'http://127.0.0.1:8000'
+    HOST_URL: process.env.HOST_URL
   },
   /*
   ** Customize the progress-bar color
