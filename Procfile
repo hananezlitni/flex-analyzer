@@ -1,2 +1,2 @@
-web: gunicorn app:application
-web: nuxt start
+web:gunicorn app:application
+web:nuxt start
