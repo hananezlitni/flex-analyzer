@@ -7,7 +7,7 @@
         <br>
         Student contributors of the initial version: Matt Fielding, Edward Peng, and Alvin Poon
         <br>
-        Re-designed &amp; re-developed by Hanane Zlitni
+        Design &amp; development of the new version: Hanane Zlitni
       </p>
 		</header> 
     <app-nav />
