@@ -4,13 +4,13 @@ from flask_cors import CORS
 import solver
 from random import *
 
-app = Flask(__name__)
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+application = Flask(__name__)
+cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 #print(sys.path)
 
-@app.route('/', methods=["POST"])
-def random_number():
+@application.route('/', methods=["POST"])
+def app():
     A = (request.data).decode("utf-8")
 
     output = solver.solveLP(A)
@@ -22,4 +22,4 @@ def random_number():
     return result
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    application.run(debug=True)
