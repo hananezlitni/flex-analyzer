@@ -74,6 +74,11 @@ dist
 # vuepress build output
 .vuepress/dist
 
+# Python
+__pycache__
+scripts/__pycache__
+.pyc
+
 # Serverless directories
 .serverless
 
