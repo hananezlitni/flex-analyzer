@@ -1,1 +1,1 @@
-web: nuxt build && cd scripts && gunicorn app:application
+web: cd scripts && gunicorn app:application
