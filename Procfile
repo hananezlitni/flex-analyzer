@@ -1,1 +1,1 @@
-web: nuxt start && gunicorn -b 127.0.0.1:8000 app:application
+web: npm run build && gunicorn -b 127.0.0.1:8000 app:application
