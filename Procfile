@@ -1,1 +1,1 @@
-web: npm run build && gunicorn app:application
+web: npm run start & gunicorn -b 127.0.0.1:8000 app:application

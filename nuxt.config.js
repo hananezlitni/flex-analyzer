@@ -20,9 +20,6 @@ export default {
       { src: 'https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js' }
     ],
   },
-  env: {
-    HOST_URL: process.env.HOST_URL || 5000
-  },
   /*
   ** Customize the progress-bar color
   */
