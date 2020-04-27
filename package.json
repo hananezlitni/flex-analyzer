@@ -9,6 +9,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
+    "heroku-postbuild": "gunicorn -b 127.0.0.1:8000 app:application",
     "generate": "nuxt generate"
   },
   "dependencies": {
