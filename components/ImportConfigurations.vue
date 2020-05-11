@@ -271,6 +271,8 @@
                 }
             },
             async solveLP() {
+                this.$nuxt.$loading.start()
+
                 //scroll to div
                 this.$el.querySelector("#import-configs-result").scrollIntoView(true)
                 
@@ -300,6 +302,7 @@
                     results["lp"] = await solveLPinPython(A)
 
                     //Display output
+                    this.$nuxt.$loading.finish()
                     document.getElementById('import-configs-result').innerHTML = '<h1 class="result__title">Results</h1>'
                     document.getElementById('import-configs-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["lp"].output.gamma.toFixed(5) + '</p>'
                 }
@@ -331,6 +334,7 @@
                 if (message.length === 0) {
                     document.getElementById("import-configs-errorMessage").innerHTML = message
                 } else {
+                    this.$nuxt.$loading.finish()
                     document.getElementById("import-configs-errorMessage").innerHTML += '<p class="error-message">' + message + '</p>'
                 }
             }
