@@ -9,6 +9,10 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 #print(sys.path)
 
+@application.route("/")
+def init():
+    return render_template('index.html')
+
 @application.route('/', methods=["POST"])
 def app():
     A = (request.data).decode("utf-8")
