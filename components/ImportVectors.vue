@@ -870,6 +870,8 @@
                 }
             },
             async solveOptimizationProblem() {
+                this.$nuxt.$loading.start()
+
                 //scroll to div
                 this.$el.querySelector("#import-vectors-result").scrollIntoView(true)
 
@@ -894,6 +896,7 @@
                     }
 
                     //Display output
+                    this.$nuxt.$loading.finish()
                     document.getElementById('import-vectors-result').innerHTML = '<h1 class="result__title">Results</h1>'
                     document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["originalProblem"].output.gamma.toFixed(5) + '</p>'
                     document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + results["fullyFlexible"].output.gamma.toFixed(5) + '</p><br>'
@@ -1172,6 +1175,7 @@
                 if (message.length === 0) {
                     document.getElementById("import-vectors-errorMessage").innerHTML = message
                 } else {
+                    this.$nuxt.$loading.finish()
                     document.getElementById("import-vectors-errorMessage").innerHTML += '<p class="error-message">' + message + '</p>'
                 }
             }
