@@ -4,14 +4,14 @@ from flask_cors import CORS
 from scripts import solver 
 from random import *
 
-application = Flask(__name__, static_url_path='/dist')
+application = Flask(__name__, static_folder=os.path.abspath('/dist/'))
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 #print(sys.path)
 
 @application.route("/")
 def index():
-    pass
+    return app.render_template('index.html')
 
 @application.route('/', methods=["POST"])
 def app():
