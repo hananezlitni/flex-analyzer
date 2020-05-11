@@ -5,7 +5,7 @@ from flask_cors import CORS
 from scripts import solver 
 from random import *
 
-application = Flask(__name__, template_folder='./dist')
+application = Flask(__name__, template_folder='./templates')
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 #print(sys.path)
