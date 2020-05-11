@@ -22,6 +22,4 @@ def app():
     return result
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 8000))
-    application.run(host='127.0.0.1', port=port)
-    #application.run(debug=True)
+    application.run()
