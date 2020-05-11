@@ -1,4 +1,5 @@
 #!flask/bin/python3.8
+import os
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from scripts import solver 
