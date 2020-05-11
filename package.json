@@ -10,7 +10,7 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "postinstall" : "nuxt build && nuxt start"
+    "postinstall" : "nuxt generate"
   },
   "dependencies": {
     "@nuxtjs/style-resources": "^0.1.2",
