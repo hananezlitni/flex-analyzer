@@ -9,7 +9,6 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "heroku-postbuild": "nuxt build && nuxt start",
     "generate": "nuxt generate"
   },
   "dependencies": {
