@@ -32,7 +32,6 @@ export default {
   /*
   ** Plugins to load before mounting the App
   */
-  generate: { fallback: true },
   plugins: [
   ],
   /*
