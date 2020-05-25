@@ -2,7 +2,7 @@
 export default {
   mode: 'universal',
   router: {
-    base: '/'
+    base: '/flex-analyzer/'
   },
   /*
   ** Headers of the page
