@@ -12,7 +12,7 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 @application.route("/")
 def index():
-    return return render_template('index.html') #send_from_directory('./static/', 'index.html')
+    return render_template('index.html') #send_from_directory('./static/', 'index.html')
 
 #@application.route('/static/<path:filename>')
 #def serve_static(filename):
