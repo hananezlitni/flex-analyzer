@@ -17,7 +17,7 @@ def index():
 @application.route('/static/_nuxt/<path:filename>')
 def serve_static(filename):
     root_dir = os.path.dirname(os.getcwd())
-    return send_from_directory(os.path.join(root_dir, 'static'), filename)
+    return send_from_directory(os.path.join(root_dir, 'static', 'js'), filename)
 
 @application.route('/', methods=["POST"])
 def app():
