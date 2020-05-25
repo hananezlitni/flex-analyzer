@@ -12,7 +12,7 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 @application.route("/")
 def index():
-    return render_template('index.html')
+    return send_from_directory('./dist/', 'index.html') #return render_template('index.html')
 
 @application.route('/', methods=["POST"])
 def app():
