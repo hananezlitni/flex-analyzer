@@ -14,6 +14,10 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 def index():
     return render_template('index.html') #send_from_directory('./static/', 'index.html')
 
+@application.errorhandler(404)
+def not_found_error(error):
+    return render_template('index.html')
+
 #@application.route('/static/<path:filename>')
 #def serve_static(filename):
 #    root_dir = os.path.dirname(os.getcwd())
