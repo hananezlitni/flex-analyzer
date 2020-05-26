@@ -5,15 +5,18 @@ from flask_cors import CORS
 from scripts import solver 
 from random import *
 
-application = Flask(__name__, static_folder="static")
+application = Flask(__name__, static_folder="./static/dist",
+                            template_folder="./static/dist")
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 #print(sys.path)
 
 @application.route("/")
-def index():
-    root_dir = os.path.dirname(os.getcwd())
-    return send_from_directory(os.path.join(root_dir, 'static', 'dist', 'client'))
+    return render_template("/server/index.spa.html")
+
+#def index():
+#    root_dir = os.path.dirname(os.getcwd())
+#    return send_from_directory(os.path.join(root_dir, 'static', 'dist', 'client'))
 
 #@application.route('/', defaults={'path': ''})
 #@application.route('/<path:path>')
