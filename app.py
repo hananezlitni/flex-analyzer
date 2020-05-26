@@ -13,7 +13,8 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 @application.route("/")
 def index():
-    return render_template("/server/index.spa.html")
+    path_dir = os.path.abspath("/static/dist/server")
+    return send_from_directory(os.path.join(path_dir), 'index.spa.html')
 
 #def index():
 #    root_dir = os.path.dirname(os.getcwd())
