@@ -34,11 +34,10 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 @application.route('/<path:path>')
 def serve(path):
      path_dir = os.path.abspath("/static")
-     print(path_dir)
      if path != "" and os.path.exists(os.path.join(path_dir, path)):
          return send_from_directory(os.path.join(path_dir), path)
      else:
-         return send_from_directory(os.path.join(path_dir),'index.html')
+         return application.send_static_file('index.html')
 
 @application.route('/', methods=["POST"])
 def app():
