@@ -21,7 +21,7 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
 @application.route("/")
 def index():
-    return application.send_static_file('../client/index.html')
+    return application.send_static_file('index.html')
 
 @application.route('/<path:path>')
 def serve_page(path):
