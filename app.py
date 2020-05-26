@@ -1,6 +1,6 @@
 #!flask/bin/python3.8
 import os
-from flask import Flask, request, jsonify, render_template, send_from_directory, send_static_file
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 from scripts import solver 
 from random import *
