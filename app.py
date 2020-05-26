@@ -13,7 +13,7 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 @application.route("/")
 def index():
     root_dir = os.path.dirname(os.getcwd())
-    return send_from_directory(os.path.join(root_dir, 'static', 'dist', 'server'), 'index.spa.html')
+    return send_from_directory(os.path.join(root_dir, 'static', 'dist', 'client'))
 
 #@application.route('/', defaults={'path': ''})
 #@application.route('/<path:path>')
