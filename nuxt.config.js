@@ -4,6 +4,7 @@ export default {
   router: {
     base: '/'
   },
+  buildDir: 'static',
   /*
   ** Headers of the page
   */
