@@ -12,6 +12,7 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 #print(sys.path)
 
 @application.route("/")
+def index():
     return render_template("/server/index.spa.html")
 
 #def index():
