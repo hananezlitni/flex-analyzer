@@ -19,12 +19,12 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 #def index(path):
 #    return render_template('index.html')
 
-@application.route("/")
-def index():
-    return application.send_static_file('index.html')
+#@application.route("/")
+#def index():
+#    return application.send_static_file('index.html')
 
-@application.route('/_nuxt/<path:filename>')
-def serve_static(filename):
+@application.route("/")
+def serve_static():
     root_dir = os.path.dirname(os.getcwd())
     return send_from_directory(os.path.join(root_dir, 'static', '_nuxt'), filename)
 
