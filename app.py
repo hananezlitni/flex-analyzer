@@ -19,16 +19,26 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 #def index(path):
 #    return render_template('index.html')
 
-@application.route("/")
-def index():
-    return application.send_static_file('index.html')
+#@application.route("/")
+#def index():
+#    return application.send_static_file('index.html')
 
-@application.route("/_nuxt/<path:filename>")
-def serve_static(filename):
-    root_dir = os.path.dirname(os.getcwd())
-    print('ROOT DIRECTORY')
-    print(root_dir)
-    return send_from_directory(os.path.join(root_dir, 'static', '_nuxt'), filename)
+#@application.route("/static/_nuxt/<path:filename>")
+#def serve_static(filename):
+#    root_dir = os.path.dirname(os.getcwd())
+#    print('ROOT DIRECTORY')
+#    print(root_dir)
+#    return send_from_directory(os.path.join(root_dir, 'static', '_nuxt'), filename)
+
+@application.route('/', defaults={'path': ''})
+@application.route('/<path:path>')
+def serve(path):
+     path_dir = os.path.abspath("/static")
+     print(path_dir)
+     if path != "" and os.path.exists(os.path.join(path_dir, path)):
+         return send_from_directory(os.path.join(path_dir), path)
+     else:
+         return send_from_directory(os.path.join(path_dir),'index.html')
 
 @application.route('/', methods=["POST"])
 def app():
