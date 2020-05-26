@@ -23,7 +23,7 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 def index():
     return application.send_static_file('index.html')
 
-@application.route('/<path:path>')
+@application.route('/_nuxt/<path:path>')
 def serve_page(path):
     return send_from_directory('static', path)
 
