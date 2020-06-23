@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export function solveLPinPython(A) {
-    const path = `http://localhost:5000` //`http://127.0.0.1:8000` //`http://localhost:5000/`
+    const path = `http://127.0.0.1:8000` //`http://127.0.0.1:8000` //`http://localhost:5000/`
     const data = A;
     const axiosConfig = {
         headers: {
