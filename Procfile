@@ -1,1 +1,1 @@
-web: honcho -f ProcfileFree start
+web: honcho -f ProcfileHoncho start
