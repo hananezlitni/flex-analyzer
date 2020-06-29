@@ -1,1 +1,1 @@
-web: foreman start -f ProcfileFree
+web: honcho -f ProcfileHoncho start
