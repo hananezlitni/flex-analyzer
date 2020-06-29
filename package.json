@@ -24,14 +24,18 @@
     "simplex-solver": "0.0.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "@babel/preset-env": "^7.10.3",
     "@vue/test-utils": "^1.0.0-beta.31",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^24.9.0",
+    "babel-loader": "^8.1.0",
     "file-loader": "^5.0.2",
     "jest": "^24.9.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "nodemon": "^1.19.4",
     "sass-loader": "^7.3.1",
-    "vue-jest": "^3.0.5"
+    "vue-jest": "^3.0.5",
+    "webpack": "^4.43.0"
   }
 }
