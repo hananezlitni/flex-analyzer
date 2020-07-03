@@ -1,5 +1,5 @@
 import numpy as np 
-from mip.model import *
+from mip import *
 import json
 
 def solveLP(A):
