@@ -949,7 +949,6 @@
                 return lpResult
             },
             solveForFullyFlexibleStructure() {
-                console.log('solveForFullyFlexibleStructure')
                 let configsNew = []
                 let configsServiceRatesMatrixNew = []
 
