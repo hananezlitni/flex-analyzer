@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export function solveLPinPython(A) {
-    const path = `https://flexibility-structure-analyzer.herokuapp.com/` //`http://localhost:3001` 
+    const path = `http://localhost:3001` 
     const data = A;
     const axiosConfig = {
         headers: {

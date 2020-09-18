@@ -30,6 +30,10 @@ async function start() {
 start()
 
 router.post('/',(req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'GET, POST');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
   var aMatrix = req.body.aMatrix;
 
   const spawn = require('child_process').spawn;
