@@ -1,9 +1,10 @@
 
 export default {
-  mode: 'universal',
+  //mode: 'universal',
   router: {
     base: '/'
   },
+  target: 'server',
   /*
   ** Headers of the page
   */

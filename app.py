@@ -12,6 +12,8 @@ cors = CORS(application, resources={r"/*": {"origins": "*"}})
 @application.route('/', methods=["POST"])
 def app():
     A = (request.data).decode("utf-8")
+    print("INPUT A")
+    print(A)
 
     output = solver.solveLP(A)
 

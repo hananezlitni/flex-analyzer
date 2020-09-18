@@ -885,22 +885,22 @@
                     let results = {}
                     
                     //Original problem
-                    results["originalProblem"] = await this.solveOriginalProblem()
+                    results["originalProblem"] = (await this.solveOriginalProblem()).replace(/'/g, '"') //new
 
                     //Fully Flexible Structure
-                    results["fullyFlexible"] = await this.solveForFullyFlexibleStructure()
+                    results["fullyFlexible"] = (await this.solveForFullyFlexibleStructure()).replace(/'/g, '"') //new
 
                     //Remove Task n
                     for (var n = 0; n < this.numOfTasks; n++) {
-                        results["noTask" + (n + 1)] = await this.solveWithoutTaskN(n)
+                        results["noTask" + (n + 1)] = (await this.solveWithoutTaskN(n)).replace(/'/g, '"') //new
                     }
 
                     //Display output
                     this.$nuxt.$loading.finish()
                     document.getElementById('import-vectors-result').innerHTML = '<h1 class="result__title">Results</h1>'
-                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["originalProblem"].output.gamma.toFixed(5) + '</p>'
-                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + results["fullyFlexible"].output.gamma.toFixed(5) + '</p><br>'
-                    if (results["originalProblem"].output.gamma.toFixed(5) >= results["fullyFlexible"].output.gamma.toFixed(5)) {
+                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + JSON.parse(results["originalProblem"]).output.gamma.toFixed(5) + '</p>'
+                    document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + JSON.parse(results["fullyFlexible"]).output.gamma.toFixed(5) + '</p><br>'
+                    if (JSON.parse(results["originalProblem"]).output.gamma.toFixed(5) >= JSON.parse(results["fullyFlexible"]).output.gamma.toFixed(5)) {
                         document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result">The submitted structure is as efficient as a fully flexible system.</p>'
                     } else {
                         document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result">The submitted structure is <em>not</em> as efficient as a fully flexible system.</p>'
@@ -908,7 +908,7 @@
                     document.getElementById('import-vectors-result').innerHTML += '<p class="asterisks">*****</p>'
 
                     for (var i = 1; i <= this.numOfTasks; i++) {
-                        document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the structure when task <em>' + i + '</em> is removed: </b>' + results["noTask" + i].output.gamma.toFixed(5) + '</p>'
+                        document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the structure when task <em>' + i + '</em> is removed: </b>' + JSON.parse(results["noTask" + i]).output.gamma.toFixed(5) + '</p>'
                     }
                 }
             },
@@ -945,7 +945,7 @@
 
                 //Pass A matrix to Python solver and get results
                 let lpResult = solveLPinPython(A)
-
+                
                 return lpResult
             },
             solveForFullyFlexibleStructure() {
