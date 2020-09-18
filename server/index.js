@@ -7,15 +7,20 @@ const app = express();
 const isDev = process.env.NODE_ENV !== 'production'
 const port = process.env.PORT || 3000
 
+// CORS
 app.use(cors())
+
+// Parse API data
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Allow CORS on the server
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 });
 
+// Render Nuxt on the server
 async function start() {
   // We get Nuxt instance
   const nuxt = await loadNuxt(isDev ? 'dev' : 'start')
@@ -34,6 +39,7 @@ async function start() {
 
 start()
 
+// POST request to Python solver
 router.post('/',(req, res) => {
   var aMatrix = req.body.aMatrix;
 
