@@ -8,10 +8,14 @@ const isDev = process.env.NODE_ENV !== 'production'
 const port = process.env.PORT || 3000
 
 app.use(cors())
-app.options('*', cors())
-
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 async function start() {
   // We get Nuxt instance
@@ -32,10 +36,6 @@ async function start() {
 start()
 
 router.post('/',(req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'GET, POST');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
   var aMatrix = req.body.aMatrix;
 
   const spawn = require('child_process').spawn;
