@@ -1,6 +1,9 @@
 import numpy as np 
 from mip import *
 import json
+import logging
+
+logging.basicConfig(level='INFO')
 
 def solveLP(A):
     #*************** Convert A to 2D of numbers **************
@@ -15,6 +18,7 @@ def solveLP(A):
     
     #****************** Optimization ******************
     m = Model(sense=MAXIMIZE)
+    m.verbose = False
 
     # creating variables (Note: Gamma is always the last variable)
     x = [ m.add_var(name= 'x{}'.format(i)) for i in range(len(aMatrix[0])) ]
@@ -22,7 +26,6 @@ def solveLP(A):
     # creating constraints
     for i in range(len(aMatrix)):
         if i == len(aMatrix) - 1:
-            print("hello")
             m += xsum(aMatrix[i][j] * m.var_by_name('x{}'.format(j)) for j in range(len(aMatrix[0]))) <= 1
         else:
             m += xsum(aMatrix[i][j] * m.var_by_name('x{}'.format(j)) for j in range(len(aMatrix[0]))) <= 0
@@ -40,4 +43,19 @@ def solveLP(A):
     
     output['gamma'] = output.pop('x{}'.format(len(aMatrix[0]) - 1))
 
-    return output
+    result = {
+        'output': output
+    }
+
+    return result
+
+if __name__ == '__main__':
+#    from codecs import decode
+    import sys
+    import logging
+
+    print(solveLP(sys.argv[1]))
+    #print(solveLP(sys.argv[1]))
+#    print(sys.argv[2])
+#    input = decode(sys.argv[2], 'unicode_escape')
+#    globals()[sys.argv[1]](str(input))
