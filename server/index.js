@@ -51,6 +51,7 @@ router.post('/',(req, res) => {
   ls.stdout.on('data', (data) => {
     result = JSON.stringify(`${data}`.split('\n')[1])
     console.log(`stdout: ${data}`);
+    console.log("result (from stdout): " + result)
   });
   
   ls.stderr.on('data', (data) => {
@@ -59,6 +60,7 @@ router.post('/',(req, res) => {
   
   ls.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
+    console.log("result (from onclose): " + result)
     res.send(result)
     res.end("end");
   });
