@@ -27,7 +27,7 @@ async function start() {
     build(nuxt)
   }
   // Listen the server
-  app.listen(port, 'https://flexibility-structure-analyzer.herokuapp.com/')
+  app.listen(port, '0.0.0.0')
   console.log('Server listening on `localhost:' + port + '`.')
 }
 
