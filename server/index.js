@@ -22,13 +22,6 @@ async function start() {
   // Render every route with Nuxt.js
   app.use(nuxt.render)
 
-  // Allow CORS on the server
-  app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-    next();
-    });
-
   // Build only in dev mode with hot-reloading
   if (isDev) {
     build(nuxt)
@@ -42,6 +35,11 @@ start()
 
 // POST request to Python solver
 router.post('/',(req, res) => {
+  // Allow CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+
+  // Pass aMatrix and receive data
   var aMatrix = req.body.aMatrix;
   console.log("AMATRIX")
   console.log(aMatrix)
