@@ -42,7 +42,8 @@ start()
 // POST request to Python solver
 router.post('/',(req, res) => {
   var aMatrix = req.body.aMatrix;
-
+  console.log("AMATRIX")
+  console.log(aMatrix)
   const spawn = require('child_process').spawn;
   const ls = spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
   var result = ''
