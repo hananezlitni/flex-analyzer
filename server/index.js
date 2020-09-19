@@ -49,7 +49,7 @@ router.post('/',(req, res) => {
   //var i = 0
   
   ls.stdout.on('data', (data) => {
-    result = JSON.stringify(`${data}`.split('\n')[1])
+    result = `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
     console.log(`stdout: ${data}`);
     console.log("result (from stdout): " + result)
   });
