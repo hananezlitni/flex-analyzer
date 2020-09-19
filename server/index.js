@@ -14,12 +14,6 @@ app.use(cors())
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Allow CORS on the server
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-});
-
 // Render Nuxt on the server
 async function start() {
   // We get Nuxt instance
@@ -27,6 +21,13 @@ async function start() {
 
   // Render every route with Nuxt.js
   app.use(nuxt.render)
+
+  // Allow CORS on the server
+  app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    next();
+    });
 
   // Build only in dev mode with hot-reloading
   if (isDev) {
