@@ -3,6 +3,7 @@ from mip import *
 import json
 import logging
 
+# Console Logging
 logging.basicConfig(level='INFO')
 
 def solveLP(A):
