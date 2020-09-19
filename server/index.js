@@ -46,12 +46,13 @@ router.post('/',(req, res) => {
   const spawn = require('child_process').spawn;
   const ls = spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
   var result = ''
+  var self = this
   //var i = 0
   
   ls.stdout.on('data', (data) => {
-    result = `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
+    self.result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
     console.log(`stdout: ${data}`);
-    console.log("result (from stdout): " + result)
+    console.log("result (from stdout): " + self.result)
   });
   
   ls.stderr.on('data', (data) => {
@@ -60,8 +61,8 @@ router.post('/',(req, res) => {
   
   ls.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
-    console.log("result (from onclose): " + result)
-    res.send(result)
+    console.log("result (from onclose): " + self.result)
+    res.send(self.result)
     res.end("end");
   });
 });
