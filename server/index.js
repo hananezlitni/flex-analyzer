@@ -34,13 +34,17 @@ async function start() {
   console.log('Server listening on `localhost:' + port + '`.')
 }
 
-async function run() {
-  // POST request to Python solver
-  router.post('/',(req, res) => {
-    // Allow CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+// POST request to Python solver
+router.post('/', async(req, res) => {
+  // Allow CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
 
+  await compute(req, res)
+});
+
+async function compute (req, res) {
+  return new Promise((resolve, reject) => {
     // Pass aMatrix and receive data
     var aMatrix = req.body.aMatrix;
     const spawn = require('child_process').spawn;
@@ -66,8 +70,8 @@ async function run() {
   });
 }
 
+
 start()
-run()
 app.listen(3001,() => {
   console.log("Started on PORT 3001");
 })

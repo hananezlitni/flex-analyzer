@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-export async function solveLPinPython(A) {
-    const path = `https://flexibility-structure-analyzer.herokuapp.com` //`http://localhost:3001` 
+export function solveLPinPython(A) {
+    const path = `https://flexibility-structure-analyzer.herokuapp.com` //`http://localhost:3001`  //`https://flexibility-structure-analyzer.herokuapp.com`
     const data = A;
     const axiosConfig = {
         headers: {
@@ -10,7 +10,7 @@ export async function solveLPinPython(A) {
         }
     }
 
-    return await axios.post(path, { 'aMatrix': JSON.stringify(data) }, axiosConfig).then(response => {
+    return axios.post(path, { 'aMatrix': JSON.stringify(data) }, axiosConfig).then(response => {
         console.log("SUCCESS POST REQUEST")
         console.log(response.data)
         return response.data
