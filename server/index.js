@@ -1,3 +1,6 @@
+//current problem: stdout is asynchronous and result is returned before full data is received
+//should use callback function
+
 const { loadNuxt, build } = require('nuxt')
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -31,46 +34,43 @@ async function start() {
   console.log('Server listening on `localhost:' + port + '`.')
 }
 
+async function run() {
+  // POST request to Python solver
+  router.post('/',(req, res) => {
+    // Allow CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+
+    // Pass aMatrix and receive data
+    var aMatrix = req.body.aMatrix;
+    const spawn = require('child_process').spawn;
+    const ls = spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
+    var result = ''
+    
+    ls.stdout.on('data', (data) => {
+      result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
+      console.log(`stdout: ${data}`);
+      console.log("result (from stdout): " + result)
+    });
+    
+    ls.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`);
+    });
+    
+    ls.on('close', (code) => {
+      console.log(`child process exited with code ${code}`);
+      console.log("result (from onclose): " + result)
+      res.send(result)
+      res.end("end");
+    });
+  });
+}
+
 start()
-
-// POST request to Python solver
-router.post('/',(req, res) => {
-  // Allow CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-
-  // Pass aMatrix and receive data
-  var aMatrix = req.body.aMatrix;
-  console.log("AMATRIX")
-  console.log(aMatrix)
-  const spawn = require('child_process').spawn;
-  const ls = spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
-  var result = ''
-  var self = this
-  //var i = 0
-  
-  ls.stdout.on('data', (data) => {
-    self.result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
-    console.log(`stdout: ${data}`);
-    console.log("result (from stdout): " + self.result)
-  });
-  
-  ls.stderr.on('data', (data) => {
-    console.log(`stderr: ${data}`);
-  });
-  
-  ls.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-    console.log("result (from onclose): " + self.result)
-    res.send(self.result)
-    res.end("end");
-  });
-});
-
+run()
 app.listen(3001,() => {
   console.log("Started on PORT 3001");
 })
-
 app.use('/', router)
 module.exports = app
 
