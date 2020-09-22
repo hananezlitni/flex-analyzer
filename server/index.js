@@ -52,11 +52,11 @@ router.post('/', async(req, res) => {
     console.log(`stdout (w/ await): ${data}`);
   });
   
-  ls.stderr.on('data', (data) => {
+  await ls.stderr.on('data', (data) => {
     console.log(`stderr: ${data}`);
   });
   
-  ls.on('close', (code) => {
+  await ls.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
     res.send(result)
   });
