@@ -46,21 +46,28 @@ router.post('/', async(req, res) => {
   const spawn = require('child_process').spawn;
   const ls = await spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
   var result = ''
+  var self = this
   
   await ls.stdout.on('data', (data) => {
-    result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
-    console.log(`stdout (w/ await): ${data}`);
+    self.result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
+    console.log(`stdout (using data): ${data}`);
+    console.log(`stdout (using result): `+ self.result);
   });
   
   ls.stderr.on('data', (data) => {
     console.log(`stderr: ${data}`);
   });
-  
-  ls.stdout.on('end', () => {
-    console.log("Final result: " + result)
-    res.send(result)
+
+  ls.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+    output(res, self.result)
   });
 });
+
+var output = function(res, result) {
+  console.log("Result (from output): " + result)
+  res.send(result)
+}
 
 start()
 app.listen(3001,() => {
