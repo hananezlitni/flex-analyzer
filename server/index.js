@@ -44,15 +44,15 @@ router.post('/', async(req, res) => {
 
   // Pass aMatrix and receive data
   const spawn = require('child_process').spawn;
-  const ls = await spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
+  const ls = spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
   var result = ''
   var self = this
   
-  ls.stdout.on('data', (data) => {
+  ls.stdout.on('data', async(data) => {
     self.result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
     console.log(`stdout (using data): ${data}`);
     console.log(`stdout (using result): `+ self.result);
-    ls.stdout.pipe(res);
+    await ls.stdout.pipe(res);
   });
   
   ls.stderr.on('data', (data) => {
