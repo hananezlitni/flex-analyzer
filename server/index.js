@@ -52,20 +52,15 @@ router.post('/', async(req, res) => {
     console.log(`stdout (w/ await): ${data}`);
   });
   
-  await ls.stderr.on('data', (data) => {
+  ls.stderr.on('data', (data) => {
     console.log(`stderr: ${data}`);
   });
   
-  await ls.on('close', (code) => {
+  ls.on('exit', (code) => {
     console.log(`child process exited with code ${code}`);
     res.send(result)
   });
 });
-
-/*async function compute (res, aMatrix) {
-    
-}*/
-
 
 start()
 app.listen(3001,() => {
