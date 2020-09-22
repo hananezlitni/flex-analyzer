@@ -40,35 +40,31 @@ router.post('/', async(req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
 
-  await compute(req, res)
+  var aMatrix = req.body.aMatrix;
+
+  // Pass aMatrix and receive data
+  const spawn = require('child_process').spawn;
+  const ls = spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
+  var result = ''
+  
+  await ls.stdout.on('data', (data) => {
+    result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
+    console.log(`stdout (w/ await): ${data}`);
+  });
+  
+  ls.stderr.on('data', (data) => {
+    console.log(`stderr: ${data}`);
+  });
+  
+  ls.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+    res.send(result)
+  });
 });
 
-async function compute (req, res) {
-  return new Promise((resolve, reject) => {
-    // Pass aMatrix and receive data
-    var aMatrix = req.body.aMatrix;
-    const spawn = require('child_process').spawn;
-    const ls = spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
-    var result = ''
+/*async function compute (res, aMatrix) {
     
-    ls.stdout.on('data', (data) => {
-      result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
-      console.log(`stdout: ${data}`);
-      console.log("result (from stdout): " + result)
-    });
-    
-    ls.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`);
-    });
-    
-    ls.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-      console.log("result (from onclose): " + result)
-      res.send(result)
-      res.end("end");
-    });
-  });
-}
+}*/
 
 
 start()
