@@ -11,6 +11,9 @@
     "start": "nuxt start",
     "generate": "nuxt generate"
   },
+  "engines": {
+    "node": "10.x"
+  },
   "dependencies": {
     "@nuxtjs/style-resources": "^0.1.2",
     "axios": "^0.19.2",
