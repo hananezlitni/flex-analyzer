@@ -48,10 +48,11 @@ router.post('/', async(req, res) => {
   var result = ''
   var self = this
   
-  await ls.stdout.on('data', (data) => {
+  ls.stdout.on('data', (data) => {
     self.result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
     console.log(`stdout (using data): ${data}`);
     console.log(`stdout (using result): `+ self.result);
+    ls.stdout.pipe(res);
   });
   
   ls.stderr.on('data', (data) => {
@@ -60,7 +61,6 @@ router.post('/', async(req, res) => {
 
   ls.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
-    output(res, self.result)
   });
 });
 
