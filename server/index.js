@@ -58,6 +58,7 @@ router.post('/', async(req, res) => {
   
   ls.on('exit', (code) => {
     console.log(`child process exited with code ${code}`);
+    console.log("Final result: " + result)
     res.send(result)
   });
 });
