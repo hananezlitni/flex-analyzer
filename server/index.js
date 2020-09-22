@@ -44,7 +44,7 @@ router.post('/', async(req, res) => {
 
   // Pass aMatrix and receive data
   const spawn = require('child_process').spawn;
-  const ls = spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
+  const ls = await spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
   var result = ''
   
   await ls.stdout.on('data', (data) => {
