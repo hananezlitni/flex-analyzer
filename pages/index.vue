@@ -1,8 +1,8 @@
 <template>
     <main>
         <tabs>
-          <tab name="Import Vectors" :selected="true">
-            <ImportVectors></ImportVectors>
+          <tab name="Import a Structure" :selected="true">
+            <ImportStructure></ImportStructure>
           </tab>
           <tab name="Import Configurations">
             <ImportConfigurations></ImportConfigurations>
@@ -14,14 +14,14 @@
 <script>
     import Tab from '../components/Tab';
     import Tabs from '../components/Tabs';
-    import ImportVectors from '../components/ImportVectors'
+    import ImportStructure from '../components/ImportStructure'
     import ImportConfigurations from '../components/ImportConfigurations'
     import axios from 'axios';
 
     export default {
       name: 'ImportTool',
       components: {
-          Tab, Tabs, ImportVectors, ImportConfigurations
+          Tab, Tabs, ImportStructure, ImportConfigurations
       },
       data() {
         return {
