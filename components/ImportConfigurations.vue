@@ -1,7 +1,7 @@
 <template>
     <section>
         <div class="import">
-        <h1 class="import__title">Import a Structure: Configurations</h1>
+        <h1 class="import__title">Import Configurations</h1>
 
         <form class="import__configurations-form" @submit="$event.preventDefault()">
             <div id="import-configs-errorMessage"></div>
@@ -38,6 +38,8 @@
             </div>
         </form>
     </div>
+
+    <LoadingSpinner :loading="isLoading" />
 
     <div id="import-configs-result" class="result"></div>
 
@@ -77,10 +79,15 @@
     import { minNumOfServers, maxNumOfServers } from '../services/constraints.js'
     import { buildMatrixA } from '../services/data-processing.js'
     import { solveLPinPython } from '../services/solver.js'
+    import LoadingSpinner from '../components/LoadingSpinner'
 
     export default {
+        components: {
+            LoadingSpinner
+        },
         data() {
             return {
+                isLoading: false,
                 numberOfTasks: 0,
                 numberOfServers: 0,
                 arrivalRatesVector: [],
@@ -271,7 +278,7 @@
                 }
             },
             async solveLP() {
-                this.$nuxt.$loading.start()
+                this.isLoading = true
 
                 //scroll to div
                 this.$el.querySelector("#import-configs-result").scrollIntoView(true)
@@ -299,12 +306,12 @@
                     let results = {}
                     
                     //Original problem
-                    results["lp"] = await solveLPinPython(A)
+                    results["lp"] = (await solveLPinPython(A)).replace(/'/g, '"') //new
 
                     //Display output
-                    this.$nuxt.$loading.finish()
+                    this.isLoading = false
                     document.getElementById('import-configs-result').innerHTML = '<h1 class="result__title">Results</h1>'
-                    document.getElementById('import-configs-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + results["lp"].output.gamma.toFixed(5) + '</p>'
+                    document.getElementById('import-configs-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + JSON.parse(results["lp"]).output.gamma.toFixed(5) + '</p>'
                 }
             },
             clearAll() {
@@ -334,7 +341,7 @@
                 if (message.length === 0) {
                     document.getElementById("import-configs-errorMessage").innerHTML = message
                 } else {
-                    this.$nuxt.$loading.finish()
+                    this.isLoading = false
                     document.getElementById("import-configs-errorMessage").innerHTML += '<p class="error-message">' + message + '</p>'
                 }
             }
