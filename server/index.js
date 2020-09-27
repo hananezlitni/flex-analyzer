@@ -43,16 +43,43 @@ router.post('/', async(req, res) => {
   var aMatrix = req.body.aMatrix;
 
   // Pass aMatrix and receive data
-  const spawn = require('child_process').spawn;
-  const ls = spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
+  var child_process = require('child_process')
+
+  run_script('python3', ['scripts/solver.py', aMatrix], function(output, exit_code) {
+      console.log('Full output of script: ',output);
+      console.log('process exit with code: ' + exit_code)
+      res.json(output)
+  });
+
+  function run_script(command, args, callback) {
+      var child = child_process.spawn(command, args)
+
+      var scriptOutput = "";
+
+      child.stdout.on('data', function(data) {
+        console.log('stdout: ' + `${data}`.split('\n')[1])
+        scriptOutput += `${data}`.split('\n')[1]
+      })
+
+      child.stderr.on('data', function(data) {
+          console.log('stderr: ' + data);
+          scriptOutput += `${data}`.split('\n')[1]
+      });
+
+      child.on('close', function(code) {
+        callback(scriptOutput, code);
+      })
+  }
+
+  /*const spawn = require('child_process').spawn;
+  const ls = await spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
   var result = ''
-  var self = this
   
   ls.stdout.on('data', async(data) => {
-    self.result =  `${data}`.split('\n')[1] //JSON.stringify(`${data}`.split('\n')[1])
-    console.log(`stdout (using data): ${data}`);
-    console.log(`stdout (using result): `+ self.result);
-    await ls.stdout.pipe(res);
+    console.log(`stdout: ${data}`);
+    result = `${data}`.split('\n')[1]
+    console.log("RESULT: " + result)
+    //res.write(`${data}`.split('\n')[1]) //JSON.stringify(`${data}`.split('\n')[1])
   });
   
   ls.stderr.on('data', (data) => {
@@ -60,14 +87,14 @@ router.post('/', async(req, res) => {
   });
 
   ls.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-  });
+    if (code === 0) {
+      console.log(`child process exited with code ${code}`);
+      res.send(result)
+    } else {
+        console.log(`error: child process exited with code ${code}`)
+    }
+  });*/
 });
-
-var output = function(res, result) {
-  console.log("Result (from output): " + result)
-  res.send(result)
-}
 
 start()
 app.listen(3001,() => {
