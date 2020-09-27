@@ -24,10 +24,10 @@
     <p><b>Robust structure:</b> The system is able to shift excess capacity from any task to any other task.</p>
     <p><b>Reference:</b> S. Andradottir, H. Ayhan, and D.G. Down, Design Principles for Flexible Systems Production and Operations Management, 2013 (volume 22, issue 5), 1144-1156.</p>
 
-    <h2>Importing Vectors</h2>
+    <h2>Importing Structures</h2>
     <br>
     <div class="div-flex-center">
-      <a v-bind:href="importVectors.loc" download="import-vectors">
+      <a v-bind:href="importStructure.loc" download="import-structure">
         <button class="button button--action button--not-filled">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
             <path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
@@ -36,7 +36,7 @@
         </button>
       </a>
     </div>
-    <p>The "Import Vectors" variation of the tool allows importing inputs as a CSV file as well as entering inputs on-screen. A sample file can be downloaded by clicking the button above for guidance. The inputs must be entered row-by-row in the CSV file, or line-by-line on-screen, in the following order:</p>
+    <p>The "Import a Structure" variation of the tool allows importing inputs as a CSV file as well as entering inputs on-screen. For guidance, a sample file is provided and can be downloaded by clicking the button above. The inputs must be entered row-by-row in the CSV file, or line-by-line on-screen, in the following order:</p>
     <ol>
       <li>Number of Tasks:</li>
       <li><em>*number of tasks*</em></li>
@@ -64,10 +64,10 @@
       </a>
     </div>
     <p>
-      Large structures and structures with many task-server assignments (i.e. the number of 1's in the F matrix) produce a very large number of configurations, which can cause errors in the tool.
+      Large structures and structures with many task-server assignments (i.e. the number of 1's in the F matrix) produce a very large number of configurations, which can cause errors in the tool as it's running on a browser.
     </p> 
     <p>      
-      To prevent such errors, please follow the steps below to compute the configurations and the corresponding service rates locally on your device:
+      To prevent such errors, please follow the steps below to compute the configurations and the corresponding service rates locally on your computer:
     </p> 
     <ol>
       <li>Node.js is required to run the script. It can be downloaded at: <a href="https://nodejs.org/en/download/" target="_blank">https://nodejs.org/en/download/</a></li>
@@ -78,7 +78,7 @@
           node -p "require('./configs.js').computeConfigurations(<em>*number of servers*</em>,<em>*number of tasks*</em>,<em>*f matrix*</em>,<em>*service rates*</em>)"
         </p>
         <br>
-        Below is an example of the command with inputs of a 3x3 structure:
+        Below is an example of using the command to compute the configurations of a 3x3 structure:
         <p class="code">
           node -p "require('./configs.js').computeConfigurations(3,3,[[1,1,1],[1,0,1],[0,1,0]],[[2,1,4],[4,0,1],[0,2,0]])"
         </p>
@@ -98,7 +98,7 @@
         </button>
       </a>
     </div>
-    <p>The "Import Configurations" variation of the tool allows directly importing the configurations and service rates as a CSV file. A sample file can be downloaded by clicking the button above for guidance. The inputs must be entered row-by-row in the CSV file in the following order:</p>
+    <p>The "Import Configurations" variation of the tool allows directly importing the configurations and service rates as a CSV file. For guidance, a sample file is provided and can be downloaded by clicking the button above. The inputs must be entered row-by-row in the CSV file in the following order:</p>
     <ol>
       <li>Number of Tasks:</li>
       <li><em>*number of tasks*</em></li>
@@ -125,7 +125,7 @@
         </button>
       </a>
     </div>
-    <p>Both variations of the tool allow importing the minimum and maximum number of servers at a task as CSV files. Sample files can be downloaded by clicking the button above for guidance. The constraints are imported row-by-row in the CSV files in the following order:</p>
+    <p>Both variations of the tool allow importing the minimum and maximum number of servers at a task as CSV files. For guidance, a sample file is provided and can be downloaded by clicking the button above. The constraints are imported row-by-row in the CSV files in the following order:</p>
     <ol>
       <li>Constraints:</li>
       <li><em>*constraints vector*</em></li>
@@ -148,7 +148,7 @@
 </style>
 
 <script>
-import importVectors from "../../files/import-vectors(v2).csv"
+import importStructure from "../../files/import-structure.csv"
 import configsScript from "../../assets/configs.js"
 import importConfigs from "../../files/import-configurations--valid.csv"
 import constraints from "../../files/constraints-max.csv"
@@ -156,10 +156,10 @@ import constraints from "../../files/constraints-max.csv"
 export default {
   data() {
     return {
-      importVectors: { title: 'import-vectors', loc: require('../../files/import-vectors(v2).csv').default },
-      configsScript: { title: 'configs', loc: require('../../assets/configs.js').default },
-      importConfigs: { title: 'import-configs', loc: require('../../files/import-configurations--valid.csv').default },
-      constraints: { title: 'constraints', loc: require('../../files/constraints-max.csv').default }
+      importStructure: { title: 'import-structure', loc: require('../../files/import-structure.csv') },
+      configsScript: { title: 'configs', loc: require('../../assets/configs.js') },
+      importConfigs: { title: 'import-configs', loc: require('../../files/import-configurations--valid.csv') },
+      constraints: { title: 'constraints', loc: require('../../files/constraints-max.csv') }
     }
   }
 }

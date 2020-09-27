@@ -1,11 +1,11 @@
 <template>
     <section>
         <div class="import">
-            <h1 class="import__title">Import a Structure: Vectors</h1>
+            <h1 class="import__title">Import a Structure</h1>
 
             <form class="import__vectors-form" @submit="$event.preventDefault()">
                 <div class="div-flex-center">
-                    <input type="text" id="file-name" class="import__file-name" placeholder="Import your vectors" readonly />
+                    <input type="text" id="file-name" class="import__file-name" placeholder="Import your structure" readonly />
                     <input type="file" id="file-upload" class="import__file-upload" accept=".csv" @change="displayCsvDataInTextArea"/>
                     <label for="file-upload" class="import__file-upload-label">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512"><path fill="#dddddd" d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/></svg>
@@ -14,8 +14,23 @@
                 </div>
 
                 <div id="import-vectors-errorMessage"></div>
-                
-                <textarea placeholder="Vectors..." id="textArea" class="import__vectors-form__textarea" /> <!--@keyup="parseCsvData($event)"-->
+
+                <!--@keyup="parseCsvData($event)"-->
+                <textarea placeholder="Structure..." id="textArea" class="import__vectors-form__textarea">
+Number of Tasks:
+3
+Number of Servers:
+3
+Arrival Rates:
+64,53,123
+Service Rates:
+2,1,4
+4,0,1
+0,2,0
+F Matrix:
+1,1,1
+1,0,1
+0,1,0</textarea>
 
                 <h2 class="import__constraints-title">Minimum Number of Servers at a Task</h2>
 
@@ -79,6 +94,7 @@
                 Submit Structure
             </button>
         </div>
+        <LoadingSpinner :loading="isLoading" />
     </section>
 </template>
 
@@ -118,10 +134,15 @@
     import { minNumOfServers, maxNumOfServers } from '../services/constraints.js'
     import { buildMatrixA } from '../services/data-processing.js'
     import { solveLPinPython } from '../services/solver.js'
+    import LoadingSpinner from '../components/LoadingSpinner'
 
     export default {
+        components: {
+            LoadingSpinner
+        },
         data() {
             return {
+                isLoading: false,
                 numOfTasks: 5,
                 numOfServers: 5,
                 fMatrix: [],
@@ -237,7 +258,7 @@
                         for (var i = 0; i < lines.length; i++) {
                             textarea.value += lines[i].replace(/['"]+/g, '')
                         }
-
+                        console.log(textarea.value)
                         let values = textarea.value.split("\n")
 
                         //Store number of tasks and servers
@@ -870,7 +891,8 @@
                 }
             },
             async solveOptimizationProblem() {
-                this.$nuxt.$loading.start()
+                //this.$nuxt.$loading.start()
+                this.isLoading = true
 
                 //scroll to div
                 this.$el.querySelector("#import-vectors-result").scrollIntoView(true)
@@ -896,7 +918,7 @@
                     }
 
                     //Display output
-                    this.$nuxt.$loading.finish()
+                    this.isLoading = false
                     document.getElementById('import-vectors-result').innerHTML = '<h1 class="result__title">Results</h1>'
                     document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the submitted structure is: </b>' + JSON.parse(results["originalProblem"]).output.gamma.toFixed(5) + '</p>'
                     document.getElementById('import-vectors-result').innerHTML += '<p class="lp-result"><b>The capacity of the fully flexible structure is: </b>' + JSON.parse(results["fullyFlexible"]).output.gamma.toFixed(5) + '</p><br>'
@@ -1175,7 +1197,7 @@
                 if (message.length === 0) {
                     document.getElementById("import-vectors-errorMessage").innerHTML = message
                 } else {
-                    this.$nuxt.$loading.finish()
+                    this.isLoading = false
                     document.getElementById("import-vectors-errorMessage").innerHTML += '<p class="error-message">' + message + '</p>'
                 }
             }
