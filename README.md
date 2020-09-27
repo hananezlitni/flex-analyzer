@@ -1,6 +1,6 @@
 # Flexibility Structure Analyzer
 
-### Site: [https://flexibility-structure-analyzer.herokuapp.com/](https://flexibility-structure-analyzer.herokuapp.com/)
+<!--### Site: [https://flexibility-structure-analyzer.herokuapp.com/](https://flexibility-structure-analyzer.herokuapp.com/)-->
 
 The Flexibility Structure Analyzer is a web-based tool that allows people who wish to design a flexible system to check and verify whether their designed system's structure is as efficient as a fully flexible system.
 
@@ -10,7 +10,17 @@ Student contributors of the initial version: Matt Fielding, Edward Peng, and Alv
 
 Design & development of the new version: Hanane Zlitni.
 
-## Project Setup
+## Running the Project
+
+``` bash
+# install dependencies
+$ npm install
+
+# run server at localhost:3000
+$ npm run server
+```
+
+<!--## Project Setup
 
 ``` bash
 # install dependencies
@@ -25,6 +35,6 @@ $ npm run start
 
 # generate static project
 $ npm run generate
-```
+```-->
 
-See [Nuxt.js docs](https://nuxtjs.org) for more information.
+<!--See [Nuxt.js docs](https://nuxtjs.org) for more information.-->
