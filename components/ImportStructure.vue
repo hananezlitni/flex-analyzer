@@ -60,6 +60,8 @@ F Matrix:
 
         <div id="figure" class="figure"></div> 
 
+        <LoadingSpinner :loading="isLoading" />
+
         <div id="import-vectors-result" class="result"></div>
 
         <br>
@@ -94,7 +96,6 @@ F Matrix:
                 Submit Structure
             </button>
         </div>
-        <LoadingSpinner :loading="isLoading" />
     </section>
 </template>
 

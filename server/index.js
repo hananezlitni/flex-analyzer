@@ -43,7 +43,40 @@ router.post('/', async(req, res) => {
   var aMatrix = req.body.aMatrix;
 
   // Pass aMatrix and receive data
-  var child_process = require('child_process')
+  run_script('scripts/solver.py', aMatrix)
+
+  function run_script(file, args) {
+    let {PythonShell} = require('python-shell')
+    let options = {
+      mode: 'text',
+      pythonOptions: ['-u'], // get print results in real-time
+      args: [args]
+    }
+    var scriptOutput = "";
+
+    try {
+      PythonShell.run(file, options, function (err, results) { 
+        console.log("error: " + err);
+        scriptOutput = results
+        console.log("Final output: " + scriptOutput)
+        res.json(scriptOutput)
+      });
+    } catch(e) {
+      console.log("error: " + e)
+    }
+  }  
+});
+
+start()
+app.listen(3001,() => {
+  console.log("Started on PORT 3001");
+})
+app.use('/', router)
+module.exports = app
+
+
+//Using callback function
+/*var child_process = require('child_process')
 
   run_script('python3', ['scripts/solver.py', aMatrix], function(output, exit_code) {
       console.log('Full output of script: ',output);
@@ -52,26 +85,27 @@ router.post('/', async(req, res) => {
   });
 
   function run_script(command, args, callback) {
-      var child = child_process.spawn(command, args)
+    var child = child_process.spawn(command, args)
 
-      var scriptOutput = "";
+    var scriptOutput = "";
 
-      child.stdout.on('data', function(data) {
-        console.log('stdout: ' + `${data}`.split('\n')[1])
+    child.stdout.on('data', function(data) {
+      console.log('stdout: ' + `${data}`.split('\n')[1])
+      scriptOutput += `${data}`.split('\n')[1]
+    })
+
+    child.stderr.on('data', function(data) {
+        console.log('stderr: ' + data);
         scriptOutput += `${data}`.split('\n')[1]
-      })
+    });
 
-      child.stderr.on('data', function(data) {
-          console.log('stderr: ' + data);
-          scriptOutput += `${data}`.split('\n')[1]
-      });
+    child.on('close', function(code) {
+      callback(scriptOutput, code);
+    })
+  }*/
 
-      child.on('close', function(code) {
-        callback(scriptOutput, code);
-      })
-  }
-
-  /*const spawn = require('child_process').spawn;
+//Using stdout.pipe()
+/*const spawn = require('child_process').spawn;
   const ls = await spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
   var result = ''
   
@@ -79,7 +113,7 @@ router.post('/', async(req, res) => {
     console.log(`stdout: ${data}`);
     result = `${data}`.split('\n')[1]
     console.log("RESULT: " + result)
-    //res.write(`${data}`.split('\n')[1]) //JSON.stringify(`${data}`.split('\n')[1])
+    stdout.pipe(res)
   });
   
   ls.stderr.on('data', (data) => {
@@ -94,34 +128,3 @@ router.post('/', async(req, res) => {
         console.log(`error: child process exited with code ${code}`)
     }
   });*/
-});
-
-start()
-app.listen(3001,() => {
-  console.log("Started on PORT 3001");
-})
-app.use('/', router)
-module.exports = app
-
-// Start standalone server if directly running
-/*if (require.main === module) {
-  const port = process.env.PORT || 3001
-  app.listen(port, () => {
-    console.log(`API server listening on port ${port}`)
-    const A = '["0,0,-4,-4,0,0,-2,-2,-6,-6,-2,-2,0,0,-4,-4,0,0,0,0,-4,-4,0,0,64","0,-2,0,-2,0,-2,0,-2,0,-2,0,-2,-1,-3,-1,-3,-1,-3,0,-2,0,-2,0,-2,53","0,0,0,0,-1,-1,0,0,0,0,-1,-1,0,0,0,0,-1,-1,-4,-4,-4,-4,-5,-5,123","1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0"]'
-    const spawn = require('child_process').spawn;
-    const ls = spawn('python3', ['scripts/solver.py', A]);
-    
-    ls.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`);
-    });
-    
-    ls.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`);
-    });
-    
-    ls.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-    });
-  })
-}*/

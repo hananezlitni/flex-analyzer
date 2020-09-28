@@ -51,12 +51,7 @@ def solveLP(A):
     return result
 
 if __name__ == '__main__':
-#    from codecs import decode
     import sys
     import logging
 
     print(solveLP(sys.argv[1]))
-    #print(solveLP(sys.argv[1]))
-#    print(sys.argv[2])
-#    input = decode(sys.argv[2], 'unicode_escape')
-#    globals()[sys.argv[1]](str(input))
