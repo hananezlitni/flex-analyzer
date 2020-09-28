@@ -7,6 +7,7 @@ import logging
 logging.basicConfig(level='INFO')
 
 def solveLP(A):
+    print("HELLO FROM solver.py")
     #*************** Convert A to 2D of numbers **************
     aMatrix = A.replace('[','').replace(']','').split('"')
     aMatrix = [x for x in aMatrix if len(x) > 1]
