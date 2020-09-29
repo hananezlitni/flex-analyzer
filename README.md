@@ -10,17 +10,7 @@ Student contributors of the initial version: Matt Fielding, Edward Peng, and Alv
 
 Design & development of the new version: Hanane Zlitni.
 
-## Running the Project
-
-``` bash
-# install dependencies
-$ npm install
-
-# run server at localhost:3000
-$ npm run server
-```
-
-<!--## Project Setup
+## Project Setup
 
 ``` bash
 # install dependencies
@@ -35,6 +25,6 @@ $ npm run start
 
 # generate static project
 $ npm run generate
-```-->
+```
 
-<!--See [Nuxt.js docs](https://nuxtjs.org) for more information.-->
+See [Nuxt.js docs](https://nuxtjs.org) for more information.
