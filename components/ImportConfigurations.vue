@@ -2,6 +2,7 @@
     <section>
         <div class="import">
         <h1 class="import__title">Import Configurations</h1>
+        <p class="import__subtitle"><i>Click <a v-bind:href="importConfigs.loc" download="configs">here</a> to download a sample CSV file</i></p>
 
         <form class="import__configurations-form" @submit="$event.preventDefault()">
             <div id="import-configs-errorMessage"></div>
@@ -73,9 +74,13 @@
     .div-flex-center {
         margin-bottom: 3em;
     }
+    .import__title {
+        margin-bottom: 0.75em;
+    }
 </style>
 
 <script>
+    import importConfigs from "../files/import-configurations--valid.csv"    
     import { minNumOfServers, maxNumOfServers } from '../services/constraints.js'
     import { buildMatrixA } from '../services/data-processing.js'
     import { solveLPinPython } from '../services/solver.js'
@@ -87,6 +92,7 @@
         },
         data() {
             return {
+                importConfigs: { title: 'import-configs', loc: require('../files/import-configurations--valid.csv') },
                 isLoading: false,
                 numberOfTasks: 0,
                 numberOfServers: 0,

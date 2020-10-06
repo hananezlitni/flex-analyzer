@@ -129,6 +129,11 @@
     font-size: 2em;
     margin-bottom: 1.5em;
   }
+  .import__subtitle {
+    align-self: center;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+  }
   .import__file-upload {
     width: 0.1px;
     height: 0.1px;
