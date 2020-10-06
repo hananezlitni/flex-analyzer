@@ -36,7 +36,7 @@
     background-color: $background-color--app;
     font-family: $roboto;	
     color: $font-color;
-    min-width: 1420px;
+    min-width: 60em;
     box-sizing: border-box;
   }
   * {
@@ -91,7 +91,7 @@
   }
   .button {
     width: 185px;
-    height: 43px;
+    height: auto;
     padding: 0.55em 0;
     margin: 0 1em 1em 0;
     border-radius: 8px;
