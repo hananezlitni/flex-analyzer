@@ -148,19 +148,19 @@
 </style>
 
 <script>
-import importStructure from "../../files/import-structure.csv"
-import configsScript from "../../assets/configs.js"
-import importConfigs from "../../files/import-configurations--valid.csv"
-import constraints from "../../files/constraints-max.csv"
+  import importStructure from "../../files/import-structure.csv"
+  import configsScript from "../../assets/configs.js"
+  import importConfigs from "../../files/import-configurations--valid.csv"
+  import constraints from "../../files/constraints-max.csv"
 
-export default {
-  data() {
-    return {
-      importStructure: { title: 'import-structure', loc: require('../../files/import-structure.csv') },
-      configsScript: { title: 'configs', loc: require('../../assets/configs.js') },
-      importConfigs: { title: 'import-configs', loc: require('../../files/import-configurations--valid.csv') },
-      constraints: { title: 'constraints', loc: require('../../files/constraints-max.csv') }
+  export default {
+    data() {
+      return {
+        importStructure: { title: 'import-structure', loc: require('../../files/import-structure.csv') },
+        configsScript: { title: 'configs', loc: require('../../assets/configs.js') },
+        importConfigs: { title: 'import-configs', loc: require('../../files/import-configurations--valid.csv') },
+        constraints: { title: 'constraints', loc: require('../../files/constraints-max.csv') }
+      }
     }
   }
-}
 </script>

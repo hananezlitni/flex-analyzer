@@ -14,8 +14,15 @@ const port = process.env.PORT || 3000
 app.use(cors())
 
 // Parse API data
-app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({
+  limit: '50mb'
+}));
+
+app.use(bodyParser.urlencoded({
+  limit: '50mb',
+  parameterLimit: 100000,
+  extended: true 
+}));
 
 // Render Nuxt on the server
 async function start() {

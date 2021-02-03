@@ -76,6 +76,10 @@ export default {
           options: {
               name: `files/[name].[ext]`
           }
+        },
+        {
+          test: /\.md$/,
+          loader: 'raw-loader',
         }
       ) 
 

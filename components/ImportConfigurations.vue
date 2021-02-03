@@ -1,8 +1,14 @@
 <template>
     <section>
         <div class="import">
-        <h1 class="import__title">Import Configurations</h1>
-        <p class="import__subtitle"><i>Click <a v-bind:href="importConfigs.loc" download="configs">here</a> to download a sample CSV file</i></p>
+        <h1 class="import__title">
+            Import Configurations
+            <svg class="info-icon" @click="showImportConfigModal = true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <title>More information</title>
+                <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1.25 17c0 .69-.559 1.25-1.25 1.25-.689 0-1.25-.56-1.25-1.25s.561-1.25 1.25-1.25c.691 0 1.25.56 1.25 1.25zm1.393-9.998c-.608-.616-1.515-.955-2.551-.955-2.18 0-3.59 1.55-3.59 3.95h2.011c0-1.486.829-2.013 1.538-2.013.634 0 1.307.421 1.364 1.226.062.847-.39 1.277-.962 1.821-1.412 1.343-1.438 1.993-1.432 3.468h2.005c-.013-.664.03-1.203.935-2.178.677-.73 1.519-1.638 1.536-3.022.011-.924-.284-1.719-.854-2.297z"/>
+            </svg>
+        </h1>
+        <!--<p class="import__subtitle"><i>Click <a v-bind:href="importConfigs.loc" download="configs">here</a> to download a sample CSV file</i></p>-->
 
         <form class="import__configurations-form" @submit="$event.preventDefault()">
             <div id="import-configs-errorMessage"></div>
@@ -16,7 +22,15 @@
                 </label>
             </div>
 
-            <h2 class="import__constraints-title">Minimum Number of Servers at a Task</h2>
+            <h2 class="import__constraints-title import__constraints-title--h2">
+                Constraints
+                <svg class="info-icon" @click="showConstraintsModal = true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <title>More information</title>
+                    <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1.25 17c0 .69-.559 1.25-1.25 1.25-.689 0-1.25-.56-1.25-1.25s.561-1.25 1.25-1.25c.691 0 1.25.56 1.25 1.25zm1.393-9.998c-.608-.616-1.515-.955-2.551-.955-2.18 0-3.59 1.55-3.59 3.95h2.011c0-1.486.829-2.013 1.538-2.013.634 0 1.307.421 1.364 1.226.062.847-.39 1.277-.962 1.821-1.412 1.343-1.438 1.993-1.432 3.468h2.005c-.013-.664.03-1.203.935-2.178.677-.73 1.519-1.638 1.536-3.022.011-.924-.284-1.719-.854-2.297z"/>
+                </svg>
+            </h2>
+
+            <h3 class="import__constraints-title import__constraints-title--h3">Minimum Number of Servers at a Task</h3>
 
             <div class="div-flex-center">
                 <input type="text" id="import-configurations-constraints-file-name--min" class="import__constraints-file-name" placeholder="Import your constraints (optional)" readonly />
@@ -27,7 +41,7 @@
                 </label>
             </div>
 
-            <h2 class="import__constraints-title">Maximum Number of Servers at a Task</h2>
+            <h3 class="import__constraints-title import__constraints-title--h3">Maximum Number of Servers at a Task</h3>
 
             <div class="div-flex-center">
                 <input type="text" id="import-configurations-constraints-file-name--max" class="import__constraints-file-name" placeholder="Import your constraints (optional)" readonly />
@@ -61,6 +75,33 @@
             Submit Structure
         </button>
     </div>
+
+    <app-modal v-if="showImportConfigModal" @close="showImportConfigModal = false">
+        <div slot="download-button" class="div-flex-center download-button">
+            <a v-bind:href="importConfigsCSV.loc" download="configurations">
+                <button class="button button--action button--not-filled">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
+                    <path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
+                </svg>
+                Sample file
+                </button>
+            </a>
+        </div>
+        <section slot="modal-content" v-html="ImportingConfigs"></section>
+    </app-modal>
+    <app-modal v-if="showConstraintsModal" @close="showConstraintsModal = false">
+        <div slot="download-button" class="div-flex-center download-button">
+            <a v-bind:href="importConstraintsCSV.loc" download="constraints">
+                <button class="button button--action button--not-filled">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="15" viewBox="0 0 512 512">
+                    <path fill="#dddddd" d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"/>
+                </svg>
+                Sample file
+                </button>
+            </a>
+        </div>
+        <section slot="modal-content" v-html="ImportingConstraints"></section>
+    </app-modal>
     </section>
 </template>
 
@@ -80,19 +121,28 @@
 </style>
 
 <script>
-    import importConfigs from "../files/import-configurations--valid.csv"    
+    import marked from 'marked';
+    import importingConfigsMD from '~/data/ImportConfigurations.md';  
+    import importingConstraintsMD from '~/data/ImportConstraints.md';
     import { minNumOfServers, maxNumOfServers } from '../services/constraints.js'
     import { buildMatrixA } from '../services/data-processing.js'
     import { solveLPinPython } from '../services/solver.js'
     import LoadingSpinner from '../components/LoadingSpinner'
+    import AppModal from "~/components/AppModal.vue";
 
     export default {
         components: {
-            LoadingSpinner
+            LoadingSpinner,
+            AppModal
         },
         data() {
             return {
-                importConfigs: { title: 'import-configs', loc: require('../files/import-configurations--valid.csv') },
+                showImportConfigModal: false,
+                ImportingConfigs: marked(importingConfigsMD),
+                importConfigsCSV: { title: 'import-configs', loc: require('~/files/import-configurations--valid.csv') },
+                showConstraintsModal: false,
+                ImportingConstraints: marked(importingConstraintsMD),
+                importConstraintsCSV: { title: 'constraints', loc: require('~/files/constraints-max.csv') },
                 isLoading: false,
                 numberOfTasks: 0,
                 numberOfServers: 0,

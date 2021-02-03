@@ -1,26 +1,41 @@
 <template>
   <div id="app">
     <header class="header">
-			<h1 class="header__title">Flexibility Structure Analyzer</h1>
-      <p class="header__team">
-        Team leads: <a href="https://www2.isye.gatech.edu/people/faculty/Sigrun_Andradottir/" target="_blank">Sigrún Andradóttir</a>, <a href="https://www.isye.gatech.edu/users/hayriye-ayhan?entry=hs41" target="_blank">Hayriye Ayhan</a>, <a href="http://www.cas.mcmaster.ca/~downd/" target="_blank">Douglas G. Down</a>
-        <br>
-        Student contributors of the initial version: Matt Fielding, Edward Peng, and Alvin Poon
-        <br>
-        Design &amp; development of the new version: Hanane Zlitni
-      </p>
+			<h1 class="header__title" v-html="AppTitle"></h1>
+      <svg class="info-icon" @click="showAppInfoModal = true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <title>More information</title>
+        <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1.25 17c0 .69-.559 1.25-1.25 1.25-.689 0-1.25-.56-1.25-1.25s.561-1.25 1.25-1.25c.691 0 1.25.56 1.25 1.25zm1.393-9.998c-.608-.616-1.515-.955-2.551-.955-2.18 0-3.59 1.55-3.59 3.95h2.011c0-1.486.829-2.013 1.538-2.013.634 0 1.307.421 1.364 1.226.062.847-.39 1.277-.962 1.821-1.412 1.343-1.438 1.993-1.432 3.468h2.005c-.013-.664.03-1.203.935-2.178.677-.73 1.519-1.638 1.536-3.022.011-.924-.284-1.719-.854-2.297z"/>
+      </svg>
 		</header> 
-    <app-nav />
+    <!--<app-nav />-->
     <nuxt />
+    <footer v-html="AppFooter"></footer>
+    <app-modal v-if="showAppInfoModal" @close="showAppInfoModal = false">
+      <section slot="modal-content" v-html="AppInfo"></section>
+    </app-modal>
   </div>
 </template>
 
 <script>
+  import marked from 'marked';
+  import appTitleMD from '~/data/AppTitle.md';
+  import appFooterMD from '~/data/AppFooter.md';
+  import appInfoMD from '~/data/AppInfo.md';
   import AppNav from "~/components/AppNav.vue";
+  import AppModal from "~/components/AppModal.vue";
 
   export default {
     components: {
-      AppNav
+      AppNav,
+      AppModal
+    },
+    data() {
+      return {
+        showAppInfoModal: false,
+        AppTitle: marked(appTitleMD),
+        AppFooter: marked(appFooterMD),
+        AppInfo: marked(appInfoMD)
+      }
     }
   };
 </script>
@@ -29,6 +44,7 @@
   /************************* BASE ****************************/
   html {
     scroll-behavior: smooth;
+    background-color: $background-color--app;
   }
   #app {
     display: grid;
@@ -36,7 +52,7 @@
     background-color: $background-color--app;
     font-family: $roboto;	
     color: $font-color;
-    min-width: 60em;
+    min-width: 80em;
     box-sizing: border-box;
   }
   * {
@@ -48,46 +64,65 @@
     }
   }
   main {
-    grid-column: 4 / -1;
+    grid-column: 3 / 11;
     grid-row: 2;
     min-height: 100vh;
     background-color: $background-color--main;
     padding: 50px 50px 0 50px;
-    margin: 20px 50px 50px 10px;
+    //margin: 8px 0 20px;
     border-radius: 6px;
     box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.15);
   }
+  footer {
+    grid-column: 3 / 11;
+    grid-row: 3;
+    display: flex;
+    justify-content: flex-start;
+  }
+  footer p {
+    font-family: $roboto-mono;
+    text-align: left;
+    color: $font-color;
+    font-size: 0.95em;
+    padding: 10px;
+  }
   p {
-    padding: 15px;
-    margin: 10px;
-    line-height: 1.5;
+    padding: 16px;
+    line-height: 1.75;
   }
   a {
     color: $accent-color;
   }
   ol {
-    padding: 15px;
-    margin: 10px 28px;
+    padding: 8px 16px;
   }
   ol li {
     line-height: 1.5;
-    padding: 15px;
+    padding: 8px 0;
+    list-style-position: inside;
+  }
+  code {
+    display: inline-block;
+    font-family: $roboto-mono;
+    font-size: 0.9em;
+    color: $accent-color;
+    background-color: $background-color--main;
+    padding: 1em;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    word-break: keep-all
   }
   .header {
     grid-column: 1 / -1;
     padding: 25px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .header__title {
     text-align: center;
     color: $font-color;
     font-weight: 500;
-  }
-  .header__team {
-    font-family: $roboto-mono;
-    text-align: center;
-    color: $accent-color;
-    font-size: 0.95em;
-    padding: 10px;
   }
   .button {
     width: 185px;
@@ -117,6 +152,16 @@
     background-color: inherit;
     border: 2px solid $accent-color;
     color: $lightest-color;
+  }
+  .download-button {
+    margin-top: 1em;
+  }
+  .info-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 0.25em;
+    fill: $accent-color;
+    cursor: pointer;
   }
   /************************* TOOL ****************************/
   .import {
@@ -187,8 +232,13 @@
   }
   .import__constraints-title {
     align-self: center;
-    font-size: 1.5em;
     margin-bottom: 1.3em;
+  }
+  .import__constraints-title--h2 {
+    font-size: 1.5em;
+  }
+  .import__constraints-title--h3 {
+    font-size: 1.25em;
   }
   .import__file-name::placeholder, .import__constraints-file-name::placeholder {
     font-style: italic;
@@ -199,7 +249,7 @@
     justify-content: center;
   }
   .buttons-div {
-    margin-bottom: 3em;
+    margin-bottom: 2em;
   }
   .result {
     display: flex;

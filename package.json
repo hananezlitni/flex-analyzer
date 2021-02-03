@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@nuxtjs/style-resources": "^0.1.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "child_process": "^1.0.2",
     "cors": "^2.8.5",
@@ -25,6 +25,7 @@
     "express": "^4.17.1",
     "file-system": "^2.2.2",
     "fs": "0.0.1-security",
+    "marked": "^1.2.7",
     "multer": "^1.4.2",
     "node-cmd": "^3.0.0",
     "nuxt": "^2.14.5",
@@ -43,6 +44,7 @@
     "jest": "^24.9.0",
     "node-sass": "^4.14.1",
     "nodemon": "^1.19.4",
+    "raw-loader": "^4.0.2",
     "sass-loader": "^7.3.1",
     "vue-jest": "^3.0.5",
     "webpack": "^4.43.0"
