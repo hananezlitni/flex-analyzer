@@ -41,12 +41,11 @@
   /************************* BASE ****************************/
   html {
     scroll-behavior: smooth;
-    background: radial-gradient(circle, $background-color--app 50%, #171d24 100%);
   }
   #app {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    background: radial-gradient(circle, $background-color--app 50%, #171d24 100%); //radial-gradient(ellipse at center,#3f5165 0,$background-color--main 100%);
+    background: radial-gradient(ellipse at center, $background-color--app 50%, #171d24 100%);
     font-family: $roboto;	
     color: $font-color;
     min-width: 80em;
