@@ -7,7 +7,6 @@
         <path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1.25 17c0 .69-.559 1.25-1.25 1.25-.689 0-1.25-.56-1.25-1.25s.561-1.25 1.25-1.25c.691 0 1.25.56 1.25 1.25zm1.393-9.998c-.608-.616-1.515-.955-2.551-.955-2.18 0-3.59 1.55-3.59 3.95h2.011c0-1.486.829-2.013 1.538-2.013.634 0 1.307.421 1.364 1.226.062.847-.39 1.277-.962 1.821-1.412 1.343-1.438 1.993-1.432 3.468h2.005c-.013-.664.03-1.203.935-2.178.677-.73 1.519-1.638 1.536-3.022.011-.924-.284-1.719-.854-2.297z"/>
       </svg>
 		</header> 
-    <!--<app-nav />-->
     <nuxt />
     <footer v-html="AppFooter"></footer>
     <app-modal v-if="showAppInfoModal" @close="showAppInfoModal = false">
@@ -21,12 +20,10 @@
   import appTitleMD from '~/data/AppTitle.md';
   import appFooterMD from '~/data/AppFooter.md';
   import appInfoMD from '~/data/AppInfo.md';
-  import AppNav from "~/components/AppNav.vue";
   import AppModal from "~/components/AppModal.vue";
 
   export default {
     components: {
-      AppNav,
       AppModal
     },
     data() {
@@ -44,12 +41,12 @@
   /************************* BASE ****************************/
   html {
     scroll-behavior: smooth;
-    background-color: $background-color--app;
+    background: radial-gradient(circle, $background-color--app 50%, #171d24 100%);
   }
   #app {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    background-color: $background-color--app;
+    background: radial-gradient(circle, $background-color--app 50%, #171d24 100%); //radial-gradient(ellipse at center,#3f5165 0,$background-color--main 100%);
     font-family: $roboto;	
     color: $font-color;
     min-width: 80em;
@@ -69,7 +66,6 @@
     min-height: 100vh;
     background-color: $background-color--main;
     padding: 50px 50px 0 50px;
-    //margin: 8px 0 20px;
     border-radius: 6px;
     box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.15);
   }
@@ -78,9 +74,10 @@
     grid-row: 3;
     display: flex;
     justify-content: flex-start;
+    margin: 1em 0;
   }
   footer p {
-    font-family: $roboto-mono;
+    font-family: $roboto;
     text-align: left;
     color: $font-color;
     font-size: 0.95em;
@@ -127,7 +124,7 @@
   .button {
     width: 185px;
     height: auto;
-    padding: 0.55em 0;
+    padding: 0.5em;
     margin: 0 1em 1em 0;
     border-radius: 8px;
     font-size: 1.05em;
@@ -155,6 +152,11 @@
   }
   .download-button {
     margin-top: 1em;
+  }
+  .button-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .info-icon {
     width: 20px;

@@ -16,7 +16,6 @@
     import Tabs from '../components/Tabs';
     import ImportStructure from '../components/ImportStructure'
     import ImportConfigurations from '../components/ImportConfigurations'
-    import axios from 'axios';
 
     export default {
       name: 'ImportTool',
