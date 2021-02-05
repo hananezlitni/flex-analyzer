@@ -45,7 +45,7 @@
   #app {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    background: radial-gradient(ellipse at center, $background-color--app 50%, #171d24 100%);
+    background: radial-gradient(circle at center, $background-color--app 50%, #1b232b 100%);
     font-family: $roboto;	
     color: $font-color;
     min-width: 80em;
