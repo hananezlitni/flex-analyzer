@@ -1,6 +1,3 @@
-//current problem: stdout is asynchronous and result is returned before full data is received
-//should use callback function
-
 const { loadNuxt, build } = require('nuxt')
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -9,6 +6,8 @@ const router = express.Router();
 const app = express();
 const isDev = process.env.NODE_ENV !== 'production'
 const port = process.env.PORT || 3000
+
+require('newrelic');
 
 // CORS
 app.use(cors())
@@ -80,58 +79,3 @@ app.listen(3001,() => {
 })
 app.use('/', router)
 module.exports = app
-
-
-//Using callback function
-/*var child_process = require('child_process')
-
-  run_script('python3', ['scripts/solver.py', aMatrix], function(output, exit_code) {
-      console.log('Full output of script: ',output);
-      console.log('process exit with code: ' + exit_code)
-      res.json(output)
-  });
-
-  function run_script(command, args, callback) {
-    var child = child_process.spawn(command, args)
-
-    var scriptOutput = "";
-
-    child.stdout.on('data', function(data) {
-      console.log('stdout: ' + `${data}`.split('\n')[1])
-      scriptOutput += `${data}`.split('\n')[1]
-    })
-
-    child.stderr.on('data', function(data) {
-        console.log('stderr: ' + data);
-        scriptOutput += `${data}`.split('\n')[1]
-    });
-
-    child.on('close', function(code) {
-      callback(scriptOutput, code);
-    })
-  }*/
-
-//Using stdout.pipe()
-/*const spawn = require('child_process').spawn;
-  const ls = await spawn('python3', ['scripts/solver.py', aMatrix], ['-l']);
-  var result = ''
-  
-  ls.stdout.on('data', async(data) => {
-    console.log(`stdout: ${data}`);
-    result = `${data}`.split('\n')[1]
-    console.log("RESULT: " + result)
-    stdout.pipe(res)
-  });
-  
-  ls.stderr.on('data', (data) => {
-    console.log(`stderr: ${data}`);
-  });
-
-  ls.on('close', (code) => {
-    if (code === 0) {
-      console.log(`child process exited with code ${code}`);
-      res.send(result)
-    } else {
-        console.log(`error: child process exited with code ${code}`)
-    }
-  });*/

@@ -26,6 +26,7 @@
     "fs": "0.0.1-security",
     "marked": "^1.2.8",
     "multer": "^1.4.2",
+    "newrelic": "^7.4.0",
     "node-cmd": "^3.0.0",
     "nuxt": "^2.14.12",
     "python-shell": "^2.0.3",
