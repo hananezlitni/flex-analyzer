@@ -24,7 +24,7 @@
     "d3": "^5.16.0",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
-    "marked": "^1.2.8",
+    "marked": "^2.0.0",
     "multer": "^1.4.2",
     "newrelic": "^7.4.0",
     "node-cmd": "^3.0.0",
