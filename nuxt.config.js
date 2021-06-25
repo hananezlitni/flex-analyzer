@@ -52,6 +52,9 @@ export default {
     // your settings here
     scss: ['~/assets/scss/main.scss'] // alternative: scss
   },
+  buildModules: [
+    '@nuxtjs/dotenv'
+  ],
   /*
   ** Build configuration
   */
