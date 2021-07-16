@@ -4,7 +4,7 @@ The Flexibility Structure Analyzer is a web-based tool that allows people who wi
 
 ### Definitions
 
-**Flexibility structure:** The training of each server.
+**Flexibility structure:** The service rates for each server at each task.
 
 **Number of tasks:** The number of tasks in the system.
 
